@@ -1,0 +1,35 @@
+/* font awesome  */
+@import url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css);
+
+ /* bootstrap 5  */
+@import url(https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css);
+
+/* fonts  */
+@import url(https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap);
+
+/* owl carousel 2  */
+@import url(https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css);
+@import url(https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css);
+
+@import url(https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/themes/base/jquery-ui.min.css);
+@import url(https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css);
+
+ /* style css  */
+ @import url(./style.css);
+ @import url(./header.css);
+ @import url(./sign-in.css);
+ @import url(./menu.css);
+ @import url(./breadcrumb.css);
+ @import url(./history.css);
+ @import url(./order.css);
+ @import url(./cart.css);
+ @import url(./contact.css);
+ @import url(./footer.css);
+ @import url(./product-detail.css);
+ @import url(./store.css);
+ @import url(./about.css);
+ @import url(./banner-sale.css);
+ @import url(./banner-product.css);
+ @import url(./slider-owl-carousel.css);
+ @import url(./product-owl-carousel.css);
+ @import url(./pagination.css);

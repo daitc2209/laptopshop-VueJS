@@ -101,6 +101,41 @@ const router = createRouter({
           name: 'homeAdmin',
           component: () => import('../components/admin/home/index.vue')
         },
+        {
+          path: '/admin/user',
+          name: 'List_user',
+          component: () => import('../components/admin/user/index.vue')
+        },
+        {
+          path: '/admin/news',
+          name: 'List_news',
+          component: () => import('../components/admin/new/index.vue')
+        },
+        {
+          path: '/admin/brand',
+          name: 'List_brand',
+          component: () => import('../components/admin/brand/index.vue')
+        },
+        {
+          path: '/admin/category',
+          name: 'List_category',
+          component: () => import('../components/admin/category/index.vue')
+        },
+        {
+          path: '/admin/order',
+          name: 'List_order',
+          component: () => import('../components/admin/order/index.vue')
+        },
+        {
+          path: '/admin/feedback',
+          name: 'List_feedback',
+          component: () => import('../components/admin/feedback/index.vue')
+        },
+        {
+          path: '/admin/product',
+          name: 'List_product',
+          component: () => import('../components/admin/product/index.vue')
+        },
       ]
     }
   ]

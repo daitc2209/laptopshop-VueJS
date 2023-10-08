@@ -56,7 +56,7 @@
 			  </a>
 			</li>
 			<li class="nav-item">
-			  <a href="/admin/new" class="nav-link">
+			  <a href="/admin/news" class="nav-link">
 				<i class="nav-icon fa-solid fa-bars"></i>
 				News
 			  </a>

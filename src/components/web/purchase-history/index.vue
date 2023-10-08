@@ -205,26 +205,26 @@ export default {
 		],
     };
   },
+  mounted(){
+	  toastr.options = {
+				 "closeButton": false,
+				 "debug": false,
+				 "newestOnTop": false,
+				 "progressBar": false,
+				 "positionClass": "toast-top-right",
+				 "preventDuplicates": false,
+				 "onclick": null,
+				 "showDuration": "300",
+				 "hideDuration": "1000",
+				 "timeOut": "5000",
+				 "extendedTimeOut": "1000",
+				 "showEasing": "swing",
+				 "hideEasing": "linear",
+				 "showMethod": "fadeIn",
+				 "hideMethod": "fadeOut"
+			   }
+  },
   methods: {
-	mounted(){
-		toastr.options = {
-				   "closeButton": false,
-				   "debug": false,
-				   "newestOnTop": false,
-				   "progressBar": false,
-				   "positionClass": "toast-top-right",
-				   "preventDuplicates": false,
-				   "onclick": null,
-				   "showDuration": "300",
-				   "hideDuration": "1000",
-				   "timeOut": "5000",
-				   "extendedTimeOut": "1000",
-				   "showEasing": "swing",
-				   "hideEasing": "linear",
-				   "showMethod": "fadeIn",
-				   "hideMethod": "fadeOut"
-				 }
-	},
     formatDate(date) {
 		const parts = date.split("/");
   		const formattedDate = new Date(parts[2], parts[1] - 1, parts[0]);

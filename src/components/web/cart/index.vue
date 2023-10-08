@@ -89,27 +89,27 @@ export default {
         };
     },
     methods: {
-    formatCurrency(value) {
-        const formatter = new Intl.NumberFormat("vi-VN", {
-			style: "currency",
-			currency: "VND",
-		});
-		return formatter.format(value);
-    },
-    decreaseQty(item) {
-        if (item.numProduct > 0) {  //Call API 
-        item.numProduct--; 
-      }
-    },
-    increaseQty(item) {
-        item.numProduct++;
-    },
-    deleteItem(id) {
-      // Call API
-    },
-    clearCart() {
-      // Call API
-    }
+		formatCurrency(value) {
+			const formatter = new Intl.NumberFormat("vi-VN", {
+				style: "currency",
+				currency: "VND",
+			});
+			return formatter.format(value);
+		},
+		decreaseQty(item) {
+			if (item.numProduct > 0) {  //Call API 
+			item.numProduct--; 
+		}
+		},
+		increaseQty(item) {
+			item.numProduct++;
+		},
+		deleteItem(id) {
+		// Call API
+		},
+		clearCart() {
+		// Call API
+		}
   }
 }
 </script>

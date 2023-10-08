@@ -1,5 +1,5 @@
 <style>
-/* @import url(../../assets/web/css/web.css); */
+@import url(../../assets/web/css/web.css);
 </style>
 
 <script >
@@ -32,9 +32,10 @@ export default{
   <div>
     <Header />
     <Menu />
-
-    <!-- Ở đây cần import content  -->
-    <router-view></router-view>
+    <div class="content-wrapper">
+      <!-- Ở đây cần import content  -->
+      <router-view></router-view>
+    </div>
 
     <Backtotop />
     <Footer />

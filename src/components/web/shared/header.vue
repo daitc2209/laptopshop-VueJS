@@ -4,28 +4,25 @@
 			<i class="fa-brands fa-twitter"></i> 
 			<i class="fa-brands fa-facebook-f"></i> 
 			<i class="fa-brands fa-instagram"></i>
-			<!-- <div th:text="${#authentication.principal.id}"></div> -->
 		</div>
 		<div class="other-links">
-			<block v-if="isAuthenticated">
-				<!-- <span sec:authentication="name">Bob</span>
-				<span sec:authentication="principal.authorities">[ROLE_USER, ROLE_ADMIN]</span>
-				<span sec:authentication="principal.id"></span> -->
-				<block v-if ="ROLE_ADMIN">
+			<template  v-if="(checklogin)">
+				<template  v-if ="isAuthenticated == 'ROLE_ADMIN'">
 				  	<a href="/admin/home"><button id="btn-login">Admin</button></a> 
-				</block>
-				<a href="/logout"><button id="btn-login">Logout</button></a> 
-			</block>
-			<block sec:authorize="!isAuthenticated()">
+				</template >
+				<a href="/logout" @click="logout()"><button id="btn-login">Logout</button></a> 
+			</template >
+			<template  v-if="(checklogin == null)  || (checklogin == '') || (checklogin == false)">
 				<a href="/auth/sign-in"><button id="btn-login">Login</button></a> 
-			</block>
+			</template >
 			<a href="/auth/sign-up"><button id="btn-signup">Sign up</button></a> 
-			<block sec:authorize="isAuthenticated()">
+			<template  v-if="(checklogin)">
 				<a href="/user/purchase-history"><i class="fa-solid fa-money-check-dollar"></i></a>
 				<a href="/user/profile"><i class="fa-solid fa-address-card"></i></a>
-			</block>
+			</template >
 			<a href="/cart"><i class="fa-solid fa-cart-shopping"></i></a>
 		</div>
+
 	</header>
 </template>
 
@@ -33,13 +30,29 @@
 export default {
 	data() {
 		return {
-		isAuthenticated: false,
-		isAdmin: false
+			isAuthenticated: "",
+			isAdmin: false,
+			checklogin: "",
 		};
   	},
-	created(){
-
-	}
+	methods: {
+		logout(){
+			sessionStorage.removeItem("login"),
+			sessionStorage.removeItem("jwtToken"),
+			sessionStorage.removeItem("refreshToken"),
+			sessionStorage.removeItem("role"),
+			this.$router.push("/home")
+		},
+	},
+	mounted() {
+		this.emitter.on("login-success", () => {
+			this.checklogin = sessionStorage.getItem("login"); // Thay đổi trạng thái đăng nhập trong header
+			console.log("checklogin: "+this.checklogin)
+		});
+		if(sessionStorage.getItem("login")){
+			this.checklogin = sessionStorage.getItem("login");
+		}
+  },
 }
 </script>
 

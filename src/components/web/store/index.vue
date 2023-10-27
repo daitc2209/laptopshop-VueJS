@@ -46,7 +46,7 @@
                     <div class="select-option">
                       <p>Brand: </p>
                       <select class="brand" v-model="formFilterProduct.brandName" @change="submitForm">
-                        <option value="all">ALL</option>
+                        <option value="all" selected>ALL</option>
                         <option v-for="item in brand" :value="item.name" :key="item.name">{{ item.name }}</option>
                       </select>
                     </div>
@@ -66,37 +66,44 @@
               </div>
               <div class="product-list">
                 <div class="row">
-                  <div v-if="listProduct.length > 0">
-                    <div v-for="item in listProduct" :key="item.id" class="col-lg-3 col-sm-6 col-6">
-                      <div class="product-item">
-                        <div class="pi-pic">
-                          <img :src="'/images/product/' + item.thumbnail" alt="">
-                          <ul>
-                            <li class="w-icon active">
-                              <a :href="'/cart/add-cart/' + item.id"><i class="fa-solid fa-cart-shopping"></i></a>
-                            </li>
-                            <li class="quick-view"><a :href="'/store/' + item.id">+ Quick View</a></li>
-                          </ul>
-                        </div>
-                        <div class="pi-text">
-                          <h5>{{ item.name }}</h5>
-                          <div class="product-price">
-                            {{ formatPrice(item.price - (item.price * item.discount / 100)) }}đ
-                            <del v-if="item.discount > 0">{{ formatPrice(item.price) }}đ</del>
+                  <template v-if="listProduct.length > 0">
+                    <template v-for="item in listProduct" >
+                      <div class="col-lg-3 col-sm-6 col-6">
+                        <div class="product-item" :key="item.id">
+                          <div class="pi-pic">
+                            <img :src="'src/images/product/' + item.img" alt="">
+                            <ul>
+                              <li class="w-icon active">
+                                <a :href="'/cart/add-cart/' + item.id"><i class="fa-solid fa-cart-shopping"></i></a>
+                              </li>
+                              <li class="quick-view"><a :href="'/store/' + item.id">+ Quick View</a></li>
+                            </ul>
+                          </div>
+                          <div class="pi-text">
+                            <h5>{{ item.name }}</h5>
+                            <div class="product-price">
+                              {{ formatPrice(item.price - (item.price * item.discount / 100)) }}
+                              <del v-if="item.discount > 0">{{ formatPrice(item.price) }}</del>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
+                    </template>
+                  </template>
                   <div v-else>
                     <div class="col-lg-3 col-sm-6 col-6">
                       Not found products
                     </div>
                   </div>
-                  <div v-if="listProduct.length > 0">
-                    <ul class="pagination mt-4" id="pagination"></ul>
-                    <input type="hidden" id="page" name="page" :value="currentPage" />
-                  </div>
+                  <template v-if="listProduct.length > 0">
+                    <ul class="pagination mt-4" id="pagination">
+                      <li></li>
+                      <li></li>
+                      <li></li>
+                      <li></li>
+                    </ul>
+                    <input hidden="" id="page" name="page" :value="currentPage" />
+                  </template>
                 </div>
               </div>
             </form>
@@ -108,8 +115,8 @@
 </template>
   
 <script>
+import Products from '../../../service/Product';
 export default {
-  name: 'index',
   data() {
     return {
       formFilterProduct: {
@@ -118,48 +125,68 @@ export default {
         brandName: 'all',
         price: 'all',
       },
+      currentPage: '1',
       listProduct: [],
       category: [],
       brand: [],
-      currentPage: '',
       totalPages: '',
       errorMsg: '',
     };
   },
   mounted() {
+    this.getFilterProduct();
     this.Pagination();
   },
   methods: {
     formatPrice(price) {
-      return new Intl.NumberFormat().format(price);
+      const formatter = new Intl.NumberFormat("vi-VN", {
+        style: "currency",
+        currency: "VND",
+			});
+			return formatter.format(price);
+    },
+    getFilterProduct(){
+      Products.getFilterProduct(
+        this.formFilterProduct.sort,
+        this.formFilterProduct.cateogryName,
+        this.formFilterProduct.brandName,
+        this.formFilterProduct.price,this.currentPage).then((res) =>{
+        
+        this.listProduct = res.data.data.listProduct
+        this.brand = res.data.data.brand
+        this.category = res.data.data.category
+        this.totalPages = res.data.data.totalPages
+        console.log("total pages: "+this.totalPages)
+        
+      }).catch(err => {console.log("loi store Get !!!!")})
     },
     submitForm() {
       this.currentPage = 1;
-      // Perform form submission or API request with updated formFilterProduct data
-      // Update listProduct, totalPages, errorMsg based on the response
-      // For example:
-      // axios.post('/store', this.formFilterProduct)
-      //   .then(response => {
-      //     this.listProduct = response.data.listProduct;
-      //     this.totalPages = response.data.totalPages;
-      //     this.errorMsg = response.data.errorMsg;
-      //     this.initializePagination();
-      //   })
-      //   .catch(error => {
-      //     console.error(error);
-      //   });
+      Products.postFilterProduct(this.formFilterProduct,this.currentPage)
+      .then((res)=>{
+        this.listProduct = res.data.data.listProduct
+        this.brand = res.data.data.brand
+        this.category = res.data.data.category
+        this.totalPages = res.data.data.totalPages
+        console.log("total pages: "+this.totalPages)
+        
+      }).catch(err => {console.log("loi store Post !!!!")})
     },
     Pagination() {
       const totalPages = this.totalPages || 1;
       const currentPage = this.currentPage || 1;
+      console.log("totalpage: "+totalPages)
+      console.log("currentPage: "+currentPage)
       $('#pagination').twbsPagination({
         totalPages: totalPages,
-        visiblePages: 3,
+        visiblePages: 4,
         startPage: currentPage,
         onPageClick: (event, page) => {
           if (this.currentPage !== page) {
-            this.currentPage = page;
-            this.submitForm();
+            // this.currentPage = page;
+            // this.submitForm();
+            $('#page').val(page);
+						$('#formStore').submit();
           }
         },
       });
@@ -168,4 +195,5 @@ export default {
 };
 </script>
   
-<style scoped></style>
+<style>
+</style>

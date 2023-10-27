@@ -2,9 +2,7 @@
 import saleItem from "./slider-owl-carousel.vue"
 import bannerProduct from "./banner-product.vue"
 import bannerSale from "./banner-sale.vue"
-import keyboard from "./product-keyboard-owl-carousel.vue"
-import laptop from "./product-laptop-owl-carousel.vue"
-import mouse from "./product-mouse-owl-carousel.vue"
+import product from "./product-owl-carousel.vue"
 </script>
 
 <template>
@@ -15,9 +13,7 @@ import mouse from "./product-mouse-owl-carousel.vue"
         <saleItem />
         <bannerProduct/>
         <bannerSale />
-        <laptop/>
-        <keyboard />
-        <mouse />
+        <product/>
     </div>
 
 </template>

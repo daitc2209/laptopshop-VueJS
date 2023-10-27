@@ -1,6 +1,14 @@
 
 <template>
   <section class="product-detail">
+    <div id="toast">
+      <template v-if="success" >
+        {{ showSuccessToast() }}
+      </template>
+      <template v-else >
+        {{ showErrorToast() }}
+      </template>
+    </div>
     <div class="container">
       <div class="row">
         <div class="breadcrumbs d-flex flex-row align-items-center col-12">
@@ -11,7 +19,7 @@
           </ul>
         </div>
         <div class="col-md-5 order-2 order-md-1">
-          <img :src="'/images/product/' + product.thumbnail" alt="">
+          <img :src="'/src/images/product/' + product.img" alt="">
         </div>
         <div class="col-md-7 order-1 order-md-2">
           <h1>{{ product.name }}</h1>
@@ -52,13 +60,15 @@
 </template>
 
 <script>
-import { decFunction, incFunction } from "../../../assets/web/js/main";
+import { decFunction, incFunction, showSuccessToast, showErrorToast } from "../../../assets/web/js/main";
+import Product from "../../../service/Product";
+import Cart from "../../../service/Cart";
 export default {
   data() {
     return {
       product: {
         name: '',
-        thumbnail: '',
+        img: '',
         description: '',
         price: 0,
         discount: 0,
@@ -66,29 +76,54 @@ export default {
       },
       numProduct: null,
       err: '',
-      cart: ''
+      success: '',
+      cart: {
+        productId: "",
+        userId: ''
+      }
     };
   },
   methods: {
     formatPrice(price) {
-      return new Intl.NumberFormat('en-US', { minimumFractionDigits: 0 }).format(price);
+      const formatter = new Intl.NumberFormat("vi-VN", {
+        style: "currency",
+        currency: "VND",
+			});
+			return formatter.format(price);
     },
-    decFunction(num) {
+    async decFunction(num) {
       decFunction(num);
     },
-    incFunction(num) {
+    async incFunction(num) {
       incFunction(num)
     },
-    addToCart() {
-      // Implement your addToCart logic here
+    async addToCart() {
+      this.cart.productId=this.product.id
+      Cart.addToCart(this.cart).then(()=>{
+        console.log("add success")
+        this.success=true
+      }).catch((err) => { 
+        this.success=false
+        console.log("err cart: "+err)
+      })
+    },
+    async getProductbyId(id){
+      Product.getProductById(id).then((res)=>{
+        this.product = res.data.data
+      }).catch((err)=> {console.log("err: "+err)})
+    },
+
+
+    showSuccessToast(){
+      showSuccessToast()
+    },
+    showErrorToast(){
+      showErrorToast()
     }
+
   },
   mounted() {
-    // Fetch product data and assign it to the 'product' data property
+    this.getProductbyId(this.$route.params.id);
   }
 };
 </script>
-
-<style>
-
-</style>

@@ -37,10 +37,33 @@
 					<li class="nav-item"><a class="nav-link" href="/news">News</a></li>
 				</ul>
 	
-				<form class="d-flex form-search">
-					<input class="form-control me-2 text-search" id="inputSearch" name="inputSearch" type="text" placeholder="Search" aria-label="Search">
+				<form class="d-flex form-search ">
+					<input class="form-control me-2 text-search" id="inputSearch" 
+					name="inputSearch" type="text" 
+					placeholder="Search" aria-label="Search">
 					<button class="btn btn-outline-success" type="submit" id="search-btn">Search</button>
 				</form>
+				<!-- <ul class="header__navbar-list">
+					<li class="header__navbar-item header__navbar-user">
+						<img src="/src/images/anh.jpg" alt="" class="header__navabar-user-img">
+						<span class="header__navbar-user-name">Trần Đại</span>
+					
+						<ul class="header__navbar-user-menu">
+							<li class="header__navbar-user-item">
+								<a href="">Tài khoản của tôi</a>
+							</li>
+							<li class="header__navbar-user-item">
+								<a href="">Địa chỉ của tôi</a>
+							</li>
+							<li class="header__navbar-user-item">
+								<a href="">Đơn mua của tôi</a>
+							</li>
+							<li class="header__navbar-user-item header__navbar-user-item--separate">
+								<a href="">Đăng xuất của tôi</a>
+							</li>
+						</ul>
+					</li>
+				</ul> -->
 			</div>
 		</div>
 	</nav>
@@ -93,4 +116,96 @@ export default {
 	height: 500px;
 	background: gray;
 }
+
+/* USER */
+/* 
+.header__navbar-list{
+    list-style-type: none;
+    padding-left: 0;
+    margin: 4px 0 0 0;
+    display: flex;
+}
+
+.header__navbar-user{
+    display: flex;
+    justify-items: center;
+    position: relative;
+}
+
+.header__navbar-user:hover 
+.header__navbar-user-menu{
+    display: block;
+}
+
+.header__navabar-user-img{
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.header__navbar-user-name{
+    margin-left: 4px;
+    font-size: 1.4rem;
+    font-weight: 400;
+}
+
+.header__navbar-user-menu{
+    z-index: 1;
+    position: absolute;
+    width: 160px;
+    padding-left: 0;
+    top: calc(100% + 6px);
+    right: 0;
+    border-radius: 2px;
+    background-color: var(--while-color);
+    list-style: none;
+    box-shadow: 0 1px 2px #e0e0e0;
+    display: none;
+}
+
+.header__navbar-user-menu::before{
+    content: "";
+    position: absolute;
+    border-width: 18px 26px;
+    border-style: solid;
+    border-color: transparent transparent var(--while-color) transparent;
+    right: 4px;
+    top: -29px;
+}
+.header__navbar-user-menu::after{
+    content: "";
+    position: absolute;
+    display: block;
+    top: -8px;
+    right: 0;
+    width: 56%;
+    height: 8px;
+}
+
+.header__navbar-user-item--separate{
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.header__navbar-user-item a{
+    font-size: 1.4rem;
+    text-decoration: none;
+    color: var(--text-color);
+    padding: 8px 16px;
+    display: block;
+}
+
+.header__navbar-user-item a:first-child{
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+}
+.header__navbar-user-item a:last-child{
+    border-bottom-left-radius: 2px;
+    border-bottom-right-radius: 2px;
+}
+
+.header__navbar-user-item a:hover{
+    background-color: #fafafa;
+} */
+
 </style>

@@ -2,12 +2,6 @@
 <template>
   <section class="product-detail">
     <div id="toast">
-      <template v-if="success" >
-        {{ showSuccessToast() }}
-      </template>
-      <template v-else >
-        {{ showErrorToast() }}
-      </template>
     </div>
     <div class="container">
       <div class="row">
@@ -34,16 +28,16 @@
             <p>{{ item }}</p>
           </div>
           <h3>
-            {{ formatPrice(product.price - (product.price * product.discount / 100)) }}đ
-            <del v-if="product.discount > 0">{{ formatPrice(product.price) }}đ</del>
+            {{ formatPrice(product.price - (product.price * product.discount / 100)) }}
+            <del v-if="product.discount > 0">{{ formatPrice(product.price) }}</del>
           </h3>
           <form @submit.prevent="addToCart" method="post">
             <input name="productId" :value="product.id" hidden>
             <div class="quantity">
               <div class="pro-qty">
                 <span @click="decFunction(1)" class="dec qtybtn">-</span>
-                <input v-if="!numProduct" class="id-1" id="quanty" type="text" value="1" name="numProduct">
-                <input v-else class="id-1" id="quanty" type="text" :value="numProduct" name="numProduct">
+                <input v-if="!cart.num" class="id-1" id="quanty" type="text" value="1" name="numProduct">
+                <input v-else class="id-1" id="quanty" type="text" :value="cart.num" name="numProduct">
                 <span @click="incFunction(1)" class="inc qtybtn">+</span>
               </div>
               <a><button class="primary-btn pd-cart" type="submit">Add To Cart</button></a>
@@ -74,12 +68,11 @@ export default {
         discount: 0,
         id: ''
       },
-      numProduct: null,
       err: '',
       success: '',
       cart: {
         productId: "",
-        userId: ''
+        num:""
       }
     };
   },
@@ -91,19 +84,22 @@ export default {
 			});
 			return formatter.format(price);
     },
-    async decFunction(num) {
-      decFunction(num);
+    decFunction(num) {
+      this.cart.num = decFunction(num);
     },
-    async incFunction(num) {
-      incFunction(num)
+    incFunction(num) {
+      this.cart.num = incFunction(num)
     },
     async addToCart() {
       this.cart.productId=this.product.id
+      console.log("cart num: "+this.cart.num)
+
       Cart.addToCart(this.cart).then(()=>{
         console.log("add success")
-        this.success=true
+        let message = 'Thêm vào giỏ hàng thành công'
+        showSuccessToast(message)
       }).catch((err) => { 
-        this.success=false
+        showErrorToast()
         console.log("err cart: "+err)
       })
     },
@@ -114,16 +110,24 @@ export default {
     },
 
 
-    showSuccessToast(){
-      showSuccessToast()
+    showSuccessToast(message){
+      showSuccessToast(message)
     },
-    showErrorToast(){
+     showErrorToast(){
       showErrorToast()
     }
 
   },
   mounted() {
     this.getProductbyId(this.$route.params.id);
+  },
+  watch(){
+    decFunction(num) 
+    incFunction(num)
   }
 };
 </script>
+
+<style>
+
+</style>

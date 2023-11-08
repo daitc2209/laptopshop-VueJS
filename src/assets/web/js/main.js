@@ -5,12 +5,12 @@ let inc = document.querySelector(".quantity .pro-qty .inc");
 export function decFunction(id){
 	let textInput = document.querySelector(".quantity .pro-qty .id-"+id);
 	let quanty = parseInt(textInput.value);
-	textInput.value = quanty<=1 ? 1 : quanty-1;
+	return textInput.value = quanty<=1 ? 1 : quanty-1;
 }
 export function incFunction(id){
 	let textInput = document.querySelector(".quantity .pro-qty .id-"+id);
 	let quanty = parseInt(textInput.value);
-	textInput.value = quanty+1;
+	return textInput.value = quanty+1;
 }
 $(function () {
  	const firstPath = location.pathname.split('/')[1];
@@ -93,10 +93,10 @@ export function toast({ title = '',
             }
         }
 
-export function showSuccessToast() {
+export function showSuccessToast(message) {
     toast({
         title: 'Success',
-        message: 'Thêm vào giỏ hàng thành công',
+        message: message,
         type: 'success',
         duration: 1000
     })

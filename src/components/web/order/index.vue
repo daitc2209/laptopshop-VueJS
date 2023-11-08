@@ -3,7 +3,7 @@
 	<head><title>Đặt hàng</title></head>
   <section class="order">
 			<div class="container">
-				<form class="order-form" action="/order" method="post">
+				<form class="order-form" @submit.prevent="Order()">
 					<div class="row">
 						<div class="breadcrumbs d-flex flex-row align-items-center col-12">
 							<ul>
@@ -32,11 +32,11 @@
 								<div class="col-12  border info-order p-3">
 									<div class="col-lg-12  pb-4 ">
 										<label>SĐT <span>*</span></label> 
-										<input type="text" name="phone" required="required" />
+										<input type="text" v-model="OrderRequest.phone" name="phone" required="required" />
 									</div>
 									<div class="col-lg-12  pb-4">
 										<label>Địa chỉ nhận hàng <span>*</span></label> 
-										<input type="text" name="address" required="required" />
+										<input type="text" v-model="OrderRequest.address" name="address" required="required" />
 									</div>
 									<div class="col-lg-12 ">
 										<label>Hình thức thanh toán <span>*</span></label> 
@@ -44,7 +44,7 @@
 											<option value="COD">COD</option>
 											<option value="TRANSFER">Chuyển khoản</option>
 										</select>
-										<div class="form-group payment mt-2" id="load-payment">
+										<div class="form-group payment mt-2" id="load-payment" @change="typeBankcode()">
 											<p>Chọn phương thức thanh toán</p>
 											
 											<p>Cách 1: Chuyển hướng sang Cổng VNPAY chọn phương thức thanh toán</p>
@@ -72,12 +72,12 @@
 									<ul class="order-table p-0">
 										<li><span>Sản phẩm</span><span>Số lượng</span><span>Giá</span></li>
 										<li class="fw-normal" v-for="(item, index) in listCart" :key="index">
-												<span><img :src="item.image" width="50px" height="50px" alt="Product Image" /></span>
-												<span>{{item.num}}</span>
-												<span>{{ formatCurrency(item.price) }}đ</span>
+												<span><img :src="`/src/images/product/`+item.img" style="width:50px; height:50px" alt="Product Image" /></span>
+												<span>{{item.numProduct}}</span>
+												<span>{{ formatCurrency(item.totalPrice) }}</span>
 										</li>
-										<li class="total-price">Tổng số lượng <p>{{totalMoney}}</p></li>
-										<li class="total-price">Tổng giá <p>{{ totalMoney }}đ</p></li>
+										<li class="total-price">Tổng số lượng <p>{{totalQuantity}}</p></li>
+										<li class="total-price">Tổng giá <p>{{ formatCurrency(totalMoney) }}</p></li>
 									</ul>
 									<div class="order-btn">
 										<button type="submit" class="site-btn place-btn">Đặt hàng</button>
@@ -93,29 +93,35 @@
 </template>
 
 <script>
+import Order from '../../../service/Order'
 export default {
 	data(){
 		return {
 			userLogin: {
-				fullname:" tran dai",
-				email: "trandai1116@gmail.com"
+				fullname:" ",
+				email: ""
 			},
-			totalMoney: "50000",
-			orderDate: "27/05/2023",
-			listCart: [
-				{
-					num: "20",
-					price: "20000"
-				},
-			]
+			totalMoney: '',
+			totalQuantity:'',
+			orderDate: "",
+			listCart: [],
+			OrderRequest:{
+				typePayment: 'COD',
+				phone:'',
+				address:'',
+				bankCode:'' 
+			}
 		}
 	},
 	methods: {
 		formatDate(date) {
-			const parts = date.split("/");
-			const formattedDate = new Date(parts[2], parts[1] - 1, parts[0]);
-			const formatter = new Intl.DateTimeFormat("vi-VN");
-			return formatter.format(formattedDate);
+			const formattedDate = new Date(date);
+			const hours = ('0' + formattedDate.getHours()).slice(-2);
+			const minutes = ('0' + formattedDate.getMinutes()).slice(-2);
+			const day = ('0' + formattedDate.getDate()).slice(-2);
+			const month = ('0' + (formattedDate.getMonth() + 1)).slice(-2);
+			const year = formattedDate.getFullYear();
+			return `${hours}:${minutes} ${day}/${month}/${year}`;
 		},
 		formatCurrency(value) {
 			const formatter = new Intl.NumberFormat("vi-VN", {
@@ -125,14 +131,66 @@ export default {
 			return formatter.format(value);
 		},
 		typePAY(){
-			$("body").on("change", "#drTypePayment", function () {
-				let type = $("#drTypePayment").val();
+			let type = document.getElementById('drTypePayment').value;
+			this.OrderRequest.typePayment = type;
+			console.log("type: " + this.OrderRequest.typePayment);
+
+			// Hiển thị hoặc ẩn phần tử "#load-payment" dựa trên giá trị của "type"
+			if (type === "TRANSFER") {
+				$("#load-payment").show();
+			} else {
 				$("#load-payment").hide();
-				if (type == "TRANSFER") {
-					$("#load-payment").show();
-				}
-			})
+			}
+		},
+		typeBankcode(){
+			let bank = document.querySelector("input[name='bankCode']:checked").value
+			this.OrderRequest.bankCode = bank;
+			return this.OrderRequest.bankCode;
+		},
+		getOrder(){
+			Order.getOrder()
+				.then((res)=>{
+					this.userLogin.email = res.data.data.email
+					this.userLogin.fullname = res.data.data.fullname
+					this.listCart = res.data.data.listCart
+					this.orderDate = res.data.data.orderDate
+					this.totalQuantity = res.data.data.totalQuantity
+					this.totalMoney = res.data.data.totalMoney
+					console.log("date: "+this.orderDate)
+
+				})
+				.catch((err)=>{
+					console.log("err order: "+err)
+				})
+		},
+		Order(){
+			if (this.OrderRequest.typePayment == "TRANSFER")
+				this.OrderRequest.bankCode = this.typeBankcode();
+			console.log("bank: "+this.OrderRequest.bankCode);
+			console.log("type: "+this.OrderRequest.typePayment);
+
+
+			Order.postOrder(this.OrderRequest)
+				.then((res)=>{
+					console.log("gui order thanh cong: "+res)
+					console.log("data res: "+res.data)
+					
+						window.location.href = res.data.data.redirectUrl
+
+						if(res.data.data.typePayment == "COD")
+						{
+							sessionStorage.setItem("typePayment",res.data.data.typePayment);
+							sessionStorage.setItem("orderId",res.data.data.orderId);
+						}
+					console.log("TRANSFER !!!!")
+				})
+				.catch((err)=>{
+					console.log("err order: "+err)
+				})
 		}
+	},
+	mounted(){
+		this.getOrder()
 	}
 }
 </script>

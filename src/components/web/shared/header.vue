@@ -14,8 +14,8 @@
 			</template >
 			<template  v-if="(checklogin == null)  || (checklogin == '') || (checklogin == false)">
 				<a href="/auth/sign-in"><button id="btn-login">Login</button></a> 
+				<a href="/auth/sign-up"><button id="btn-signup">Sign up</button></a> 
 			</template >
-			<a href="/auth/sign-up"><button id="btn-signup">Sign up</button></a> 
 			<template  v-if="(checklogin)">
 				<a href="/user/purchase-history"><i class="fa-solid fa-money-check-dollar"></i></a>
 				<a href="/user/profile"><i class="fa-solid fa-address-card"></i></a>

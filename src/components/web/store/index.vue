@@ -4,6 +4,10 @@
     <head>
       <title>Store Page</title>
     </head>
+
+    <div id="toast">
+    </div>
+
     <section class="store">
       <div class="container">
         <div class="row">
@@ -74,7 +78,7 @@
                             <img :src="'src/images/product/' + item.img" alt="">
                             <ul>
                               <li class="w-icon active">
-                                <a :href="'/cart/add-cart/' + item.id"><i class="fa-solid fa-cart-shopping"></i></a>
+                                <a @click="addToCart(item.id)"><i class="fa-solid fa-cart-shopping"></i></a>
                               </li>
                               <li class="quick-view"><a :href="'/store/' + item.id">+ Quick View</a></li>
                             </ul>
@@ -115,7 +119,9 @@
 </template>
   
 <script>
+import { showSuccessToast, showErrorToast } from "../../../assets/web/js/main";
 import Products from '../../../service/Product';
+import Cart from '../../../service/Cart';
 export default {
   data() {
     return {
@@ -131,6 +137,11 @@ export default {
       brand: [],
       totalPages: '',
       errorMsg: '',
+      success: '',
+      cart:{
+        productId:'',
+        num:'',
+      }
     };
   },
   mounted() {
@@ -160,6 +171,27 @@ export default {
         
       }).catch(err => {console.log("loi store Get !!!!")})
     },
+    async addToCart(id){
+      this.cart.productId=id
+      console.log("id: "+id)
+      Cart.addToCart(this.cart).then(()=>{
+        console.log("them thanh cong o trang store")
+        let message = 'Thêm vào giỏ hàng thành công'
+        showSuccessToast(message)
+      }).catch((err)=>{
+        console.log("err o trang store khi them gio hang: "+err)
+        showErrorToast()
+      })
+    },
+    showSuccessToast(message){
+      showSuccessToast(message)
+    },
+     showErrorToast(){
+      showErrorToast()
+    },
+
+
+
     submitForm() {
       this.currentPage = 1;
       Products.postFilterProduct(this.formFilterProduct,this.currentPage)

@@ -69,13 +69,13 @@ export default {
 			Users.login(this.user)
 				.then((res) =>{
 					console.log(res)
-					console.log("res data accessToken: "+ res.data.accessToken)
-					console.log("role: "+ res.data.role)
+					console.log("res data accessToken: "+ res.data.data.accessToken)
+					console.log("role: "+ res.data.data.role)
 					if(res.data != null){
 						sessionStorage.setItem("login", true)
-						sessionStorage.setItem("jwtToken", res.data.accessToken)
-						sessionStorage.setItem("refreshToken", res.data.refreshToken)
-						sessionStorage.setItem("role", res.data.role)
+						sessionStorage.setItem("jwtToken", res.data.data.accessToken)
+						sessionStorage.setItem("refreshToken", res.data.data.refreshToken)
+						sessionStorage.setItem("role", res.data.data.role)
 						this.emitter.emit("login-success");
 						this.$router.push("/home");
 						// window.location.reload();

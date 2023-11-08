@@ -16,6 +16,8 @@
 
     <section class="purchase-history p-0">
       <div class="container">
+		<div id="toast">
+    	</div>
         <div class="row">
           <h3 class="text-center mb-4">Danh sách đơn hàng</h3>
         </div>
@@ -101,7 +103,7 @@
 												</div>
 												<div class="col-lg-12 d-flex align-items-center">
 													<label>Số lượng :</label>
-													<label>{{ item.quantity }}</label>
+													<label>{{ item.num }}</label>
 												</div>
 												<div class="col-lg-12 d-flex align-items-center">
 													<label>Tổng tiền :</label>
@@ -120,13 +122,13 @@
 												<div class="order-total">
 													<ul class="order-table p-0">
 														<li><span>Sản phẩm</span><span>Số lượng</span><span>Giá</span></li>
-														<li class="fw-normal" v-for="(product, index) in item.products" :key="index">
-																<span><img :src="product.image" width="50px" height="50px" alt="Product Image" /></span>
-																<span>{{product.quantity}}</span>
-																<span>{{ formatCurrency(product.price) }}đ</span>
+														<li class="fw-normal" v-for="(orderdetail, index) in item.orderdetail" :key="index">
+																<span><img :src="`/src/images/product/`+orderdetail.product.img" style="height: 50px; width: 50px;" alt="Product Image" /></span>
+																<span>{{orderdetail.num}}</span>
+																<span>{{ formatCurrency(orderdetail.price) }}</span>
 														</li>
-														<li class="total-price">Tổng số lượng <p>{{item.quantity}}</p></li>
-														<li class="total-price">Tổng giá <p>{{ formatCurrency(item.price) }}đ</p></li>
+														<li class="total-price">Tổng số lượng <p>{{item.num}}</p></li>
+														<li class="total-price">Tổng giá <p>{{ formatCurrency(item.total_money) }}</p></li>
 													</ul>
 													<div :id="'cancelOrderBtn_'+ item.id" v-if="(item.stateOrder !== 'CANCELLED' && item.stateOrder !== 'RECEIVED')" class="order-btn"><a @click="clickCancelOrder(item.id)"><button type="button" class="site-btn place-btn">Hủy đơn hàng</button></a></div>
 																								
@@ -164,7 +166,9 @@
   </div>
 </template>
   
-  <script>
+<script>
+import User from '../../../service/User';
+import {showSuccessToast,showErrorToast } from "../../../assets/web/js/main";
 export default {
 
   data() {
@@ -186,50 +190,37 @@ export default {
 				},
 			],
         },
-		{
-          id: 2,
-          name: "Product 2",
-          stateOrder: "RECEIVED",
-          total_money: "313000",
-		  created_at: "27/05/2023",
-		  quantity: '10',
-		  products: [
-				{
-					code: 2,
-					name: "Product 2",
-					quantity: "12",
-					price: "33123000",
-				},
-			],
-        },
 		],
     };
   },
   mounted(){
-	  toastr.options = {
-				 "closeButton": false,
-				 "debug": false,
-				 "newestOnTop": false,
-				 "progressBar": false,
-				 "positionClass": "toast-top-right",
-				 "preventDuplicates": false,
-				 "onclick": null,
-				 "showDuration": "300",
-				 "hideDuration": "1000",
-				 "timeOut": "5000",
-				 "extendedTimeOut": "1000",
-				 "showEasing": "swing",
-				 "hideEasing": "linear",
-				 "showMethod": "fadeIn",
-				 "hideMethod": "fadeOut"
-			   }
+	//   toastr.options = {
+	// 	"closeButton": false,
+	// 	"debug": false,
+	// 	"newestOnTop": false,
+	// 	"progressBar": false,
+	// 	"positionClass": "toast-top-right",
+	// 	"preventDuplicates": false,
+	// 	"onclick": null,
+	// 	"showDuration": "300",
+	// 	"hideDuration": "1000",
+	// 	"timeOut": "5000",
+	// 	"extendedTimeOut": "1000",
+	// 	"showEasing": "swing",
+	// 	"hideEasing": "linear",
+	// 	"showMethod": "fadeIn",
+	// 	"hideMethod": "fadeOut"
+	// 		   }
   },
   methods: {
     formatDate(date) {
-		const parts = date.split("/");
-  		const formattedDate = new Date(parts[2], parts[1] - 1, parts[0]);
-  		const formatter = new Intl.DateTimeFormat("vi-VN");
-  		return formatter.format(formattedDate);
+		const formattedDate = new Date(date);
+			const hours = ('0' + formattedDate.getHours()).slice(-2);
+			const minutes = ('0' + formattedDate.getMinutes()).slice(-2);
+			const day = ('0' + formattedDate.getDate()).slice(-2);
+			const month = ('0' + (formattedDate.getMonth() + 1)).slice(-2);
+			const year = formattedDate.getFullYear();
+			return `${hours}:${minutes} ${day}/${month}/${year}`;
     },
     formatCurrency(value) {
 		const formatter = new Intl.NumberFormat("vi-VN", {
@@ -238,26 +229,43 @@ export default {
       });
       return formatter.format(value);
     },
+
+	getPurchaseHistory(){
+		User.getPurchaseHistory()
+			.then((res)=>{
+				this.order = res.data.data.order
+			})
+			.catch((err)=>{console.log("loi purchase history !!!" + err)})
+	},
+
+
 	clickCancelOrder(id){
-		const firstPath = location.pathname.split('/')[1];
-		$.ajax({
-			url: '/'+firstPath+'/'+"user/purchase-history/delete",
-			async: false,  
-			type: "post",
-			data: { id: id },
-			success:function(res){
+		User.postPurchaseHistory(id)
+			.then((res)=>{
 				if(res.data){
 					$('#trow_' + id + ' .td7').empty();
 					$('#cancelOrderBtn_' + id).empty();
-					$('#trow_' + id + ' .td7').append(`<h6>${res.data.stateOrder}</h6>`);
+					$('#trow_' + id + ' .td7').append(`<h6>${res.data.data}</h6>`);
 						$('.modal').modal('hide');
-						Command: toastr["success"](res.message, "Cancel Order")
+						let message = 'Hủy đơn hàng thành công'
+						showSuccessToast(message)
+						// toastr["success"]('Cancel order successfully!', "Cancel Order")
 				}else{
-						Command: toastr["error"](res.message, "Cancel Order")
+						// toastr["error"]('Cancel order failed!', "Cancel Order")
+						showErrorToast()
 				}
-			}
-		});
+			})
+			.catch((err)=>{console.log("loi purchase history !!!" + err)})
 	},
+	showSuccessToast(message){
+		showSuccessToast(message)
+    },
+	showErrorToast(){
+		showErrorToast()
+    },
+  },
+  mounted(){
+	this.getPurchaseHistory()
   }
 };
 </script>

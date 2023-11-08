@@ -1,5 +1,7 @@
 <template>
 
+  <div id="toast">
+    </div>
 
 <div id="laptop" class="container product-cards p-0 mt-0">
     <h1 class="text-center">Laptop</h1>
@@ -22,7 +24,7 @@
               <span>
                 <a :href="'/store/' + item.id"><i class="fa-solid fa-eye"></i></a>
                 &emsp;
-                <a :href="'/cart/add-cart/' + item.id"><i class="fa-solid fa-cart-shopping"></i></a>
+                <a @click="addToCart(item.id)"><i class="fa-solid fa-cart-shopping"></i></a>
               </span>
             </h5>
           </div>
@@ -52,7 +54,7 @@
             <span>
               <a :href="`/store/${item.id}`"><i class="fa-solid fa-eye"></i></a>
               &emsp;
-              <a :href="`/cart/add-cart/${item.id}`"><i class="fa-solid fa-cart-shopping"></i></a>
+              <a @click="addToCart(item.id)"><i class="fa-solid fa-cart-shopping"></i></a>
             </span>
           </h5>
         </div>
@@ -80,7 +82,7 @@
             <span>
               <a :href="'/store/' + item.id"><i class="fa-solid fa-eye"></i></a>
               &emsp;
-              <a :href="'/cart/add-cart/' + item.id"><i class="fa-solid fa-cart-shopping"></i></a>
+              <a @click="addToCart(item.id)" ><i class="fa-solid fa-cart-shopping"></i></a>
             </span>
           </h5>
         </div>
@@ -92,14 +94,21 @@
 </template>
 
 <script>
+import { showSuccessToast, showErrorToast } from "../../../assets/web/js/main";
 import Products from '../../../service/Product'
+import Cart from '../../../service/Cart';
 export default {
   data() {
     return {
       laptopCategory: [],
       mouseCategory: [],
-      keyboardCategory: []
-    };
+      keyboardCategory: [],
+      success: '',
+      cart:{
+        productId:'',
+        num:'',
+      }
+    }
   },
   methods: {
     formatPrice(price) {
@@ -109,7 +118,7 @@ export default {
 			});
 			return formatter.format(price);
     },
-    getAllProduct(){
+    async getAllProduct(){
       Products.getAllProduct().then((res) => {
         console.log(res)
         this.laptopCategory = res.data.data.laptop;
@@ -117,6 +126,24 @@ export default {
         this.keyboardCategory = res.data.data.keyboard;
       })
       .catch(err => console.log(err))
+    },
+    async addToCart(id){
+      this.cart.productId=id
+      console.log("id: "+id)
+      Cart.addToCart(this.cart).then(()=>{
+        console.log("them thanh cong o trang home")
+        let message = 'Thêm vào giỏ hàng thành công'
+        showSuccessToast(message)
+      }).catch((err)=>{
+        showErrorToast()
+        console.log("err o trang home khi them gio hang: "+err)
+      })
+    },
+    showSuccessToast(message){
+      showSuccessToast(message)
+    },
+     showErrorToast(){
+      showErrorToast()
     }
   },
   mounted() {

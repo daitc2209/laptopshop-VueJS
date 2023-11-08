@@ -6,8 +6,6 @@
 				<form class="order-form">
 					<div v-if="checkout" class="row">
 			        	<div class="header clearfix col-12">
-			        	<h3 v-if="success" class="text-muted">{{success}}</h3>
-			        	<h3 v-if="error" class="text-muted">{{error}}</h3>
 			            </div>
 			            <div class="table-responsive col-12">
 			                <div class="form-group">
@@ -83,7 +81,7 @@
 									<ul class="order-table p-0">
 										<li><span>Sản phẩm</span><span>Số lượng</span><span>Giá</span></li>
 										<div v-for="item in orderdetail" v-bind:key="item.id">
-											<li class="fw-normal"><span><img src="/images/product/{img}(img=${item.product.thumbnail})" width="50px" height="50px"/></span> <span>{{item.num}}</span><span>{{formatCurrency(item.totalPrice)}}</span></li>
+											<li class="fw-normal"><span><img :src="`/src/images/product/` + item.product.img" style="width: 50px; height: 50px;"/></span> <span>{{item.num}}</span><span>{{formatCurrency(item.totalPrice)}}</span></li>
 										</div>
 										<li class="total-price">Tổng số lượng <p>{{order.num}}</p></li>
 										<li class="total-price">Tổng giá <p>{{formatCurrency(order.total_money)}}</p></li>
@@ -99,11 +97,10 @@
 </template>
 
 <script>
+import CheckOut from '../../../service/CheckOut'
 export default {
     data(){
         return{
-            error:"",
-            success:"",
             order: {
                 codeOrder:"",
                 name:"",
@@ -114,16 +111,23 @@ export default {
                 num:"",
                 total_money:"",
                 payment:""
-            }
+            },
+			orderdetail:{}
 
         }
     },
+	mounted(){
+		this.getBill();
+	},
     methods: {
         formatDate(date) {
-			const parts = date.split("/");
-			const formattedDate = new Date(parts[2], parts[1] - 1, parts[0]);
-			const formatter = new Intl.DateTimeFormat("vi-VN");
-			return formatter.format(formattedDate);
+			const formattedDate = new Date(date);
+			const hours = ('0' + formattedDate.getHours()).slice(-2);
+			const minutes = ('0' + formattedDate.getMinutes()).slice(-2);
+			const day = ('0' + formattedDate.getDate()).slice(-2);
+			const month = ('0' + (formattedDate.getMonth() + 1)).slice(-2);
+			const year = formattedDate.getFullYear();
+			return `${hours}:${minutes} ${day}/${month}/${year}`;
 		},
 		formatCurrency(value) {
 			const formatter = new Intl.NumberFormat("vi-VN", {
@@ -132,6 +136,41 @@ export default {
 			});
 			return formatter.format(value);
 		},
+
+		getBill(){
+			if(sessionStorage.getItem("typePayment")=="COD")
+			{
+				CheckOut.getBill(sessionStorage.getItem("orderId"))
+					.then((res)=>{
+						this.order = res.data.data.order
+						this.orderdetail = res.data.data.orderdetail
+						sessionStorage.removeItem("typePayment")
+						sessionStorage.removeItem("orderId")
+					})
+					.catch((err)=>{console.log("err bill: "+err)})
+			}
+			else{
+				var url = window.location.href
+
+				var urlParam = new URL(url)
+
+				var vnp_Amount = urlParam.searchParams.get("vnp_Amount");
+				var vnp_BankCode = urlParam.searchParams.get("vnp_BankCode");
+				var vnp_CardType = urlParam.searchParams.get("vnp_CardType");
+				var vnp_OrderInfo = urlParam.searchParams.get("vnp_OrderInfo");
+				var vnp_PayDate = urlParam.searchParams.get("vnp_PayDate");
+				var vnp_ResponseCode = urlParam.searchParams.get("vnp_ResponseCode");
+				var vnp_TxnRef = urlParam.searchParams.get("vnp_TxnRef");
+
+				CheckOut.getBillVNPAY(vnp_Amount,vnp_BankCode,vnp_CardType,
+						vnp_OrderInfo,vnp_PayDate,vnp_ResponseCode,vnp_TxnRef)
+						.then((res)=>{
+							this.order = res.data.data.order
+							this.orderdetail = res.data.data.orderdetail
+						})
+						.catch((err)=>{console.log("err bill VNPAY: "+err)})
+			}
+		}
     }
 }
 </script>

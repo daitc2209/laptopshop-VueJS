@@ -15,6 +15,26 @@ class Users{
         return axios.post('getInfo',accessToken) 
     }
 
+    getPurchaseHistory(){
+        return axios.get('purchase-history');
+    }
+
+    postPurchaseHistory(id){
+        return axios.post(`purchase-history/delete?id=`+id)
+    }
+
+    postProfile(data){
+        return axios.post('user/profile', data)
+    }
+
+    getProfile(){
+        return axios.get('user/profile')
+    }
+
+    postChangePW(oldPW, newPW){
+        return axios.post('user/profile/change-password?oldPW='+oldPW+'&newPW='+newPW)
+    }
+
     // getInfo(accessToken){
     //     return axios.post('sso/getInfoGG',accessToken) 
     // }

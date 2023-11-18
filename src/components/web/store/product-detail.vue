@@ -55,7 +55,7 @@
 
 <script>
 import { decFunction, incFunction, showSuccessToast, showErrorToast } from "../../../assets/web/js/main";
-import Product from "../../../service/Product";
+import productApi from "../../../service/Product";
 import Cart from "../../../service/Cart";
 export default {
   data() {
@@ -104,9 +104,16 @@ export default {
       })
     },
     async getProductbyId(id){
-      Product.getProductById(id).then((res)=>{
-        this.product = res.data.data
-      }).catch((err)=> {console.log("err: "+err)})
+      try{
+        const res = await productApi.getProductById(id)
+        this.product = res.data
+      }
+      catch(err) {
+        console.log("err: " + err)
+      }
+      // .then((res)=>{
+      //   this.product = res.data.data
+      // }).catch((err)=> {console.log("err: "+err)})
     },
 
 

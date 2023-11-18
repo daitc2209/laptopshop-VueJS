@@ -17,28 +17,29 @@
 							<div class="box-new-item" v-for="item in news" :key="item.id">
 								<div class="row">
 									<div class="col-3">
-										<img alt="" :src="item.thumbnail">
+										<img alt="" :src="item.img" @click="submitFormNewDetail(item.id)">
 									</div>
 									<div class="col-9">
 										<div class="new-content">
-											<h5><a @click="submitFormNewDetail(item.id)">{{item.title}}</a></h5>
+											<h5><a :href="'/news/detail?id='+item.id+'&page='+this.currentPage">{{item.title}}</a></h5>
 											<p>{{item.shortDescription}}</p>
 										</div>
 									</div>
-									<form :id="'formNewDetail' + item.id" action="/news/detail" method="post">
-										<input hidden="" name="page" :value="currentPage"/>
-										<input hidden="" name="id" :value="item.id"/>
-									</form>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-				<div v-if="news">
-					<form class="mx-3" id="formNew" action="/news" method="post">
-						<ul class="pagination mt-4" id="pagination"></ul>
-						<input hidden=""  id="page"  name="page" :value="currentPage"/>
-					</form>
+				<div>
+						<!-- <ul class="pagination mt-4" id="pagination"></ul>
+						<input hidden=""  id="page"  name="page" :value="currentPage"/> -->
+						<div class="pagination" id="pagination" v-if="paginationButtons.length >= 2">
+							<button v-for="page in paginationButtons" :key="page" 
+							:class="{ active: currentPage === page }" 
+							@click="PaginationButton(page).handleClick()">
+								{{ page }}
+							</button>
+						</div>
 				</div>
 			</div>
 		</section>
@@ -46,21 +47,64 @@
 </template>
 
 <script>
+
+import News from '../../../service/News';
 export default {
     data(){
         return {
+			paginationButtons:[],
             currentPage: "",
-            news: [{id:1, title: "123", shortDescription:"1234123"}],
+            news: [],
+			totalPage:""
         }
     },
     methods: {
-        submitFormNewDetail(id){
-            $("#formNewDetail"+id).submit()
-        }
-    }
+		getNews(){
+			News.getNews(this.currentPage)
+				.then(res => {
+					this.news = res.data.data.listNews
+					this.totalPage = res.data.data.totalPage
+					this.currentPage = res.data.data.currentPage
+					this.SetupPagination(this.totalPage)
+				})
+				.catch(err => {
+					console.log("err news: "+err)
+				})
+		},
+		PaginationButton (page) {
+			return {
+				page,
+				isActive: this.currentPage === page,
+				handleClick: () => {
+					this.loadNews(page);
+				},
+			};
+		},
+		SetupPagination (totalPage) {
+			this.paginationButtons = [];
+
+			let page_count = totalPage;
+			for (let i = 1; i < page_count + 1; i++) {
+				this.paginationButtons.push(i);
+			}
+		},
+		loadNews(page) {
+			News.getNews(page)
+				.then(res => {
+					this.news = res.data.data.listNews;
+					this.totalPage = res.data.data.totalPage;
+					this.currentPage = res.data.data.currentPage;
+				})
+				.catch(err => {
+					console.log("err news: " + err);
+				});
+		}
+    },
+	mounted(){
+		this.getNews()
+	}
 }
 </script>
 
 <style>
-
 </style>

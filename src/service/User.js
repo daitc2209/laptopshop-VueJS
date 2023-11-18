@@ -2,6 +2,14 @@
 import axios from "axios"
 
 class Users{
+
+    signUp(data){
+        return axios.post('register',data) 
+    }
+    verify(data){
+        return axios.get('register/verify?token='+data) 
+    }
+
     login(data)
     {
         return axios.post('login',data) 
@@ -9,6 +17,10 @@ class Users{
 
     loginGG(){
         return axios.post('loginCode',data1) 
+    }
+
+    logout(token){
+        return axios.get("logout?token="+token)
     }
 
     getInfo(accessToken){
@@ -35,28 +47,49 @@ class Users{
         return axios.post('user/profile/change-password?oldPW='+oldPW+'&newPW='+newPW)
     }
 
-    // getInfo(accessToken){
-    //     return axios.post('sso/getInfoGG',accessToken) 
-    // }
+    getListUserAdmin(page, fullname,sex,address,email,stateUser,authType,role){
+        return axios.get('admin/user',
+            {params: {fullname:fullname,sex:sex,address:address,
+                    email:email,stateUser:stateUser,authType:authType, role:role,page:page}}) 
+    }
 
-    // getUserById(id){
-    //     return axios.get(`user/edit/${id}`) 
-    // }
-    // update(id, data){
-    //     return axios.put(`user/${id}`,data)
-    // }
+    addUser(data){
+        return axios.post("admin/user/add",data)
+    }
 
-    // getUserByEmail(email){
-    //     return axios.get(`user/editInformation?email=${email}`)
-    // }
-    // updateInfo(id,data){
-    //     return axios.put(`user/editInformation?id=${id}`,data)
-    // }
+    getEditUser(id){
+        return axios.get("admin/user/edit/"+id)
+    }
 
-    // checkEmail(input){
-    //     const email = /^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/;
-    //     return email.test(input);
-    // }
+    postEditUser(data){
+        return axios.post("admin/user/edit",data)
+    }
+
+    lockUser(id){
+        return axios.post("admin/user/lock?id="+id)
+    }
+
+    unlockUser(id){
+        return axios.post("admin/user/unlock?id="+id)
+    }
 }
 
-export default new Users()
+// const Users = {
+//     signUp: async (data) => {
+//         const res = await axios.post('register',data)
+//         return res; 
+//     },
+
+//     verify: async (data) => {
+//         const res = await axios.get('register/verify?token='+data) 
+//         return res;
+//     },
+
+//     login: async (data) => {
+//         const res = await axios.post('login',data) 
+//         return res;
+//     }
+// }
+
+export default new Users();
+// export default Users;

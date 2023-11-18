@@ -14,12 +14,12 @@
 		<section class="container mb-4">
 			<div class="row">
 				<div class="col-md-4 col-12 p-0" id="side1">
-					<span v-if="this.url==null || this.url == ''">
-						<img class="image" alt="logo"
-							:src="`/src/images/user/`+this.profile.img" />
+					<span v-if="this.urlImg">
+						<img id="image" :src="this.profile.img" />
 					</span>
 					<span v-else>
-						<img id="image" :src="this.url" />
+						<img class="image" alt="logo"
+							:src="`/src/images/user/`+this.profile.img" />
 					</span>
 					
 				</div>
@@ -32,9 +32,10 @@
 							<input type="text" v-model="profile.sex" disabled="disabled" title="Giới tính">
 							<input type="text" v-model="profile.birthday" disabled="disabled" title="Ngày sinh">
 							<input type="text" v-model="profile.address" disabled="disabled" title="Địa chỉ">
+							<input type="text" v-model="profile.phone" disabled="disabled" title="SDT">
 						</div>
 						<div id="login">
-							<button type="button" data-bs-toggle="modal" data-bs-target="#myModal">Click Edit</button>
+							<button type="button" @click="getProfile()" data-bs-toggle="modal" data-bs-target="#myModal">Click Edit</button>
 							<button type="button" data-bs-toggle="modal" data-bs-target="#myModal1">Click Change Password</button>
 						</div>
 					</form>
@@ -80,8 +81,9 @@
 										<option value="MALE">MALE</option>
 										<option value="FEMALE">FEMALE</option>
 									</select>
-									<input title="Ngày sinh" type="text" v-model="profile.birthday"> 
+									<input title="Ngày sinh" type="text" placeholder="yyyy-mm-dd" v-model="profile.birthday"> 
 									<input title="Địa chỉ" type="text" v-model="profile.address"> 
+									<input title="SDT" type="text" v-model="profile.phone"> 
 									<input hidden="" type="text" v-model="profile.img" > 
 									<input 
 										class="p-0" 
@@ -174,9 +176,11 @@ export default {
 				email:'',
 				img:''
             },
-			url:'',
+			urlImg:'',
 			oldPw:'',
-			newPw:''
+			newPw:'',
+			url:'',
+			imgDto:''
         }
     },
 	methods:{
@@ -186,14 +190,17 @@ export default {
 			console.log("file: "+file)
 			if (file) {
 				this.url = URL.createObjectURL(file);
-				this.profile.img = file
-				console.log("url: ", this.profile.img);
+				this.imgDto = file
+				console.log("url: ", this.imgDto);
 			}
-		
 		},
 		editProfile() {
 			const formData = new FormData();
-			// formData.append('fileImage', this.$refs.file.files[0]);
+			console.log("this.profile.img: ", this.profile.img);
+			if (this.imgDto !== null && this.imgDto !== "")
+				this.profile.img = this.imgDto
+			console.log("this.profile.img dto: ", this.profile.img);
+
 			formData.append('fileImage', this.profile.img);
 			formData.append('id', this.profile.id);
 			formData.append('fullname', this.profile.fullname);
@@ -201,14 +208,15 @@ export default {
 			formData.append('sex', this.profile.sex);
 			formData.append('birthday', this.profile.birthday);
 			formData.append('email', this.profile.email);
-			// formData.append('fileImage', this.profile.img);
+			formData.append('phone', this.profile.phone);
 			
 			User.postProfile(formData)
-			.then(response => {
+			.then(res => {
+				this.getProfile()
 				// Xử lý phản hồi thành công
 				let message = "Sửa thông tin thành công"
 				showSuccessToast(message)
-				console.log(response.data);
+				bootstrap.Modal.getInstance(document.getElementById("myModal1")).hide()
 			})
 			.catch(error => {
 				// Xử lý lỗi
@@ -216,14 +224,15 @@ export default {
 			});
 		},
 		getProfile(){
+			this.url = ''
 			User.getProfile()
 				.then(res => {
 					// Xử lý phản hồi thành công
-					console.log("get profile");
-					if (res.data.data.typeAuth != "DATABASE")
-						this.url = res.data.data.profile.img
-					this.profile = res.data.data.profile
-					console.log(res.data);
+						this.profile = res.data.data.profile
+
+						this.urlImg = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- ./?%&=]*)?/.test(this.profile.img);
+						console.log("urlImg: "+this.urlImg)
+					
 				})
 				.catch(error => {
 					// Xử lý lỗi
@@ -247,8 +256,8 @@ export default {
 			console.log("file new: "+file)
 			if (file) {
 				this.url = URL.createObjectURL(file);
-				this.profile.img = file
-				console.log("url: ", this.profile.img);
+				this.imgDto = file
+				console.log("url: ", this.imgDto);
 			}
 		},
 		ChangePassword(){
@@ -276,7 +285,13 @@ export default {
 		}
 	},
 	mounted(){
-		this.getProfile()
+		if(sessionStorage.getItem("login"))
+			this.getProfile()
+		else
+			{
+				window.location.href = "/auth/sign-in"
+				sessionStorage.setItem("err",true)
+			}
 	}
 }
 </script>

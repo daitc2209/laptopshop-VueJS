@@ -20,8 +20,10 @@
 		</section>
 		
 		<section class="search">
+			<div id="toast">
+    		</div>
 			<div class="container">
-				<form action="/admin/user"  method="post" :object="formSearchUser">
+				<form @submit.prevent="search(1,formSearchUser)">
 					<h5 class="px-3 mb-4">Form search user</h5>
 					<div class="row">
 						<div class="col-6 left px-4">
@@ -38,12 +40,16 @@
 								</select>
 							</div>
 							<div class="form-group d-flex justify-content-between">
-								<label for="inputPassword6" class="col-form-label">Birthday:</label>
-								<input type="text" v-model="formSearchUser.birthday" class="form-control" />
-							</div>
-							<div class="form-group d-flex justify-content-between">
 								<label for="inputPassword6" class="col-form-label">Address:</label>
 								<input type="text" v-model="formSearchUser.address" class="form-control" />
+							</div>
+							<div class="form-group d-flex justify-content-between">
+								<label for="inputPassword6" class="col-form-label">Role:</label>
+								<select class="form-control form-select" v-model="formSearchUser.role">
+									<option selected="selected" value="0"></option>
+									<option value="1">ROLE_ADMIN</option>
+									<option value="2">ROLE_USER</option>
+								</select>
 							</div>
 						</div>
 						<div class="col-6 right px-4">
@@ -68,14 +74,6 @@
 									<option value="DATABASE">DATABASE</option>
 									<option value="GOOGLE">GOOGLE</option>
 									<option value="FACEBOOK">FACEBOOK</option>
-								</select>
-							</div>
-							<div class="form-group d-flex justify-content-between">
-								<label for="inputPassword6" class="col-form-label">Role:</label>
-								<select class="form-control form-select" v-model="formSearchUser.role">
-									<option selected="selected" value="0"></option>
-									<option value="1">ROLE_ADMIN</option>
-									<option value="2">ROLE_USER</option>
 								</select>
 							</div>
 						</div>
@@ -105,6 +103,7 @@
 								<th>Img</th>
 								<th>Fullname</th>
 								<th>Email</th>
+								<th>Phone</th>
 								<th>Sex</th>
 								<th>Birthday</th>
 								<th>Address</th>
@@ -118,19 +117,21 @@
 							<template v-if="user">
 									<tr :id="'trow_'+item.id" v-for="(item,index) in user" v-bind:key="item.id">
 										<td class="td1" :text="index + ((currentPage - 1) * 3)">{{ index + 1 }}</td>
-										<td class="td2"><img src='' alt=""></td>
+										<td class="td2" v-if="item.urlImg"><img :src='item.img' alt=""></td>
+										<td class="td2" v-else><img :src='`/src/images/user/`+item.img' alt=""></td>
 										<td class="td3"><h6>{{ item.fullname }}</h6></td>
 										<td class="td4"><h6>{{item.email}}</h6></td>
-										<td class="td5"><h6>{{item.sex}}</h6></td>
-										<td class="td6"><h6>{{item.birthday}}</h6></td>
+										<td class="td4"><h6>{{item.phone}}</h6></td>
+										<td class="td5"><h6>{{item.gender}}</h6></td>
+										<td class="td6"><h6>{{item.dob}}</h6></td>
 										<td class="td7"><h6>{{item.address}}</h6></td>
 										<td class="td8"><h6>{{item.stateUser}}</h6></td>
 										<td class="td9"><h6>{{item.authType}}</h6></td>
 										<td class="td10"><h6>{{item.role}}</h6></td>
 										<td class="td11">
-											<a data-bs-toggle="modal" data-bs-target="#edit" class="btn btn-sm btn-primary">Edit</a> 
-											<a @click="clickClockUser(item.id)" class="btn btn-sm btn-danger">Clock</a>
-											<a @click="clickUnClockUser(item.id)" class="btn btn-sm btn-danger">unClock</a>
+											<a data-bs-toggle="modal" @click="getEditUser(item.id)" :data-bs-target="`#edit`+item.id" class="btn btn-sm btn-primary">Edit</a> 
+											<a v-if="item.lock==true" @click="clickClockUser(item)" class="btn btn-sm btn-danger">Clock</a>
+											<a v-else @click="clickUnClockUser(item)" class="btn btn-sm btn-danger">unClock</a>
 										</td>
 									</tr>
 							</template>
@@ -141,22 +142,14 @@
 							</template>
 						</tbody>
 					</table>
-					<template v-if="user">
-						<form id="formUser" action="/admin/user" method="post">
-							<ul class="pagination mt-4" id="pagination"></ul>
-							<input hidden="" id="page"  name="page" :value="formSearchUser.currentPage"/>
-							<input hidden="" id="totalPage" name="totalPage" :value="formSearchUser.totalPage"/>
-							
-							<input hidden="" v-model="formSearchUser.fullname"/>
-							<input hidden="" v-model="formSearchUser.sex"/>
-							<input hidden="" v-model="formSearchUser.birthday"/>
-							<input hidden="" v-model="formSearchUser.address"/>
-							<input hidden="" v-model="formSearchUser.email"/>
-							<input hidden="" v-model="formSearchUser.stateUser"/>
-							<input hidden="" v-model="formSearchUser.authType"/>
-							<input hidden="" v-model="formSearchUser.role"/>
-						</form>
-					</template>
+
+						<div class="pagination" id="pagination" v-if="paginationButtons.length >= 2">
+							<button v-for="page in paginationButtons" :key="page" 
+							:class="{ active: currentPage === page }" 
+							@click="PaginationButton(page).handleClick()">
+								{{ page }}
+							</button>
+                  		</div>
 				</div>
 			</div>
 		</section>
@@ -164,7 +157,7 @@
 		<div class="modal" id="add">
 			<div class="modal-dialog">
 				<div class="modal-content">
-					<form action="/admin/user/add" method="post">
+					<form @submit.prevent="addUser(formAddUser)">
 						<div class="modal-header">
 							<h4 class="modal-title">Add new user</h4>
 							<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -201,78 +194,88 @@
 				</div>
 			</div>
 		</div>
-		<div class="modal" id="edit">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<form id="formEditUser" action="/admin/user/edit" method="post" enctype="multipart/form-data">
-						<div class="modal-header">
-							<h4 class="modal-title">Edit new user</h4>
-							<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-						</div>
-						<div class="modal-body">
-							<div id="logins-part" class="content" role="tabpanel" aria-labelledby="logins-part-trigger">
-								<div class="form-group">
-									<label for="">Id</label> 
-									<input type="text" id="idEdit" v-model="formEditUser.id" class="form-control" readonly="readonly"/>
-								</div>
-								<div class="form-group">
-									<label for="">Fullname</label> 
-									<input type="text" id="fullnameEdit" v-model="formEditUser.fullname" class="form-control" required="required" />
-								</div>
-								<div class="form-group">
-									<label for="">Sex</label> 
-									<select class="form-control form-select" id="sexEdit" v-model="formEditUser.sex" >
-										<option value="MALE">MALE</option>
-										<option value="FEMALE">FEMALE</option>
-									</select>
-								</div>
-								<div class="form-group">
-									<label for="">Birthday</label> 
-									<input type="text" class="form-control" id="birthdayEdit" v-model="formEditUser.birthday" />
-								</div>
-								<div class="form-group">
-									<label for="">Address</label> 
-									<input type="text" class="form-control" id="addressEdit" v-model="formEditUser.address" />
-								</div>
-								<div class="form-group">
-									<label for="">State user</label> 
-									<select class="form-control form-select" id="stateUserEdit" v-model="formEditUser.stateUser" required="required">
-										<option value="PENDING">PENDING</option>
-										<option value="ACTIVED">ACTIVED</option>
-										<option value="DISABLED">DISABLED</option>
-										<option value="REMOVED">REMOVED</option>
-									</select>
-								</div>
-								<div class="form-group">
-									<label for="">AuthType</label> 
-									<select class="form-control form-select" id="authTypeEdit" v-model="formEditUser.authType" required="required">
-										<option value="DATABASE">DATABASE</option>
-										<option value="GOOGLE">GOOGLE</option>
-										<option value="FACEBOOK">FACEBOOK</option>
-									</select>
-								</div>
-								<div class="form-group">
-									<label for="">Role</label> 
-										<select class="form-control form-select" id="roleEdit" v-model="formEditUser.role" required="required">
-										<option value="1">ROLE_ADMIN</option>
-										<option value="2">ROLE_USER</option>
-									</select>
-								</div>
-								<div class="form-group">
-									<label for="">Img</label> 
-									<input hidden="" type="text" v-model="formEditUser.img" id="imgEdit" /> 
-									<input class="form-control" onchange="chooseFile(this, 'edit')" type="file" id="fileImage" name="fileImage" />
-								</div>
-								<div class="form-group d-flex justify-content-center">
-									<img id="imageEdit" alt="" class="imgEdit" src="" height="200px" width="200px"/>
+		<div v-for="item in user" v-bind:key="item.id" >
+			<div class="modal" :id="`edit`+item.id">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<form id="formEditUser" @submit.prevent="editUser(formEditUser)" enctype="multipart/form-data">
+							<div class="modal-header">
+								<h4 class="modal-title">Edit new user</h4>
+								<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+							</div>
+							<div class="modal-body">
+								<div id="logins-part" class="content" role="tabpanel" aria-labelledby="logins-part-trigger">
+									<div class="form-group">
+										<label for="">Id</label> 
+										<input type="text" id="idEdit" v-model="formEditUser.id" class="form-control" readonly="readonly"/>
+									</div>
+									<div class="form-group">
+										<label for="">Fullname</label> 
+										<input type="text" id="fullnameEdit" v-model="formEditUser.fullname" class="form-control" required="required" />
+									</div>
+									<div class="form-group">
+										<label for="">Sex</label> 
+										<select class="form-control form-select" id="sexEdit" v-model="formEditUser.gender" >
+											<option value="MALE">MALE</option>
+											<option value="FEMALE">FEMALE</option>
+										</select>
+									</div>
+									<div class="form-group">
+										<label for="">Birthday</label> 
+										<input type="text" class="form-control" id="birthdayEdit" v-model="formEditUser.dob" />
+									</div>
+									<div class="form-group">
+										<label for="">Address</label> 
+										<input type="text" class="form-control" id="addressEdit" v-model="formEditUser.address" />
+									</div>
+									<div class="form-group">
+										<label for="">Phone</label> 
+										<input type="text" class="form-control" id="phoneEdit" v-model="formEditUser.phone" />
+									</div>
+									<div class="form-group">
+										<label for="">State user</label> 
+										<select class="form-control form-select" id="stateUserEdit" v-model="formEditUser.stateUser" required="required">
+											<option value="PENDING">PENDING</option>
+											<option value="ACTIVED">ACTIVED</option>
+											<option value="DISABLED">DISABLED</option>
+											<option value="REMOVED">REMOVED</option>
+										</select>
+									</div>
+									<div class="form-group">
+										<label for="">AuthType</label> 
+										<select class="form-control form-select" id="authTypeEdit" v-model="formEditUser.authType" required="required">
+											<option value="DATABASE">DATABASE</option>
+											<option value="GOOGLE">GOOGLE</option>
+											<option value="FACEBOOK">FACEBOOK</option>
+										</select>
+									</div>
+									<div class="form-group">
+										<label for="">Role</label> 
+											<select class="form-control form-select" id="roleEdit" v-model="formEditUser.role" required="required">
+											<option value="ROLE_ADMIN">ROLE_ADMIN</option>
+											<option value="ROLE_USER">ROLE_USER</option>
+										</select>
+									</div>
+									<div class="form-group">
+										<label for="">Img</label> 
+										<input hidden="" type="text" v-model="formEditUser.img" id="imgEdit" /> 
+										<input class="form-control" @change="chooseFile" type="file" id="fileImage" name="fileImage" 
+										ref="file"
+										accept=".png, .jpg, jpeg"
+										:maxFileSize="1000000" />
+									</div>
+									<div class="form-group d-flex justify-content-center">
+										<img v-if="formEditUser.urlImg" id="imageEdit" class="imgEdit" :src="formEditUser.img" style="height: 200px; width: 200px"/>
+										<img v-else id="imageEdit" class="imgEdit" :src="`/src/images/user/`+formEditUser.img" style="height: 200px; width: 200px"/>
+									</div>
 								</div>
 							</div>
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
-							<button type="button" @click="clickEditUser()" class="btn btn-primary">Edit</button>
-						</div>
-					</form>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+								<button type="submit" class="btn btn-primary">Edit</button>
+							</div>
+						</form>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -280,29 +283,243 @@
 </template>
 
 <script>
+import { showSuccessToast, showErrorToast } from "../../../assets/web/js/main";
+import Users from '../../../service/User'
 export default {
     data(){
         return {
-			user: [
-				{id: 1},
-				{id: 2}
-			],
-            formSearchUser: [
-				
-			],
-            formAddUser: {
-
-            },
-            formEditUser: {
-
-            }
+			user: [],
+			currentPage:'',
+			totalPage:"",
+            formSearchUser: {},
+            formAddUser: {},
+            formEditUser: {},
+			paginationButtons:[],
+			imgDto:'',
         }
     },
     methods: {
-        clickClockUser(id){},
-        clickUnClockUser(id){},
-        clickEditUser(){}
-    }
+		getListUserAdmin(){
+			console.log("page: "+this.currentPage)
+			Users.getListUserAdmin(this.currentPage,
+			 	this.formSearchUser.fullname,
+				this.formSearchUser.sex,
+				this.formSearchUser.address,
+				this.formSearchUser.email,
+				this.formSearchUser.stateUser,
+				this.formSearchUser.authType,
+				this.formSearchUser.role)
+				.then(res => {
+					if(res.data.data.listUser != null){
+						this.user = res.data.data.listUser.content.map(user => {return {...user,urlImg: false,lock:false}})
+						this.totalPage = res.data.data.listUser.totalPages
+						this.currentPage = res.data.data.currentPage
+						this.user.forEach(user => {
+							if(user.stateUser == "ACTIVED")
+								user.lock = true
+							console.log("lock: "+user.lock)
+						});
+						console.log("total: "+this.totalPage)
+						this.setupPagination(this.totalPage)
+						
+						this.user.forEach(user => {
+							user.urlImg = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- ./?%&=]*)?/.test(user.img);
+							console.log("urlImg: "+user.urlImg)
+						});
+					}
+					else
+						this.user = false
+				})
+				.catch(err => {
+					console.log("err: "+err)
+				})
+		},
+		addUser(formAddUser){
+			Users.addUser(formAddUser)
+				.then(res=>{
+					let mess=''
+					if(res.data.success)
+					{
+						mess='Thêm mới thành công'
+						this.showToastr(1,mess)
+					}
+					if(res.data.error){
+						mess='Có lỗi xảy ra'
+						this.showToastr(0,mess)
+					}
+
+					this.formAddUser=[]
+
+					this.getListUserAdmin();
+					bootstrap.Modal.getInstance(document.getElementById("add")).hide()
+				})
+				.catch(err=>{
+					// let mess = 'Something wrong !!!'
+					// this.showToastr(0,mess)
+					console.log("err: "+err)
+				})
+		},
+		getEditUser(id){
+			Users.getEditUser(id)
+				.then(res=>{
+					this.formEditUser = res.data
+					this.formEditUser.urlImg = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- ./?%&=]*)?/.test(this.formEditUser.img);
+				})
+				.catch(err=>{
+					console.log("err: "+err)
+				})
+		},
+		editUser(formEditUser){
+			if(formEditUser.role == "ROLE_ADMIN")
+				formEditUser.role = 1
+			if(formEditUser.role == "ROLE_USER")
+				formEditUser.role = 2
+			console.log("role: "+formEditUser.role)
+			const formData = new FormData();
+			if(this.imgDto != "" && this.imgDto != null)
+				formEditUser.img = this.imgDto
+			formData.append('fileImage', formEditUser.img);
+			formData.append('id', formEditUser.id);
+			formData.append('fullname', formEditUser.fullname);
+			formData.append('address', formEditUser.address);
+			formData.append('sex', formEditUser.gender);
+			formData.append('birthday', formEditUser.dob);
+			formData.append('stateUser', formEditUser.stateUser);
+			formData.append('authType', formEditUser.authType);
+			formData.append('role', formEditUser.role);
+			formData.append('phone', formEditUser.phone);
+
+			Users.postEditUser(formData)
+				.then(res => {
+					this.getListUserAdmin()
+					// Xử lý phản hồi thành công
+					let mess=''
+					if(res.data.success)
+					{
+						mess='Sửa thành công'
+						this.showToastr(1,mess)
+					}
+					if(res.data.error){
+						mess='Có lỗi xảy ra'
+						this.showToastr(0,mess)
+					}
+					bootstrap.Modal.getInstance(document.getElementById("edit"+formEditUser.id)).hide()
+				})
+				.catch(error => {
+					// Xử lý lỗi
+					console.error("err: "+error);
+				});
+		},
+        clickClockUser(item){
+			Users.lockUser(item.id)
+				.then(res => {
+					this.getListUserAdmin()
+					if(res.data.success)
+					{
+						let mess='Khóa thành công'
+						this.showToastr(1,mess)
+					}
+					if(res.data.error){
+						let mess='Có lỗi xảy ra'
+						this.showToastr(0,mess)
+					}
+				})
+				.catch(err => {
+					console.error("err: "+error);
+				})
+		},
+        clickUnClockUser(item){
+			Users.unlockUser(item.id)
+				.then(res => {
+					if(res.data.success)
+					{
+						let mess='Mở khóa thành công'
+						this.showToastr(1,mess)
+						this.getListUserAdmin()
+					}
+					if(res.data.error){
+						let mess='Có lỗi xảy ra'
+						this.showToastr(0,mess)
+					}
+				})
+				.catch(err => {
+					console.error("err: "+error);
+				})
+		},
+
+		search(page,formSearchUser){
+			console.log("formSearchUser: "+formSearchUser.fullname)
+			this.getListUserAdmin(page,formSearchUser.fullname,
+				formSearchUser.sex,
+				formSearchUser.address,
+				formSearchUser.email,
+				formSearchUser.stateUser,
+				formSearchUser.authType,
+				formSearchUser.role)
+		},
+
+		chooseFile(e){
+			console.log("event: "+e)
+			const file = e.target.files[0];
+			console.log("file: "+file)
+			if (file) {
+				this.imgDto = file;
+				this.formEditUser.img = URL.createObjectURL(file)
+				this.formEditUser.urlImg = true
+				console.log("url: ", this.formEditUser.img);
+			}
+		},
+
+		showToastr(condition,message) {
+            if(condition)
+				showSuccessToast(message)
+			
+			if(condition == false)
+				showErrorToast(message)
+			
+        },
+        PaginationButton (page) {
+			return {
+				page,
+				isActive: this.currentPage === page,
+				handleClick: async () => {
+					console.log("page: "+page)
+					await this.loadUsers(page);
+				},
+			};
+		},
+    	setupPagination (totalPage) {
+			this.paginationButtons = [];
+
+			let page_count = totalPage;
+			for (let i = 1; i < page_count + 1; i++) {
+				this.paginationButtons.push(i);
+			}
+		},
+		async loadUsers(page) {
+				Users.getListUserAdmin(page)
+				.then(res => {
+					this.user = res.data.data.listUser.content
+					this.totalPage = res.data.data.listUser.totalPages
+					this.currentPage = res.data.data.currentPage
+					this.user.forEach(user => {
+						user.urlImg = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- ./?%&=]*)?/.test(user.img);
+						console.log("urlImg: "+user.urlImg)
+					});
+				})
+				.catch(err => {console.log("err: "+err)})
+    	},
+    },
+	mounted(){
+		if(!sessionStorage.getItem("login") && sessionStorage.getItem("role")!="ROLE_ADMIN")
+		{
+			// window.location.href = "/auth/sign-in"
+			this.$router.push("/auth/sign-in")
+			sessionStorage.setItem("auth",true)
+		}
+		else
+			this.getListUserAdmin()
+	}
 }
 </script>
 

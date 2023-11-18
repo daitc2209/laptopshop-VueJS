@@ -18,14 +18,16 @@
 		</section>
 		
 		<section class="search">
+			<div id="toast">
+    		</div>
 			<div class="container">
-				<form action="/admin/category" method="post">
+				<form @submit.prevent="search(1,keyword)">
 					<h5 class="px-3 mb-4">Form tìm kiếm</h5>
 					<div class="row">
 						<div class="col-6 left pl-4">
 							<div class="form-group d-flex justify-content-between">
 								<label for="inputPassword6" class="col-form-label">Name:</label>
-								<input type="text" name="name" :value="name" class="form-control">
+								<input type="text" name="keyword" v-model="this.keyword" class="form-control">
 							</div>
 						</div>
 						<div class="col-6 right pl-4">
@@ -63,9 +65,77 @@
 										<td class="td2">{{ item.title }}</td>
 										<td class="td2">{{ item.shortDescription }}</td>
 										<td class="td3">
-											<a data-bs-toggle="modal" data-bs-target='#edit' class="btn btn-sm btn-primary">Edit</a> 
-											<a @click="clickDeleteNew(item.id)" class="btn btn-sm btn-danger">Delete</a>
+											<a data-bs-toggle="modal" :data-bs-target="'#edit'+ item.id" @click="getEditNewsAdmin(item.id)" class="btn btn-sm btn-primary">Edit</a> 
+											<a data-bs-toggle="modal" :data-bs-target="'#delete'+ item.id" class="btn btn-sm btn-danger">Delete</a>
 										</td>
+										<div class="modal add-new" :id="'edit'+item.id">
+											<div class="modal-dialog">
+												<div class="modal-content">
+													<form @submit.prevent="postEditNewsAdmin(item.id)"  >
+														<div class="modal-header">
+															<h4 class="modal-title">Chỉnh sửa tin tức</h4>
+															<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+														</div>
+														<div class="modal-body">
+															<div id="logins-part" class="content" role="tabpanel" aria-labelledby="logins-part-trigger">
+																<div class="form-group">
+																	<label for="">ID</label> 
+																	<input type="text" id="idEdit" v-model="newDto.id" class="form-control" readonly="readonly" />
+																	<div class="text-danger"></div>
+																</div>
+																<div class="form-group">
+																	<label for="">Thể loại</label> 
+																	<select class="form-control form-select" required="required" v-model="newDto.categoryName" id="categoryEdit">
+																		<option v-for="item in category" v-bind:key="item.id"
+																			 :value="item.name" >{{ item.name }}</option>
+																	</select>
+																</div>
+																<div class="form-group">
+																	<label for="">Tiêu đề</label> 
+																	<input type="text" v-model="newDto.title" class="form-control" required="required" id="titleEdit"/>
+																	<div class="text-danger"></div>
+																</div>
+																<div class="form-group">
+																	<label for="">Hình đại diện</label> 
+																	<input type="text" v-model="newDto.img" class="form-control" required="required" id="thumbnailEdit"/>
+																	<div class="text-danger"></div>
+																</div>
+																<div class="form-group">
+																	<label for="">Mô tả ngắn</label> 
+																	<textarea class="form-control" v-model="newDto.shortDescription" required="required" id="shortDescriptionEdit"></textarea>
+																</div>
+																<div class="form-group">
+																	<label for="">Nội dung</label> 
+																	<textarea class="form-control" :id="`contentEdit`+item.id" v-model="newDto.content"></textarea>
+																</div>
+															</div>
+														</div>
+														<div class="modal-footer">
+															<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Hủy</button>
+															<button type="submit" class="btn btn-primary">Cập nhật</button>
+														</div>
+													</form>
+												</div>
+											</div>
+										</div>
+
+										<div class="modal delete-new" :id="'delete'+item.id">
+											<div class="modal-dialog">
+												<div class="modal-content">
+													<div class="modal-header">
+														<h4 class="modal-title">Xóa tin tức</h4>
+														<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+													</div>
+													<div class="modal-body">
+														Bạn có chắc là xóa không ?
+													</div>
+													<div class="modal-footer">
+														<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Hủy</button>
+														<button @click="clickDeleteNew(item.id)" class="btn btn-primary">Xác nhận</button>
+													</div>
+												</div>
+											</div>
+										</div>
 									</tr>
 							</template>
 							<template v-else>
@@ -73,183 +143,214 @@
 									<td colspan="4">Không có bản ghi nào!!!</td>
 								</tr>
 							</template>
+
+							<div class="modal add-new edit" id="add">
+								<div class="modal-dialog">
+									<div class="modal-content">
+										<form @submit.prevent="postAddNewsAdmin()" >
+											<div class="modal-header">
+												<h4 class="modal-title">Thêm mới tin tức</h4>
+												<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+											</div>
+											<div class="modal-body">
+												<div id="logins-part" class="content" role="tabpanel" aria-labelledby="logins-part-trigger">
+													<div class="form-group">
+														<label style="display: flex;">Thể loại</label> 
+														<select class="form-control form-select" required="required" v-model="newAdd.categoryName">
+															<option v-for="item in category" v-bind:key="item.id" :value="item.name" >{{ item.name }}</option>
+														</select>
+													</div>
+													<div >
+														<label>Tiêu đề</label> 
+														<input type="text" v-model="newAdd.title" class="form-control" required="required" />
+														<div class="text-danger"></div>
+													</div>
+													<div class="form-group">
+														<label for="">Hình đại diện</label> 
+														<input type="text" v-model="newAdd.img" class="form-control" required="required" />
+														<div class="text-danger"></div>
+													</div>
+													<div class="form-group">
+														<label for="">Mô tả ngắn</label> 
+														<textarea class="form-control" v-model="newAdd.shortDescription" required="required"></textarea>
+														<div class="text-danger"></div>
+													</div>
+													<div class="form-group">
+														<label for="">Nội dung</label> 
+														<textarea class="form-control" id="contentAdd" v-model="newAdd.content"></textarea>
+													</div>
+												</div>
+											</div>
+											<div class="modal-footer">
+												<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Hủy</button>
+												<button type="submit" class="btn btn-primary">Thêm</button>
+											</div>
+										</form>
+									</div>
+								</div>
+							</div>
 						</tbody>
 					</table>
-					<template v-if="news != '' && news != null">
-						<form id="formNew" action="/admin/new" method="post">
-							<ul class="pagination mt-4" id="pagination"></ul>
-							<input hidden="" id="page"  name="page" :value="currentPage"/>
-							<input hidden="" id="totalPage" name="totalPage" :value="totalPage"/>
-						</form>
-					</template>
+					<div class="pagination" id="pagination" v-if="paginationButtons.length >= 2">
+						<button v-for="page in paginationButtons" :key="page" 
+						:class="{ active: currentPage === page }" 
+						@click="PaginationButton(page).handleClick()">
+							{{ page }}
+						</button>
+                  </div>
 				</div>
 			</div>
 		</section>
 
-		<div class="modal add-new" id="add">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<form action="/admin/new/add" method="post" >
-						<div class="modal-header">
-							<h4 class="modal-title">Thêm mới tin tức</h4>
-							<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-						</div>
-						<div class="modal-body">
-							<div id="logins-part" class="content" role="tabpanel" aria-labelledby="logins-part-trigger">
-								<div class="form-group">
-									<label for="">Thể loại</label> 
-									<select class="form-control form-select" required="required" v-model="newDto.categoryName">
-										<block v-for="item in newDto.category" v-bind:key="item.id">
-											<option :value="item.name">{{item.name}}</option>
-										</block>
-									</select>
-								</div>
-								<div class="form-group">
-									<label for="">Tiêu đề</label> 
-									<input type="text" v-model="newDto.title" class="form-control" required="required" />
-									<div class="text-danger"></div>
-								</div>
-								<div class="form-group">
-									<label for="">Hình đại diện</label> 
-									<input type="text" v-model="newDto.thumbnail" class="form-control" required="required" />
-									<div class="text-danger"></div>
-								</div>
-								<div class="form-group">
-									<label for="">Mô tả ngắn</label> 
-									<textarea class="form-control" v-model="newDto.shortDescription" required="required"></textarea>
-									<div class="text-danger"></div>
-								</div>
-								<div class="form-group">
-									<label for="">Nội dung</label> 
-									<textarea class="form-control" id="contentAdd" v-model="newDto.content"></textarea>
-								</div>
-							</div>
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Hủy</button>
-							<button type="submit" class="btn btn-primary">Thêm</button>
-						</div>
-					</form>
-				</div>
-			</div>
-		</div>
-		<div class="modal add-new" id="edit">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<form action="/admin/new/edit" method="post" >
-						<div class="modal-header">
-							<h4 class="modal-title">Thêm mới tin tức</h4>
-							<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-						</div>
-						<div class="modal-body">
-							<div id="logins-part" class="content" role="tabpanel" aria-labelledby="logins-part-trigger">
-								<div class="form-group">
-									<label for="">ID</label> 
-									<input type="text" id="idEdit" v-model="newDto.id" class="form-control" readonly="readonly" />
-									<div class="text-danger"></div>
-								</div>
-								<div class="form-group">
-									<label for="">Thể loại</label> 
-									<select class="form-control form-select" required="required" v-model="newDto.categoryName" id="categoryEdit">
-										<block v-for="item in newDto.category" v-bind:key="item.id">
-											<option :value="item.name">{{item.name}}</option>
-										</block>
-									</select>
-								</div>
-								<div class="form-group">
-									<label for="">Tiêu đề</label> 
-									<input type="text" v-model="newDto.title" class="form-control" required="required" id="titleEdit"/>
-									<div class="text-danger"></div>
-								</div>
-								<div class="form-group">
-									<label for="">Hình đại diện</label> 
-									<input type="text" v-model="newDto.thumbnail" class="form-control" required="required" id="thumbnailEdit"/>
-									<div class="text-danger"></div>
-								</div>
-								<div class="form-group">
-									<label for="">Mô tả ngắn</label> 
-									<textarea class="form-control" v-model="newDto.shortDescription" required="required" id="shortDescriptionEdit"></textarea>
-								</div>
-								<div class="form-group">
-									<label for="">Nội dung</label> 
-									<textarea class="form-control" id="contentEdit" v-model="newDto.content"></textarea>
-								</div>
-							</div>
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Hủy</button>
-							<button type="submit" class="btn btn-primary">Cập nhật</button>
-						</div>
-					</form>
-				</div>
-			</div>
-		</div>
+		
   </div>
 </template>
 
 <script>
+import News from '../../../service/News';
+import { showSuccessToast, showErrorToast } from "../../../assets/web/js/main";
+
 export default {
     data(){
         return {
-            news: [{id:1,title:"first"},{id:2,title:"second"}],
-            newDto: [
-            ]
+			paginationButtons:[],
+            news: [],
+            newDto: [],
+            newAdd: {},
+			category:[],
+			currentPage:'',
+			totalPage:"", 
+			keyword:''
         }
     },
     methods: {
-        clickDeleteNew(id){},
-        initializeEditor() {
-            this.editorAdd = CKEDITOR.replace('contentAdd');
-            this.editorEdit = CKEDITOR.replace('contentEdit');
-			toastr.options = {
-				   "closeButton": false,
-				   "debug": false,
-				   "newestOnTop": false,
-				   "progressBar": false,
-				   "positionClass": "toast-top-right",
-				   "preventDuplicates": false,
-				   "onclick": null,
-				   "showDuration": "300",
-				   "hideDuration": "1000",
-				   "timeOut": "5000",
-				   "extendedTimeOut": "1000",
-				   "showEasing": "swing",
-				   "hideEasing": "linear",
-				   "showMethod": "fadeIn",
-				   "hideMethod": "fadeOut"
-				 }
+		getNewsAdmin(){
+			News.getNewsAdmin(this.currentPage,this.keyword)
+				.then(res => {
+					this.news = res.data.data.news.content
+					this.totalPage = res.data.data.totalPage
+					this.currentPage = res.data.data.currentPage
+					this.category = res.data.data.category
+					this.setupPagination(this.totalPage)
+				})
+				.catch(err => {console.log("err: "+err)})
+		},
+		getEditNewsAdmin(id){
+			// CKEDITOR.replace('contentEdit' + id)
+			News.getEditNewsAdmin(id)
+				.then(res => {
+					this.newDto = res.data.data.newsDto
+					CKEDITOR.replace('contentEdit' + id, {}, () => {
+						CKEDITOR.instances['contentEdit' + id].setData(res.data.data.newsDto.content);
+					});
+				})
+				.catch(err => {console.log("err: "+err)})
+				
+		},
+		postEditNewsAdmin(id){
+			console.log("content: "+CKEDITOR.instances['contentEdit' + id].getData())
+			this.newDto.content = CKEDITOR.instances['contentEdit' + id].getData();
+			News.postEditNewsAdmin(this.newDto)
+				.then(() => {
+					let mess = 'Chỉnh sửa thành công'
+					this.showToastr(true,mess)
+					this.getNewsAdmin()
+					// document.getElementById("edit"+id).style.display='none';
+					bootstrap.Modal.getInstance(document.getElementById("edit"+id)).hide()
+				})
+				.catch(() => {
+					let mess = 'Có lỗi xảy ra'
+					this.showToastr(false,mess)
+				})
+		},
+		postAddNewsAdmin(){
+			this.newAdd.content = CKEDITOR.instances['contentAdd'].getData();
+			News.postAddNewsAdmin(this.newAdd)
+				.then(() => {
+					let mess = 'Thêm thành công'
+					this.showToastr(true,mess)
+					this.getNewsAdmin()
+					// document.getElementById("add").style.display='none';
+					// document.getElementsByClassName("modal-backdrop")[0].classList.remove("modal-backdrop", "show");
+					bootstrap.Modal.getInstance(document.getElementById("add")).hide()
+				})
+				.catch(() => {
+					let mess = 'Có lỗi xảy ra'
+					this.showToastr(false,mess)
+				})
+		},
+        clickDeleteNew(id){
+			News.deleteNewsAdmin(id)
+				.then(() => {
+					let mess = 'Xóa thành công'
+					this.showToastr(true,mess)
+					this.getNewsAdmin();
+					// document.getElementById("delete" + id).classList.remove("show");
+					// document.getElementsByClassName("modal-backdrop")[0].classList.remove("modal-backdrop", "show");
+					bootstrap.Modal.getInstance(document.getElementById("delete" + id)).hide()
+				})
+				.catch(() => {
+					let mess = 'Có lỗi xảy ra'
+					this.showToastr(false,mess)
+				})
+		},
+        
+        showToastr(condition,message) {
+            if(condition)
+				showSuccessToast(message)
+			
+			if(condition == false)
+				showErrorToast(message)
+			
         },
-        showToastr() {
-            const add = /*[[${param.add}]]*/ '';
-            if (add === 'success') {
-                toastr['success']('Insert category successfully!', 'Add Category');
-            } else if (add === 'fail') {
-                toastr['error']('Insert category failed!', 'Add Category');
-            } else if (add === 'exist') {
-                toastr['error']('The category name already exists!', 'Add Category');
-            }
-        },
-        setupPagination() {
-            const currentPage ='';
-            const totalPages ='';
-            $('#pagination').twbsPagination({
-                totalPages: totalPages ? totalPages : 1,
-                visiblePages: 3,
-                startPage: currentPage ? currentPage : 1,
-                onPageClick: (event, page) => {
-                    if (currentPage != page) {
-                        $('#page').val(page);
-                        $('#formNew').submit();
-                    }
-                },
-            });
-        },
+        PaginationButton (page) {
+			return {
+				page,
+				isActive: this.currentPage === page,
+				handleClick: async () => {
+					console.log("page: "+page)
+					await this.loadNews(page);
 
-    },
+				},
+			};
+		},
+    	setupPagination (totalPage) {
+			this.paginationButtons = [];
+
+			let page_count = totalPage;
+			for (let i = 1; i < page_count + 1; i++) {
+				this.paginationButtons.push(i);
+			}
+		},
+		async loadNews(page) {
+				News.getNewsAdmin(page)
+				.then(res => {
+					this.news = res.data.data.news.content
+					this.totalPage = res.data.data.totalPage
+					this.currentPage = res.data.data.currentPage
+				})
+				.catch(err => {console.log("err: "+err)})
+			
+    	},
+
+		initializeEditor(){
+			CKEDITOR.replace( 'contentAdd');
+		},
+		
+		search(page,keyword){
+			console.log("keyword: "+keyword)
+			this.getNewsAdmin(page,keyword)
+		}
+	},
     mounted() {
-        this.initializeEditor();
-        this.showToastr();
-        this.setupPagination();
+		if(!sessionStorage.getItem("login") && sessionStorage.getItem("role")!="ROLE_ADMIN")
+		{
+			// window.location.href = "/auth/sign-in"
+			this.$router.push("/auth/sign-in")
+			sessionStorage.setItem("auth",true)
+		}
+		this.initializeEditor()
+		this.getNewsAdmin();
  	},
 }
 </script>

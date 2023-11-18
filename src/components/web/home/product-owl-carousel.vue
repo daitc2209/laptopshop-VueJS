@@ -95,7 +95,8 @@
 
 <script>
 import { showSuccessToast, showErrorToast } from "../../../assets/web/js/main";
-import Products from '../../../service/Product'
+// import Products from '../../../service/Product'
+import productApi from '../../../service/Product';
 import Cart from '../../../service/Cart';
 export default {
   data() {
@@ -119,13 +120,17 @@ export default {
 			return formatter.format(price);
     },
     async getAllProduct(){
-      Products.getAllProduct().then((res) => {
-        console.log(res)
-        this.laptopCategory = res.data.data.laptop;
-        this.mouseCategory = res.data.data.mouse;
-        this.keyboardCategory = res.data.data.keyboard;
-      })
-      .catch(err => console.log(err))
+      const res = await productApi.getAllProduct();
+      // .then((res) => {
+      //   console.log(res)
+      //   this.laptopCategory = res.data.data.laptop;
+      //   this.mouseCategory = res.data.data.mouse;
+      //   this.keyboardCategory = res.data.data.keyboard;
+      // })
+      // .catch(err => console.log(err))
+      this.laptopCategory = res.data.laptop;
+      this.mouseCategory = res.data.mouse;
+      this.keyboardCategory = res.data.keyboard;
     },
     async addToCart(id){
       this.cart.productId=id

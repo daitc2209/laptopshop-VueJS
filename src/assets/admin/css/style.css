@@ -164,6 +164,10 @@
 	max-width: 90%;
 }
 
+.show{
+	display: block;
+}
+
 .order {
 	padding-top: 20px;
 	padding-bottom: 20px;

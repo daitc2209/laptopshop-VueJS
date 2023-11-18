@@ -1,8 +1,9 @@
 <template>
   <nav class="navbar navbar-expand-lg menu" id="navbar">
 		<div class="container-fluid">
-			<a class="navbar-brand" href="/home"><img src="../../../images/anh.jpg" alt="" width="180px" height="50px"></a>
-			<button 
+			<a class="navbar-brand" href="/home">
+				<img src="../../../images/anh.jpg" width="180px" height="50px"></a>
+				<button 
 				class="navbar-toggler" 
 				type="button" 
 				data-bs-toggle="collapse"
@@ -37,175 +38,177 @@
 					<li class="nav-item"><a class="nav-link" href="/news">News</a></li>
 				</ul>
 	
-				<form class="d-flex form-search ">
-					<input class="form-control me-2 text-search" id="inputSearch" 
+				<div class="d-flex form-search ">
+					<input class="form-control me-2 text-search inputSearch" id="inputSearch"
 					name="inputSearch" type="text" 
-					placeholder="Search" aria-label="Search">
-					<button class="btn btn-outline-success" type="submit" id="search-btn">Search</button>
-				</form>
-				<!-- <ul class="header__navbar-list">
-					<li class="header__navbar-item header__navbar-user">
-						<img src="/src/images/anh.jpg" alt="" class="header__navabar-user-img">
-						<span class="header__navbar-user-name">Trần Đại</span>
-					
-						<ul class="header__navbar-user-menu">
-							<li class="header__navbar-user-item">
-								<a href="">Tài khoản của tôi</a>
-							</li>
-							<li class="header__navbar-user-item">
-								<a href="">Địa chỉ của tôi</a>
-							</li>
-							<li class="header__navbar-user-item">
-								<a href="">Đơn mua của tôi</a>
-							</li>
-							<li class="header__navbar-user-item header__navbar-user-item--separate">
-								<a href="">Đăng xuất của tôi</a>
+					placeholder="Search" aria-label="Search" v-model="searchText">
+					<div class="search__product-list" v-show=" hasResults && searchText !== ''">
+						<ul class="search__product-list-item">
+							<li class="search__product-item" v-for="product in searchResults" :key="product.id">
+								<a class="search__product-item-link" :href="`/store/${product.id}`">
+										<img :src="`/src/images/product/${product.img}`" alt="" class="search__product-img">
+										<div class="search__product-item-info">
+											<div class="search__product-item-head">
+												<h3 class="search__product-item-name">{{ product.name }}</h3>
+											</div>
+
+											<div class="search__product-item-body">
+												<span class="search__product-item-price">
+												{{ product.price }}
+												</span>
+												<span class="search__product-item-price-discount">
+												{{ product.discountPrice }}
+												</span>
+											</div>
+										</div>
+								</a>
 							</li>
 						</ul>
-					</li>
-				</ul> -->
+					</div>
+
+					<button class="btn btn-outline-success" @click="searchText1" type="submit" id="search-btn">Search</button>
+				
+				</div>
+				
 			</div>
 		</div>
 	</nav>
 </template>
 
 <script>
+import Search from '../../../service/Search'
 export default {
+	data() {
+		return {
+			searchText: '',
+			searchResults: [],
+			hasResults: false,
+		};
+	},
+	methods:{
+		searchText1() {
+			if(this.searchText=="" || this.searchText==null)
+				this.hasResults = false
+			
+			Search.Search({
+				params: {
+					term: this.searchText
+				}
+			})
+				.then(res => {
+					if(res != null)
+					{
+						this.searchResults = res.data.data.listSearch;
+						this.hasResults = true;
+					}
+
+				})
+				.catch(err => {
+					console.log("err search: "+err)
+				})
+		},
+	},
+	watch: {
+		searchText() {
+			this.searchText1();
+		}
+	},
 
 }
 </script>
 
 <style>
-@charset "UTF-8";
 
-#navbar {
-	background-color: #1c1c50;
-	font-size: 16px;
-	font-family: 'Roboto Slab', serif;
-}
-#navbar .nav-link {
-	color: white;
-	font-weight: bold;
-	margin-left: 5px;
-	transition: 0.5s ease;
-}
+/* Search */
 
-#navbar .nav-link:hover {
-	color: white;
-	border-radius: 5px;
-}
-
-.dropdown li a {
-	color: white;
-}
-.form-search{
-	width: 65%;
-}
-#search-btn {
-	color: white;
-	border: 1px solid white;
-}
-
-#search-btn:hover {
-	background-color: #1c1c50;
-}
-.product-search{
-	position: fixed;
-	top: 60px;
-	width: 60%;
-	height: 500px;
-	background: gray;
-}
-
-/* USER */
-/* 
-.header__navbar-list{
-    list-style-type: none;
+.header__cart-list-item{
     padding-left: 0;
-    margin: 4px 0 0 0;
+    list-style: none;
+    height: 56vh;  /*view port height*/
+    /* khi đơn hàng nhiều, nó sẽ tự động tạo scroll */
+    overflow-y: auto;
+}
+
+.header__cart-item{
     display: flex;
+    align-items: center;
 }
 
-.header__navbar-user{
+.header__cart-item:hover{
+    background-color: #F8F8F8;
+}
+
+.header__cart-img{
+    width: 42px;
+    height: 42px;
+    margin: 12px;
+    border: 1px solid #E8E8E8;
+}
+.header__cart-item-info{
+    width: 100%;
+    margin-right: 12px;
+}
+.header__cart-item-head{
     display: flex;
-    justify-items: center;
-    position: relative;
+    align-items: center;
+    justify-content: space-between;
 }
+.header__cart-item-name{
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: var(--text-color);
+    margin: 0;
+    
+    flex: 1;
+    padding-right: 16px;
+    /* tạo dấu 3 chấm ... khi tên sản phẩm dài quá */
+    max-height: 4rem;
+    line-height: 2rem;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    text-align: left;
 
-.header__navbar-user:hover 
-.header__navbar-user-menu{
-    display: block;
 }
-
-.header__navabar-user-img{
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.header__navbar-user-name{
-    margin-left: 4px;
+.header__cart-item-price{
     font-size: 1.4rem;
     font-weight: 400;
+    color: var(--primary-color);
 }
-
-.header__navbar-user-menu{
-    z-index: 1;
-    position: absolute;
-    width: 160px;
-    padding-left: 0;
-    top: calc(100% + 6px);
-    right: 0;
-    border-radius: 2px;
-    background-color: var(--while-color);
-    list-style: none;
-    box-shadow: 0 1px 2px #e0e0e0;
-    display: none;
+.header__cart-item-mul{
+    font-size: 0.9rem;
+    margin: 0 4px;
+    color: #757575;
 }
-
-.header__navbar-user-menu::before{
-    content: "";
-    position: absolute;
-    border-width: 18px 26px;
-    border-style: solid;
-    border-color: transparent transparent var(--while-color) transparent;
-    right: 4px;
-    top: -29px;
+.header__cart-item-qnt{
+    font-size: 1.2rem;
+    color: #757575;
 }
-.header__navbar-user-menu::after{
-    content: "";
-    position: absolute;
-    display: block;
-    top: -8px;
-    right: 0;
-    width: 56%;
-    height: 8px;
+.header__cart-item-body{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
 }
-
-.header__navbar-user-item--separate{
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
+.header__cart-item-desc{
+    color: #757575;
+    font-size: 1.2rem;
+    font-weight: 300;
 }
-
-.header__navbar-user-item a{
-    font-size: 1.4rem;
-    text-decoration: none;
+.header__cart-item-remove{
     color: var(--text-color);
-    padding: 8px 16px;
-    display: block;
+    font-size: 1.2rem;
+    font-weight: 400;
 }
-
-.header__navbar-user-item a:first-child{
-    border-top-left-radius: 2px;
-    border-top-right-radius: 2px;
+.header__cart-item-remove:hover{
+    color: var(--primary-color);
+    cursor: pointer;
 }
-.header__navbar-user-item a:last-child{
-    border-bottom-left-radius: 2px;
-    border-bottom-right-radius: 2px;
+.header__cart-viewcart{
+    float: right;
+    margin: 0 12px 12px 0;
 }
-
-.header__navbar-user-item a:hover{
-    background-color: #fafafa;
-} */
-
+.header__cart-viewcart:hover{
+    background-color: #F05D41;
+}
 </style>

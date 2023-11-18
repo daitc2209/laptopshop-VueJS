@@ -25,6 +25,9 @@
 			            <div v-if="param.accessDenied">
 			                <div class="alert alert-danger"> You not authorize</div>
 			            </div>
+						<div v-if="param.checkLoginForCheckOut">
+			                <div class="alert alert-danger"> You must login. </div>
+			            </div>
 						<h3>Login Account</h3>
 						<div class="inp">
 							<input v-model="user.email" type="text" name="username" id="username" placeholder="User Name" required> 
@@ -58,7 +61,8 @@ export default {
             param: {
 				error: false,
 				logout: false,
-				accessDenied: false
+				accessDenied: false,
+				checkLoginForCheckOut: false
 			},
             display: 'none',
         }
@@ -76,8 +80,8 @@ export default {
 						sessionStorage.setItem("jwtToken", res.data.data.accessToken)
 						sessionStorage.setItem("refreshToken", res.data.data.refreshToken)
 						sessionStorage.setItem("role", res.data.data.role)
-						this.emitter.emit("login-success");
-						this.$router.push("/home");
+						// this.emitter.emit("login-success");
+						window.location.href = "/home"
 						// window.location.reload();
 					}
 				})
@@ -101,13 +105,31 @@ export default {
                 sessionStorage.setItem("refreshToken", refreshToken);
                 sessionStorage.setItem("role", role);
 				sessionStorage.setItem("login", true)
-				this.emitter.emit("login-success");
-				this.$router.push("/home");
+				window.location.href = "/home"
+				// this.emitter.emit("login-success");
+				// this.$router.push("/home");
 			}
 		}
 	},
 	mounted(){
+		if (sessionStorage.getItem("login"))
+			window.location.href = '/home'
 		this.loginGG();
+		if(sessionStorage.getItem("logout"))
+		{
+			this.param.logout = true
+			sessionStorage.removeItem("logout")
+		}
+		if(sessionStorage.getItem("err"))
+		{
+			this.param.checkLoginForCheckOut = true
+			sessionStorage.removeItem("err")
+		}
+		if(sessionStorage.getItem("auth"))
+		{
+			this.param.accessDenied = true
+			sessionStorage.removeItem("auth")
+		}
 	}
 }
 </script>

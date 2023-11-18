@@ -117,7 +117,13 @@ export default {
         }
     },
 	mounted(){
-		this.getBill();
+		if (sessionStorage.getItem("login"))
+			this.getBill();
+		else
+		{
+			window.location.href = '/auth/sign-in'
+			sessionStorage.setItem("err", true)
+		}
 	},
     methods: {
         formatDate(date) {

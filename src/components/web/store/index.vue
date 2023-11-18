@@ -18,7 +18,7 @@
                 <li class="active"><a href="#"><i class="fa fa-angle-right" aria-hidden="true"></i>Store</a></li>
               </ul>
             </div>
-            <form @submit.prevent="submitForm" id="formStore">
+            <div id="formStore">
               <div v-if="errorMsg">
                 <div v-if="!param.cart" class="alert alert-danger">{{ errorMsg }} products left in stock</div>
                 <div v-else class="alert alert-danger">There are {{ param.cart }} products in cart / {{ errorMsg }}
@@ -29,7 +29,7 @@
                   <div class="col-md-3 col-6 p-1">
                     <div class="select-option">
                       <p>Sort: </p>
-                      <select class="sort" v-model="formFilterProduct.sort" @change="submitForm">
+                      <select class="sort" v-model="formFilterProduct.sort" @change="getFilterProduct()">
                         <option value="low-high">Low to High Price</option>
                         <option value="high-low">High to Low Price</option>
                         <option value="a-z">Name: A - Z</option>
@@ -40,7 +40,7 @@
                   <div class="col-md-3 col-6 p-1">
                     <div class="select-option">
                       <p>Category: </p>
-                      <select class="category" v-model="formFilterProduct.cateogryName" @change="submitForm">
+                      <select class="category" v-model="formFilterProduct.cateogryName" @change="getFilterProduct()">
                         <option value="all">ALL</option>
                         <option v-for="item in category" :value="item.name" :key="item.name">{{ item.name }}</option>
                       </select>
@@ -49,7 +49,7 @@
                   <div class="col-md-3 col-6 p-1">
                     <div class="select-option">
                       <p>Brand: </p>
-                      <select class="brand" v-model="formFilterProduct.brandName" @change="submitForm">
+                      <select class="brand" v-model="formFilterProduct.brandName" @change="getFilterProduct()">
                         <option value="all" selected>ALL</option>
                         <option v-for="item in brand" :value="item.name" :key="item.name">{{ item.name }}</option>
                       </select>
@@ -58,7 +58,7 @@
                   <div class="col-md-3 col-6 p-1">
                     <div class="select-option">
                       <p>Price: </p>
-                      <select class="price" v-model="formFilterProduct.price" @change="submitForm">
+                      <select class="price" v-model="formFilterProduct.price" @change="getFilterProduct()">
                         <option value="all">ALL</option>
                         <option value="1-5">1 - 5 million</option>
                         <option value="5-10">5 - 10 million</option>
@@ -99,18 +99,16 @@
                       Not found products
                     </div>
                   </div>
-                  <template v-if="listProduct.length > 0">
-                    <ul class="pagination mt-4" id="pagination">
-                      <li></li>
-                      <li></li>
-                      <li></li>
-                      <li></li>
-                    </ul>
-                    <input hidden="" id="page" name="page" :value="currentPage" />
-                  </template>
+                  <div class="pagination" id="pagination" v-if="paginationButtons.length >= 2">
+                    <button v-for="page in paginationButtons" :key="page" 
+                    :class="{ active: currentPage === page }" 
+                    @click="PaginationButton(page).handleClick()">
+                      {{ page }}
+                    </button>
+                  </div>
                 </div>
               </div>
-            </form>
+            </div>
           </div>
         </div>
       </div>
@@ -120,7 +118,8 @@
   
 <script>
 import { showSuccessToast, showErrorToast } from "../../../assets/web/js/main";
-import Products from '../../../service/Product';
+// import Products from '../../../service/Product';
+import productApi from '../../../service/Product';
 import Cart from '../../../service/Cart';
 export default {
   data() {
@@ -131,7 +130,8 @@ export default {
         brandName: 'all',
         price: 'all',
       },
-      currentPage: '1',
+      currentPage: '',
+      paginationButtons:[],
       listProduct: [],
       category: [],
       brand: [],
@@ -144,10 +144,6 @@ export default {
       }
     };
   },
-  mounted() {
-    this.getFilterProduct();
-    this.Pagination();
-  },
   methods: {
     formatPrice(price) {
       const formatter = new Intl.NumberFormat("vi-VN", {
@@ -156,20 +152,40 @@ export default {
 			});
 			return formatter.format(price);
     },
-    getFilterProduct(){
-      Products.getFilterProduct(
-        this.formFilterProduct.sort,
-        this.formFilterProduct.cateogryName,
-        this.formFilterProduct.brandName,
-        this.formFilterProduct.price,this.currentPage).then((res) =>{
-        
-        this.listProduct = res.data.data.listProduct
-        this.brand = res.data.data.brand
-        this.category = res.data.data.category
-        this.totalPages = res.data.data.totalPages
-        console.log("total pages: "+this.totalPages)
-        
-      }).catch(err => {console.log("loi store Get !!!!")})
+    async getFilterProduct(){
+      try{
+        const res = await productApi.getFilterProduct(
+          this.formFilterProduct.sort,
+          this.formFilterProduct.cateogryName,
+          this.formFilterProduct.brandName,
+          this.formFilterProduct.price,this.currentPage)
+        //   .then((res) =>{
+          
+        //   this.listProduct = res.data.data.listProduct
+        //   this.brand = res.data.data.brand
+        //   this.category = res.data.data.category
+        //   this.totalPages = res.data.data.totalPages
+        //   this.currentPage = res.data.data.currentPage
+        //   console.log("currentPage: "+this.currentPage)
+  
+        //   this.SetupPagination(this.totalPages)
+        //   console.log("so lan refresh: "+this.currentPage)
+          
+        // }).catch(err => {console.log("loi store Get !!!!")})
+        console.log("Res: "+res.data.listProduct)
+        this.listProduct = res.data.listProduct;
+        this.brand = res.data.brand;
+        this.category = res.data.category;
+        this.totalPages = res.data.totalPages;
+        this.currentPage = res.data.currentPage;
+        console.log("currentPage: " + this.currentPage);
+    
+        this.SetupPagination(this.totalPages);
+
+      }
+      catch(err){
+        console.log("loi store Get: "+err)
+      }
     },
     async addToCart(id){
       this.cart.productId=id
@@ -190,39 +206,53 @@ export default {
       showErrorToast()
     },
 
+    PaginationButton (page) {
+			return {
+				page,
+				isActive: this.currentPage === page,
+				handleClick: async () => {
+					console.log("page: "+page)
+					await this.loadProducts(page);
 
+				},
+			};
+		},
+    SetupPagination (totalPage) {
+			this.paginationButtons = [];
 
-    submitForm() {
-      this.currentPage = 1;
-      Products.postFilterProduct(this.formFilterProduct,this.currentPage)
-      .then((res)=>{
-        this.listProduct = res.data.data.listProduct
-        this.brand = res.data.data.brand
-        this.category = res.data.data.category
-        this.totalPages = res.data.data.totalPages
-        console.log("total pages: "+this.totalPages)
-        
-      }).catch(err => {console.log("loi store Post !!!!")})
-    },
-    Pagination() {
-      const totalPages = this.totalPages || 1;
-      const currentPage = this.currentPage || 1;
-      console.log("totalpage: "+totalPages)
-      console.log("currentPage: "+currentPage)
-      $('#pagination').twbsPagination({
-        totalPages: totalPages,
-        visiblePages: 4,
-        startPage: currentPage,
-        onPageClick: (event, page) => {
-          if (this.currentPage !== page) {
-            // this.currentPage = page;
-            // this.submitForm();
-            $('#page').val(page);
-						$('#formStore').submit();
-          }
-        },
-      });
-    },
+			let page_count = totalPage;
+			for (let i = 1; i < page_count + 1; i++) {
+				this.paginationButtons.push(i);
+			}
+		},
+    async loadProducts(page) {
+      try{
+        const res = await productApi.getFilterProduct(
+          this.formFilterProduct.sort,
+          this.formFilterProduct.cateogryName,
+          this.formFilterProduct.brandName,
+          this.formFilterProduct.price,page)
+        //   .then((res) =>{
+          
+          // this.listProduct = res.data.data.listProduct
+          // this.brand = res.data.data.brand
+          // this.category = res.data.data.category
+          // this.totalPages = res.data.data.totalPages
+          // this.currentPage = res.data.data.currentPage
+          // console.log("load product: "+this.currentPage)
+          this.listProduct = res.data.listProduct
+          this.brand = res.data.brand
+          this.category = res.data.category
+          this.totalPages = res.data.totalPages
+          this.currentPage = res.data.currentPage
+          console.log("load product: "+this.currentPage)
+        // }).catch(err => {console.log("loi store pagination !!!!")})
+      }
+      catch(err) {console.log("loi store pagination !!!!")}
+		}
+  },
+   mounted() {
+     this.getFilterProduct();
   },
 };
 </script>

@@ -20,14 +20,16 @@
 		</section>
 		
 		<section class="search">
+			<div id="toast">
+    		</div>
 			<div class="container">
-				<form method="post" action="/admin/order" object="${formSearchOrder}">
+				<form @submit.prevent="search(currentPage,formSearchOrder)">
 					<h5 class="px-3 mb-4">Form tìm kiếm</h5>
 					<div class="row">
 						<div class="col-12  px-4">
 							<div class="form-group ">
-								<label class="col-form-label">Tên:</label>
-								<input type="text" v-model="formSearchOrder.nameOrder" class="form-control">
+								<label class="col-form-label">Tên người đặt:</label>
+								<input type="text" v-model="formSearchOrder.name" class="form-control">
 							</div>
 							<div class="form-group">
 								<label for="inputPassword6" class="col-form-label">Hình thức thanh toán:</label>
@@ -151,9 +153,10 @@
 																					<div class="order-total">
 																						<ul class="order-table p-0">
 																							<li><span>id</span><span>Sản phẩm</span><span>Số lượng</span><span>Giá</span></li>
-																							<block v-for="items in item.orderdetail" :key="items.id">
-																								<li class="fw-normal"><span>#{{items.product.id}}</span><span><img src="/images/product/{img}(img=${items.product.thumbnail})" width="50px" height="50px" />{{items.product.name}}</span> <span>{{items.num}}</span><span>{{formatCurrency(items.totalPrice)}}đ</span></li>
-																							</block>
+																							<span v-for="items in item.orderdetail" :key="items.id">
+																								<li class="fw-normal"><span>#{{items.product.id}}</span>
+																								<span><img :src="`/src/images/product/${items.product.img}`" width="50px" height="50px" />{{items.product.name}}</span> <span>{{items.num}}</span><span>{{formatCurrency(items.totalPrice)}}</span></li>
+																							</span>
 																							<li class="total-price">Tổng số lượng <p>{{item.num}}</p></li>
 																							<li class="total-price">Tổng giá <p>{{formatCurrency(item.total_money)}}đ</p></li>
 																						</ul>
@@ -201,7 +204,7 @@
 														</div>
 														<div class="modal-footer">
 															<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
-															<button @click="clickVerifyOrder(item.id)" type="button" class="btn btn-primary">Verify</button>
+															<button @click="clickVerifyOrder(item)" type="button" class="btn btn-primary">Verify</button>
 														</div>
 													</form>
 												</div>
@@ -217,19 +220,13 @@
 						</tbody>
 					</table>
 					<template v-if="order">
-						<form id="formOrder" action="/admin/order" method="post" object="${formSearchOrder}">
-							<ul class="pagination mt-4" id="pagination"></ul>
-							<input hidden="" id="page"  name="page" :value="currentPage"/>
-							<input hidden="" id="totalPage" name="totalPage" :value="totalPage"/>
-							
-							<input hidden="" v-model="formSearchOrder.nameOrder"/>
-							<input hidden="" v-model="formSearchOrder.phone"/>
-							<input hidden="" v-model="formSearchOrder.address"/>
-							<input hidden="" v-model="formSearchOrder.totalMoney"/>
-							<input hidden="" v-model="formSearchOrder.orderDate"/>
-							<input hidden="" v-model="formSearchOrder.payment"/>
-							<input hidden="" v-model="formSearchOrder.status"/>
-						</form>
+						<div class="pagination" id="pagination" v-if="paginationButtons.length >= 2">
+							<button v-for="page in paginationButtons" :key="page" 
+							:class="{ active: currentPage === page }" 
+							@click="PaginationButton(page).handleClick()">
+								{{ page }}
+							</button>
+                  		</div>
 					</template>
 				</div>
 			</div>
@@ -238,25 +235,65 @@
 </template>
 
 <script>
+import Order from '../../../service/Order';
+import { showSuccessToast, showErrorToast } from "../../../assets/web/js/main";
 export default {
     data(){
         return {
-			order: [
-				{id: 1,created_at: "27/02/2023",},
-				{id: 2,created_at: "21/08/2024",}
-			],
-            formSearchOrder: [
-				
-			],
+			order: [],
+            formSearchOrder: [],
+			currentPage:'',
+			totalPage:'',
+			paginationButtons:[],
         }
     },
     methods: {
-        clickVerifyOrder(id){},
+		getListOrder(){
+			Order.getListOrder(this.currentPage,
+				this.formSearchOrder.name,
+				this.formSearchOrder.payment,
+				this.formSearchOrder.status)
+				.then(res => {
+						this.order = res.data.data.listOrders.content
+						this.totalPage = res.data.data.listOrders.totalPages
+						this.currentPage = res.data.data.currentPage
+						this.setupPagination(this.totalPage)
+					
+				})
+				.catch(err => {
+					this.order = false
+				})
+		},
+        clickVerifyOrder(item){
+			Order.verify(item.id,item.stateOrder)
+				.then(res => {
+					let mess=''
+					if(res.data.success)
+					{
+						mess='Sửa thành công'
+						this.showToastr(1,mess)
+					}
+					if(res.data.error){
+						mess='Có lỗi xảy ra'
+						this.showToastr(0,mess)
+					}
+				})
+				.catch(err => {
+					console.log("err: "+err)
+				})
+		},
+		search(currentPage,formSearchOrder){
+			this.getListOrder(currentPage,formSearchOrder.name,formSearchOrder.payment,formSearchOrder.stateOrder)
+		},
+
 		formatDate(date) {
-			const parts = date.split("/");
-			const formattedDate = new Date(parts[2], parts[1] - 1, parts[0]);
-			const formatter = new Intl.DateTimeFormat("vi-VN");
-			return formatter.format(formattedDate);
+			const formattedDate = new Date(date);
+			const hours = ('0' + formattedDate.getHours()).slice(-2);
+			const minutes = ('0' + formattedDate.getMinutes()).slice(-2);
+			const day = ('0' + formattedDate.getDate()).slice(-2);
+			const month = ('0' + (formattedDate.getMonth() + 1)).slice(-2);
+			const year = formattedDate.getFullYear();
+			return `${hours}:${minutes} ${day}/${month}/${year}`;
 		},
 		formatCurrency(value) {
 			const formatter = new Intl.NumberFormat("vi-VN", {
@@ -265,44 +302,45 @@ export default {
 			});
 			return formatter.format(value);
 		},
-		initialize() {
-			toastr.options = {
-				   "closeButton": false,
-				   "debug": false,
-				   "newestOnTop": false,
-				   "progressBar": false,
-				   "positionClass": "toast-top-right",
-				   "preventDuplicates": false,
-				   "onclick": null,
-				   "showDuration": "300",
-				   "hideDuration": "1000",
-				   "timeOut": "5000",
-				   "extendedTimeOut": "1000",
-				   "showEasing": "swing",
-				   "hideEasing": "linear",
-				   "showMethod": "fadeIn",
-				   "hideMethod": "fadeOut"
-				 }
+
+        showToastr(condition,message) {
+            if(condition)
+				showSuccessToast(message)
+			
+			if(condition == false)
+				showErrorToast(message)
+			
         },
-        setupPagination() {
-            const currentPage ='';
-            const totalPages ='';
-            $('#pagination').twbsPagination({
-                totalPages: totalPages ? totalPages : 1,
-                visiblePages: 3,
-                startPage: currentPage ? currentPage : 1,
-                onPageClick: (event, page) => {
-                    if (currentPage != page) {
-                        $('#page').val(page);
-                        $('#formOrder').submit();
-                    }
-                },
-            });
-        },
+        PaginationButton (page) {
+			return {
+				page,
+				isActive: this.currentPage === page,
+				handleClick: async () => {
+					console.log("page: "+page)
+					await this.loadOrders(page);
+				},
+			};
+		},
+    	setupPagination (totalPage) {
+			this.paginationButtons = [];
+
+			let page_count = totalPage;
+			for (let i = 1; i < page_count + 1; i++) {
+				this.paginationButtons.push(i);
+			}
+		},
+		async loadOrders(page) {
+				Order.getListOrder(page)
+				.then(res => {
+					this.order = res.data.data.listOrders.content
+					this.totalPage = res.data.data.listOrders.totalPages
+					this.currentPage = res.data.data.currentPage
+				})
+				.catch(err => {console.log("err: "+err)})
+    	},
     },
 	mounted(){
-		this.initialize()
-		this.setupPagination()
+		this.getListOrder()
 	}
 }
 </script>

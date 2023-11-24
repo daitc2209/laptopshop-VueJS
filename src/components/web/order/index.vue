@@ -38,10 +38,24 @@
 										<label>Địa chỉ nhận hàng <span>*</span></label> 
 										<input type="text" v-model="OrderRequest.address" name="address" required="required" />
 									</div>
+									<div class="col-lg-12  pb-4">
+										<label>Ghi chú <span>*</span></label> 
+										<textarea name="note" v-model="OrderRequest.note"  id="floatingTextarea2" class="form-control" style="height: 70px;"></textarea>
+									</div>
+									<div class="mt-sm-1 ">
+										<label class="fw-bold text-size-18 d-block">Vận chuyển <span>*</span></label> 
+										<div class="d-flex justify-content-between align-items-center mb-4 ">
+											<div class="text-size-14 mt-1">
+												<input type="radio" checked style="width: 10px; height: 10px; margin-right: 4px;" />
+												<label style="align-items: center;">Giao hàng tận nơi</label>
+											</div>
+											<span class="fw-bold text-size-14">40.000 đ</span><br>
+										</div>
+									</div>
 									<div class="col-lg-12 ">
 										<label>Hình thức thanh toán <span>*</span></label> 
 										<select class="form-control form-select" @change="typePAY()" name="typePayment" id="drTypePayment" required="required">
-											<option value="COD">COD</option>
+											<option value="COD">Thanh toán khi nhận hàng (COD)</option>
 											<option value="TRANSFER">Chuyển khoản</option>
 										</select>
 										<div class="form-group payment mt-2" id="load-payment" @change="typeBankcode()">
@@ -77,7 +91,9 @@
 												<span>{{ formatCurrency(item.totalPrice) }}</span>
 										</li>
 										<li class="total-price">Tổng số lượng <p>{{totalQuantity}}</p></li>
-										<li class="total-price">Tổng giá <p>{{ formatCurrency(totalMoney) }}</p></li>
+										<li class="total-price">Tổng tiền <p>{{formatCurrency(totalMoney)}}</p></li>
+										<li class="total-price">Phí vận chuyển <p>{{formatCurrency(40000)}}</p></li>
+										<li class="total-price">Thành tiền <p>{{ formatCurrency(totalMoney + 40000) }}</p></li>
 									</ul>
 									<div class="order-btn">
 										<button type="submit" class="site-btn place-btn">Đặt hàng</button>
@@ -109,7 +125,8 @@ export default {
 				typePayment: 'COD',
 				phone:'',
 				address:'',
-				bankCode:'' 
+				bankCode:'' ,
+				note:''
 			}
 		}
 	},

@@ -137,7 +137,7 @@ export default {
 					this.$emit('edit')
 					let mess = "Sửa thành công"
 					this.showToastr(true,mess)
-					this.getEditProduct()
+					await this.getEditProduct()
 				}
 				if(res.error){
 					let mess='Có lỗi xảy ra'

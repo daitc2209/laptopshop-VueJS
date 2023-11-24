@@ -17,7 +17,7 @@
 				<div class="col-md-8 col-12 p-0" id="side2">
 					<form class="form-login" @submit.prevent="login">
 						<div v-if="param.error">
-			                <div class="alert alert-danger">Invalid Email or Password</div>
+			                <div class="alert alert-danger">Invalid Username or Password</div>
 			            </div>
 			            <div v-if="param.logout">
 			                <div class="alert alert-success"> You have been logged out.</div>
@@ -30,7 +30,7 @@
 			            </div>
 						<h3>Login Account</h3>
 						<div class="inp">
-							<input v-model="user.email" type="text" name="username" id="username" placeholder="User Name" required> 
+							<input v-model="user.username" type="text" name="username" id="username" placeholder="User Name" required> 
 							<input v-model="user.password" autocomplete="" type="password" name="password" id="password" placeholder="Password" required>
 						</div>
 						<div class="m-0 p-2 mt-2"><input type="checkbox" /> Remember me</div>
@@ -54,7 +54,7 @@ export default {
 	data() {
         return {
             user: {
-                email: '',
+                username: '',
                 password: '',
                 role: []
             },

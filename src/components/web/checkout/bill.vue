@@ -72,6 +72,9 @@
 									<div class="col-lg-12 d-flex align-items-center">
 										<label>Hình thức thanh toán :</label> <label>{{order.payment}}</label>
 									</div>
+									<div class="col-lg-12 d-flex align-items-center">
+										<label>Ghi chú :</label> <label>{{order.note}}</label>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -110,7 +113,8 @@ export default {
                 created_at: "27/02/2023",
                 num:"",
                 total_money:"",
-                payment:""
+                payment:"",
+				note:''
             },
 			orderdetail:{}
 
@@ -118,7 +122,9 @@ export default {
     },
 	mounted(){
 		if (sessionStorage.getItem("login"))
+		{
 			this.getBill();
+		}
 		else
 		{
 			window.location.href = '/auth/sign-in'
@@ -143,6 +149,12 @@ export default {
 			return formatter.format(value);
 		},
 
+		sendOrderConfirm(orderCode){
+			CheckOut.sendEmail(orderCode)
+				.then(() => console.log("success !!!"))
+				.catch(() => console.log("error !!!"))
+		},
+
 		getBill(){
 			if(sessionStorage.getItem("typePayment")=="COD")
 			{
@@ -152,6 +164,7 @@ export default {
 						this.orderdetail = res.data.data.orderdetail
 						sessionStorage.removeItem("typePayment")
 						sessionStorage.removeItem("orderId")
+						this.sendOrderConfirm(this.order.codeOrder)
 					})
 					.catch((err)=>{console.log("err bill: "+err)})
 			}
@@ -173,6 +186,7 @@ export default {
 						.then((res)=>{
 							this.order = res.data.data.order
 							this.orderdetail = res.data.data.orderdetail
+							this.sendOrderConfirm(vnp_TxnRef)
 						})
 						.catch((err)=>{console.log("err bill VNPAY: "+err)})
 			}

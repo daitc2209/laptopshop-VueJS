@@ -173,6 +173,10 @@
 									<input type="text" v-model="formAddUser.email" class="form-control" required="required" />
 								</div>
 								<div class="form-group">
+									<label for="">Username</label> 
+									<input type="text" v-model="formAddUser.username" class="form-control" required="required" />
+								</div>
+								<div class="form-group">
 									<label for="">Password</label> 
 									<input autocomplete="" type="password" v-model="formAddUser.password" class="form-control" required="required" />
 								</div>

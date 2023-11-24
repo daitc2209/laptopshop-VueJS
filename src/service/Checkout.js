@@ -14,6 +14,10 @@ class CheckOut{
                 +`&vnp_ResponseCode=`+vnp_ResponseCode
                 +`&vnp_TxnRef=`+vnp_TxnRef);
     }
+
+    sendEmail(orderCode){
+        return axios.post("/checkout/orderConfirm?codeOrder="+orderCode)
+    }
 }
 
 export default new CheckOut

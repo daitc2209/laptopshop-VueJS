@@ -59,7 +59,7 @@
 							</div>
 							<div class="form-group">
 								<label for="">Img</label> 
-								<input class="form-control" @change="chooseFile" type="file" name="fileImage" required="required" />
+								<input class="form-control" @change="chooseFile" :value="input" type="file" name="fileImage" />
 							</div>
 							<div class="form-group d-flex justify-content-center">
 								<img id="imageAdd" class="imageAdd" :src="productDto.img" style="height: 200px; width: 200px"/>
@@ -89,6 +89,7 @@ export default {
 			brands:[],
 			categories:[],
 			imgDto:'',
+			input: ''
         }
     },
     methods:{
@@ -112,6 +113,7 @@ export default {
 					let mess = "Thêm thành công"
 					this.showToastr(true,mess)
 					this.productDto=[]
+					this.imgDto=''
 				}
 				if(res.error){
 					let mess='Có lỗi xảy ra'
@@ -160,6 +162,7 @@ export default {
 				this.imgDto = file;
 				this.productDto.img = URL.createObjectURL(file)
 				this.productDto.urlImg = true
+				this.input = ''
 				console.log("file: ", this.imgDto);
 				console.log("url: ", this.productDto.img);
 			}

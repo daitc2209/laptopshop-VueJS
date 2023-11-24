@@ -131,9 +131,14 @@
 	border: 1px solid #ebebeb;
 }
 
-.order-table  img {
+.order-table img {
 	width: 100px;
 	height: 100px;
+}
+
+.order-table td img {
+	width: 40px;
+	height: 40px;
 }
 
 .order-table  tr th {
@@ -385,3 +390,4 @@
 .user-table  tr:hover  {
 	background: #c0c0c0;
 }
+

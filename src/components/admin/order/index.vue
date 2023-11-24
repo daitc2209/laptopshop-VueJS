@@ -93,7 +93,7 @@
 										<td class="td8">
 											<a data-bs-toggle="modal" :data-bs-target="'#see'+item.id" class="btn btn-sm btn-primary">See</a> 
 											<a v-if="item.stateOrder == 'CANCELLED'" class="btn btn-sm btn-secondary">Vertify</a>
-											<a v-if="item.stateOrder != 'CANCELLED'" data-bs-toggle="modal" :data-bs-target="'#vertify'+item.id" class="btn btn-sm btn-danger">Vertify</a>
+											<a v-if="item.stateOrder != 'CANCELLED'" data-bs-toggle="modal" :data-bs-target="'#vertify'+item.id" @click="getOrder(item.id)" class="btn btn-sm btn-danger">Vertify</a>
 										</td>
 										<div class="modal see-order" :id="'see'+item.id">
 											<div class="modal-dialog">
@@ -144,6 +144,9 @@
 																						<div class="col-lg-12 d-flex align-items-center">
 																							<label>Hình thức thanh toán :</label> <label>{{item.payment}}</label>
 																						</div>
+																						<div class="col-lg-12 d-flex align-items-center">
+																							<label>Ghi chú :</label> <label>{{item.note}}</label>
+																						</div>
 																					</div>
 																				</div>
 																			</div>
@@ -158,7 +161,7 @@
 																								<span><img :src="`/src/images/product/${items.product.img}`" width="50px" height="50px" />{{items.product.name}}</span> <span>{{items.num}}</span><span>{{formatCurrency(items.totalPrice)}}</span></li>
 																							</span>
 																							<li class="total-price">Tổng số lượng <p>{{item.num}}</p></li>
-																							<li class="total-price">Tổng giá <p>{{formatCurrency(item.total_money)}}đ</p></li>
+																							<li class="total-price">Tổng giá <p>{{formatCurrency(item.total_money)}}</p></li>
 																						</ul>
 																					</div>
 																				</div>
@@ -178,7 +181,7 @@
 										<div class="modal" :id="'vertify'+item.id">
 											<div class="modal-dialog">
 												<div class="modal-content">
-													<form :id="'formVerifyOrder'+item.id" action="" method="post" >
+													<form @submit.prevent="clickVerifyOrder(orderDto)" >
 														<div class="modal-header">
 															<h4 class="modal-title">Verify order</h4>
 															<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -188,12 +191,12 @@
 															<div id="logins-part" class="content" role="tabpanel" aria-labelledby="logins-part-trigger">
 																<div class="form-group">
 																	<label for="">Id</label> 
-																	<input type="text" name="id" :value="item.id" class="form-control" readonly="readonly" />
+																	<input type="text" name="id" :v-model="orderDto.id" class="form-control" readonly="readonly" />
 																</div>
 																<div class="form-group">
 																	<label for="">Status</label> 
-																	<select name="status" class="form-control form-select" required="required">
-																		<option hidden="" :value="item.stateOrder">{{item.stateOrder}}</option>
+																	<select name="status" v-model="orderDto.stateOrder" class="form-control form-select" required="required">
+																		<option hidden="" :value="orderDto.stateOrder">{{orderDto.stateOrder}}</option>
 																		<option value="CONFIRMED">CONFIRMED</option>
 																		<option value="DELIVERING">DELIVERING</option>
 																		<option value="RECEIVED">RECEIVED</option>
@@ -204,7 +207,7 @@
 														</div>
 														<div class="modal-footer">
 															<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
-															<button @click="clickVerifyOrder(item)" type="button" class="btn btn-primary">Verify</button>
+															<button type="submit" class="btn btn-primary">Verify</button>
 														</div>
 													</form>
 												</div>
@@ -245,6 +248,7 @@ export default {
 			currentPage:'',
 			totalPage:'',
 			paginationButtons:[],
+			orderDto:{}
         }
     },
     methods: {
@@ -264,19 +268,33 @@ export default {
 					this.order = false
 				})
 		},
+		getOrder(id){
+			Order.getOrderById(id)
+				.then(res => {
+						this.orderDto = res.data.data.orders
+				})
+				.catch(err => {
+					mess='Có lỗi xảy ra'
+					this.showToastr(0,mess)
+				})
+		},
         clickVerifyOrder(item){
+			console.log("item: "+item.stateCheckout)
 			Order.verify(item.id,item.stateOrder)
 				.then(res => {
 					let mess=''
-					if(res.data.success)
+					if(res.data.message)
 					{
 						mess='Sửa thành công'
 						this.showToastr(1,mess)
+						this.getListOrder()
 					}
 					if(res.data.error){
 						mess='Có lỗi xảy ra'
 						this.showToastr(0,mess)
 					}
+					bootstrap.Modal.getInstance(document.getElementById("vertify"+item.id)).hide()
+			
 				})
 				.catch(err => {
 					console.log("err: "+err)

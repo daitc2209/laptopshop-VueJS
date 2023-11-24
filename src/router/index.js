@@ -136,6 +136,16 @@ const router = createRouter({
           name: 'List_product',
           component: () => import('../components/admin/product/index.vue')
         },
+        {
+          path: '/admin/revenue/categories',
+          name: 'List_revenue_categories',
+          component: () => import('../components/admin/revenue/index.vue')
+        },
+        {
+          path: '/admin/revenue/products',
+          name: 'List_revenue_products',
+          component: () => import('../components/admin/revenue/revenue-products.vue')
+        },
       ]
     }
   ]

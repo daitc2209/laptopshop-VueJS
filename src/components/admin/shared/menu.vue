@@ -1,24 +1,19 @@
 <template>
 	<aside class="main-sidebar sidebar-dark-primary elevation-4">
-	  <a href="/admin/home" class="brand-link">
-		<img src="../../../images/anh.jpg" alt="" class="brand-image img-circle elevation-3" style="opacity: .8">
-		<span class="brand-text font-weight-light">Laptopshop</span>
+	  <a href="/admin/home" class="brand-link" style="text-align: center;">
+		<span class="brand-text font-weight-light">TCD Laptopshop</span>
 	  </a>
 	  <div class="sidebar">
 		<div class="user-panel mt-3 pb-3 mb-3 d-flex">
-		  <div class="image">
-			<!-- <img :src="'../images/user/' + authentication.principal.thumbnail" class="img-circle elevation-2" alt="User Image"> -->
-			<img src="../../../images/anh.jpg" class="img-circle elevation-2" alt="User Image">
-		  </div>
 		  <div class="info">
-			<!-- <a href="/admin/home" class="d-block">{{ authentication.principal.name }}</a> -->
-			<a href="/admin/home" class="d-block">Quản trị viên</a>
+			<a href="/admin/home" class="d-block"><i class="fa-solid fa-house mr-2"></i><label style="color: #fff; cursor: pointer;">Trang chủ</label></a>
 		  </div>
 		</div>
   
 		<nav class="mt-2">
 		  <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
 			<!-- Add icons to the links using the .nav-icon class with font-awesome or any other icon font library -->
+			<label for="" style="color: #fff;">Quản lý</label>
 			<li class="nav-item">
 			  <a href="/admin/category" class="nav-link">
 				<i class="nav-icon fa-solid fa-bars"></i>
@@ -59,6 +54,19 @@
 			  <a href="/admin/news" class="nav-link">
 				<i class="nav-icon fa-solid fa-bars"></i>
 				News
+			  </a>
+			</li>
+			<label for="" style="color: #fff;">Thống kê</label>
+			<li class="nav-item">
+			  <a href="/admin/revenue/categories" class="nav-link">
+				<i class="nav-icon fa-solid fa-bars"></i>
+				Categories
+			  </a>
+			</li>
+			<li class="nav-item">
+			  <a href="/admin/revenue/products" class="nav-link">
+				<i class="nav-icon fa-solid fa-bars"></i>
+				Products
 			  </a>
 			</li>
 		  </ul>

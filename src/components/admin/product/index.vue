@@ -124,9 +124,10 @@ export default {
 		},
         async clickDeleteProduct(id){
 			try{
-				const res = productApi.deleteProduct(id)
-				this.getListProduct(this.currentPage,this.searchdata)
+				const res = await productApi.deleteProduct(id)
+				// this.getListProduct(this.currentPage,this.searchdata)
 				if(res.success){
+					await this.getListProduct(this.currentPage,this.searchdata)
 					let mess='Xóa thành công'
 					this.showToastr(true,mess)
 				}

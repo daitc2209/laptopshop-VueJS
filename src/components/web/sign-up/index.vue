@@ -1,4 +1,10 @@
 <template>
+	<div v-if="showPreload" class="preload-screen">
+		<div class="d-flex justify-content-center">
+			<div class="spinner-border" role="status"></div>
+				<span class="visually" style="margin-left: 20px; line-height: 30px;">Loading...</span>
+		</div>
+	</div>
   <section class="container login">
 			<div class="row">
 				<div class="breadcrumbs d-flex flex-row align-items-center col-12">
@@ -28,6 +34,7 @@
                                 <input v-model="user.fullname" type="text" required placeholder="Name" title="VD: Trần Công Đại">
                                 <input v-model="user.address" type="text" required placeholder="Address" title="VD: Đa Hội Châu Khê">
                                 <input v-model="user.email" type="email" placeholder="Email" required pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" title="VD: admin@gmail.com">
+                                <input v-model="user.username" type="text" required placeholder="Username" title="VD: trandai">
                                 <!-- <input v-model="password" autocomplete="" type="password" placeholder="Password" required pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])([0-9a-zA-Z]{8,})$" title="VD: 123"> -->
                                 <input v-model="user.password" autocomplete="" type="password" placeholder="Password" required title="VD: 123">
                             </div>
@@ -46,9 +53,11 @@ import Users from '../../../service/User';
 export default {
     data() {
 		return {
+			showPreload: false,
 			user: {
 				fullname: '',
 				email: '',
+				username: '',
 				password: '',
 				address:'',
 			},
@@ -58,17 +67,21 @@ export default {
     },
     methods: {
 		signUp(){
-			if(this.user.fullname != "" || this.user.email !="" || this.user.password != "" || this.user.address != "")
+			if(this.user.fullname != "" || this.user.username != "" || this.user.email !="" || this.user.password != "" || this.user.address != "")
 			{
+				this.showPreload = true
 				Users.signUp(this.user)
 					.then(res => {
 						if (res.data.success)
 							this.success = res.data.success
 						if (res.data.err)
 							this.error = res.data.error
+
+						this.showPreload = false
 					})
 					.catch(err => {
 						console.log("err: "+err)
+						this.showPreload = false
 					})
 			}
 		},
@@ -108,5 +121,19 @@ export default {
 </script>
 
 <style>
-
+.preload-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  color: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  font-weight: 700;
+  opacity: .7;
+}
 </style>

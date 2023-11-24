@@ -77,6 +77,7 @@
 								<div class="inp">
 									<input title="ID" type="text" hidden="" v-model="profile.id"> 
 									<input title="Họ và tên" type="text" v-model="profile.fullname">
+									<input title="Email" type="text" v-model="profile.email">
 									<select title="Giới tính" class="form-control form-select" v-model="profile.sex">
 										<option value="MALE">MALE</option>
 										<option value="FEMALE">FEMALE</option>
@@ -174,7 +175,8 @@ export default {
 				sex:'',
 				birthday:'',
 				email:'',
-				img:''
+				img:'',
+				phone:''
             },
 			urlImg:'',
 			oldPw:'',
@@ -211,12 +213,12 @@ export default {
 			formData.append('phone', this.profile.phone);
 			
 			User.postProfile(formData)
-			.then(res => {
+			.then(() => {
 				this.getProfile()
 				// Xử lý phản hồi thành công
 				let message = "Sửa thông tin thành công"
 				showSuccessToast(message)
-				bootstrap.Modal.getInstance(document.getElementById("myModal1")).hide()
+				bootstrap.Modal.getInstance(document.getElementById("myModal")).hide()
 			})
 			.catch(error => {
 				// Xử lý lỗi
@@ -269,7 +271,7 @@ export default {
 					this.newPw = ''
 					let message = "Đổi mật khẩu thành công"
 					showSuccessToast(message)
-
+					bootstrap.Modal.getInstance(document.getElementById("myModal1")).hide()
 				})
 				.catch(error => {
 					// Xử lý lỗi

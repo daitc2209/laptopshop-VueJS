@@ -113,6 +113,10 @@
 													<label>Hình thức thanh toán :</label>
 													<label>{{ item.payment }}</label>
 												</div>
+												<div class="col-lg-12 d-flex align-items-center">
+													<label>Ghi chú :</label>
+													<label>{{ item.note }}</label>
+												</div>
 												</div>
 											</div>
 											</div>
@@ -173,44 +177,8 @@ export default {
 
   data() {
     return {
-      order: [
-		{
-          id: 1,
-          name: "Product 1",
-          stateOrder: "CANCELLED",
-          total_money: "30000",
-		  created_at: "27/02/2023",
-		  quantity: '10',
-		  products: [
-				{
-					code: 1,
-					name: "Product 1",
-					quantity: "10",
-					price: "32000",
-				},
-			],
-        },
-		],
+      order: [],
     };
-  },
-  mounted(){
-	//   toastr.options = {
-	// 	"closeButton": false,
-	// 	"debug": false,
-	// 	"newestOnTop": false,
-	// 	"progressBar": false,
-	// 	"positionClass": "toast-top-right",
-	// 	"preventDuplicates": false,
-	// 	"onclick": null,
-	// 	"showDuration": "300",
-	// 	"hideDuration": "1000",
-	// 	"timeOut": "5000",
-	// 	"extendedTimeOut": "1000",
-	// 	"showEasing": "swing",
-	// 	"hideEasing": "linear",
-	// 	"showMethod": "fadeIn",
-	// 	"hideMethod": "fadeOut"
-	// 		   }
   },
   methods: {
     formatDate(date) {

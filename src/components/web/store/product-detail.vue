@@ -18,11 +18,11 @@
         <div class="col-md-7 order-1 order-md-2">
           <h1>{{ product.name }}</h1>
           <div class="pd-rating mb-2">
-            <i class="fa fa-star"></i>
-            <i class="fa fa-star"></i>
-            <i class="fa fa-star"></i>
-            <i class="fa fa-star"></i>
-            <i class="fa fa-star-o"></i>
+            <i class="fa fa-star checked"></i>
+            <i class="fa fa-star checked"></i>
+            <i class="fa fa-star checked"></i>
+            <i class="fa fa-star checked"></i>
+            <i class="fa fa-star checked"></i>
           </div>
           <div v-for="item in product.description.split(',')" :key="item">
             <p>{{ item }}</p>
@@ -31,6 +31,9 @@
             {{ formatPrice(product.price - (product.price * product.discount / 100)) }}
             <del v-if="product.discount > 0">{{ formatPrice(product.price) }}</del>
           </h3>
+          <h5>
+            Discount: {{ product.discount }}%
+          </h5>
           <form @submit.prevent="addToCart" method="post">
             <input name="productId" :value="product.id" hidden>
             <div class="quantity">

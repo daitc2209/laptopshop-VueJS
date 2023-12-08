@@ -134,7 +134,7 @@
 														<li class="total-price">Tổng số lượng <p>{{item.num}}</p></li>
 														<li class="total-price">Tổng giá <p>{{ formatCurrency(item.total_money) }}</p></li>
 													</ul>
-													<div :id="'cancelOrderBtn_'+ item.id" v-if="(item.stateOrder !== 'CANCELLED' && item.stateOrder !== 'RECEIVED')" class="order-btn"><a @click="clickCancelOrder(item.id)"><button type="button" class="site-btn place-btn">Hủy đơn hàng</button></a></div>
+													<div :id="'cancelOrderBtn_'+ item.id" v-if="(item.stateOrder === 'PENDING')" class="order-btn"><a @click="clickCancelOrder(item.id)"><button type="button" class="site-btn place-btn">Hủy đơn hàng</button></a></div>
 																								
 												</div>
 											</div>

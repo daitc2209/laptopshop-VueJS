@@ -7,11 +7,14 @@
     <h1 class="text-center">Laptop</h1>
     <div class="product-owl-carousel owl-carousel">
       <div v-for="item in laptopCategory" :key="item.id">
-        <div class="card">
+        <div class="home-product card">
+          <div class="home-product-item__favourite">
+              <span>Giảm {{ item.discount }}%</span>
+          </div>
           <img :src="'/src/images/product/' + item.img" alt="">
           <div class="card-body">
-            <h3>{{ item.name }}</h3>
-            <p>Danh mục laptop.</p>
+            <h3 class="item-name">{{ item.name }}</h3>
+            <p class="item-description">{{ item.description }}</p>
             <div class="star">
               <i class="fas fa-star checked"></i>
               <i class="fas fa-star checked"></i>
@@ -38,10 +41,13 @@
     <h1 class="text-center">Keyboard</h1>
     <div class="product-owl-carousel owl-carousel">
       <div v-for="item in keyboardCategory" :key="item.id" class="card">
+        <div class="home-product-item__favourite">
+            <span>Giảm {{ item.discount }}%</span>
+        </div>
         <img :src="'/src/images/product/'+item.img" alt="">
         <div class="card-body">
           <h3>{{ item.name }}</h3>
-          <p>Lorem ipsum dolor sit amet.</p>
+          <p class="item-description">{{ item.description }}</p>
           <div class="star">
             <i class="fas fa-star checked"></i> 
             <i class="fas fa-star checked"></i>
@@ -66,10 +72,13 @@
     <h1 class="text-center">Mouse</h1>
     <div class="product-owl-carousel owl-carousel">
       <div v-for="item in mouseCategory" :key="item.id" class="card">
+        <div class="home-product-item__favourite">
+            <span>Giảm {{ item.discount }}%</span>
+        </div>
         <img :src="'/src/images/product/' + item.img" alt="">
         <div class="card-body">
           <h3>{{ item.name }}</h3>
-          <p>Lorem ipsum dolor sit amet.</p>
+          <p class="item-description">{{ item.description }}</p>
           <div class="star">
             <i class="fas fa-star checked"></i>
             <i class="fas fa-star checked"></i>
@@ -190,5 +199,20 @@ export default {
 </script>
 
 <style>
+.card {
+  position: relative;
+  overflow: hidden;
+}
 
+.card img {
+  transition: transform 0.3s ease;
+}
+
+.card:hover img {
+  transform: scale(1.1);
+}
+
+.card:hover .home-product-item__favourite{
+  opacity: 1;
+}
 </style>

@@ -72,9 +72,9 @@
                 <div class="row">
                   <template v-if="listProduct.length > 0">
                     <template v-for="item in listProduct" >
-                      <div class="col-lg-3 col-sm-6 col-6">
-                        <div class="product-item" :key="item.id">
-                          <div class="pi-pic">
+                      <div class="col-lg-3 col-sm-6 col-6 ">
+                        <div class="product-item " :key="item.id">
+                          <div class="pi-pic ">
                             <img :src="'src/images/product/' + item.img" alt="">
                             <ul>
                               <li class="w-icon active">
@@ -90,6 +90,9 @@
                               <del v-if="item.discount > 0">{{ formatPrice(item.price) }}</del>
                             </div>
                           </div>
+                          <div class="home-product-item__favourite">
+                              <span>Giảm {{ item.discount }}%</span>
+                            </div>
                         </div>
                       </div>
                     </template>
@@ -159,19 +162,7 @@ export default {
           this.formFilterProduct.cateogryName,
           this.formFilterProduct.brandName,
           this.formFilterProduct.price,this.currentPage)
-        //   .then((res) =>{
-          
-        //   this.listProduct = res.data.data.listProduct
-        //   this.brand = res.data.data.brand
-        //   this.category = res.data.data.category
-        //   this.totalPages = res.data.data.totalPages
-        //   this.currentPage = res.data.data.currentPage
-        //   console.log("currentPage: "+this.currentPage)
-  
-        //   this.SetupPagination(this.totalPages)
-        //   console.log("so lan refresh: "+this.currentPage)
-          
-        // }).catch(err => {console.log("loi store Get !!!!")})
+
         console.log("Res: "+res.data.listProduct)
         this.listProduct = res.data.listProduct;
         this.brand = res.data.brand;
@@ -232,14 +223,7 @@ export default {
           this.formFilterProduct.cateogryName,
           this.formFilterProduct.brandName,
           this.formFilterProduct.price,page)
-        //   .then((res) =>{
-          
-          // this.listProduct = res.data.data.listProduct
-          // this.brand = res.data.data.brand
-          // this.category = res.data.data.category
-          // this.totalPages = res.data.data.totalPages
-          // this.currentPage = res.data.data.currentPage
-          // console.log("load product: "+this.currentPage)
+
           this.listProduct = res.data.listProduct
           this.brand = res.data.brand
           this.category = res.data.category
@@ -258,4 +242,16 @@ export default {
 </script>
   
 <style>
+.pi-pic {
+  position: relative;
+  overflow: hidden;
+}
+
+.pi-pic img {
+  transition: transform 0.3s ease;
+}
+
+.pi-pic:hover img {
+  transform: scale(1.2);
+}
 </style>

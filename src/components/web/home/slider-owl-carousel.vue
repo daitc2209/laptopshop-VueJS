@@ -3,7 +3,7 @@
 		<div class="slider-item">
 			<div class="content">
 				<h3>Biggest Clothe Sale <br> <span>Up To 50% Off</span></h3>
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Atque culpa, totam sed maxime animi facilis!</p>
+				<p>Immerse yourself in seamless computing with Asus's range of sleek and powerful laptops, designed for the modern user.</p>
 				<a href="/store"><button id="shopnow">Shop Now</button></a>
 			</div>
 			<div class="img"><img src="../../../images/slide/ASUS-1.png" alt=""></div>
@@ -11,7 +11,7 @@
 		<div class="slider-item">
 			<div class="content">
 				<h3>Biggest Clothe Sale <br> <span>Up To 75% Off</span></h3>
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Atque culpa, totam sed maxime animi facilis!</p>
+				<p>Experience seamless productivity and exceptional craftsmanship with Dell's premium laptops, designed to empower your work.</p>
 				<a href="/store"><button id="shopnow">Shop Now</button></a>
 			</div>
 			<div class="img"><img src="../../../images/slide/DELL-1.png" alt=""></div>
@@ -19,7 +19,7 @@
 		<div class="slider-item">
 			<div class="content">
 				<h3>Biggest Clothe Sale <br> <span>Up To 95% Off</span></h3>
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Atque culpa, totam sed maxime animi facilis!</p>
+				<p>Experience the perfect blend of performance and elegance with HP laptops, designed to fuel your productivity.</p>
 				<a href="/store"><button id="shopnow">Shop Now</button></a>
 			</div>
 			<div class="img"><img src="../../../images/slide/HP-1.png" alt=""></div>

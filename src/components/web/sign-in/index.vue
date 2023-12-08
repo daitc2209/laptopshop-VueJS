@@ -80,6 +80,8 @@ export default {
 						sessionStorage.setItem("jwtToken", res.data.data.accessToken)
 						sessionStorage.setItem("refreshToken", res.data.data.refreshToken)
 						sessionStorage.setItem("role", res.data.data.role)
+						sessionStorage.setItem("img", res.data.data.img);
+						sessionStorage.setItem("name", res.data.data.name)
 						// this.emitter.emit("login-success");
 						window.location.href = "/home"
 						// window.location.reload();
@@ -101,10 +103,15 @@ export default {
 				var token = urlParam.searchParams.get("token");
                 var refreshToken = urlParam.searchParams.get("refreshToken");
                 var role = urlParam.searchParams.get("role");
+                var img = urlParam.searchParams.get("img");
+                var encodeName = urlParam.searchParams.get("name");
+				var fullname = decodeURIComponent(encodeName)
 				sessionStorage.setItem("jwtToken",token);
                 sessionStorage.setItem("refreshToken", refreshToken);
                 sessionStorage.setItem("role", role);
 				sessionStorage.setItem("login", true)
+				sessionStorage.setItem("img", img);
+				sessionStorage.setItem("name", fullname)
 				window.location.href = "/home"
 				// this.emitter.emit("login-success");
 				// this.$router.push("/home");

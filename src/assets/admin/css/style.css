@@ -89,42 +89,6 @@
 	background: #c0c0c0;
 }
 
-/* .order-table .td1{
-	width: 4%;
-	word-break: break-word;
-}
-.order-table .td2{
-	width: 10%;
-	word-break: break-word;
-}
-.order-table .td3{
-	width: 10%;
-	word-break: break-word;
-}
-.order-table .td4{
-	width: 12%;
-	word-break: break-word;
-}
-.order-table .td5{
-	width: 10%;
-	word-break: break-word;
-}
-.order-table .td6{
-	width: 10%;
-	word-break: break-word;
-}
-.order-table .td7{
-	width: 12%;
-	word-break: break-word;
-}
-.order-table .td8{
-	width: 12%;
-	word-break: break-word;
-}
-.order-table .td9{
-	width: 10%;
-	word-break: break-word;
-} */
 .order-table  {
 	width: 100%;
 	min-width: 480px;
@@ -309,50 +273,6 @@
 	width: 6%;
 }
 
-/* .user-table .td1{
-	width: 5%;
-	word-break: break-word;
-}
-.user-table .td2{
-	width: 5%;
-	word-break: break-word;
-}
-.user-table .td3{
-	width: 10%;
-	word-break: break-word;
-}
-.user-table .td4{
-	width: 15%;
-	word-break: break-word;
-}
-.user-table .td5{
-	width: 5%;
-	word-break: break-word;
-}
-.user-table .td6{
-	width: 10%;
-	word-break: break-word;
-}
-.user-table .td7{
-	width: 14%;
-	word-break: break-word;
-}
-.user-table .td8{
-	width: 6%;
-	word-break: break-word;
-}
-.user-table .td9{
-	width: 7%;
-	word-break: break-word;
-}
-.user-table .td10{
-	width: 8%;
-	word-break: break-word;
-}
-.user-table .td11{
-	width: 15%;
-	word-break: break-word;
-} */
 .user-table  {
 	width: 100%;
 	min-width: 480px;
@@ -390,4 +310,3 @@
 .user-table  tr:hover  {
 	background: #c0c0c0;
 }
-

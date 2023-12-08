@@ -45,6 +45,7 @@
 }
 .product-item {
 	margin-bottom: 10px;
+	position: relative;
 }
 
 .product-item:hover .pi-pic ul {

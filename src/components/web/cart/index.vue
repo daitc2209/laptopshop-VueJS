@@ -3,8 +3,8 @@
     <head><title>Trang giỏ hàng</title></head>
     <div class="breadcrumbs d-flex flex-row align-items-center col-12 container  mt-2">
 			<ul class="m-0">
-				<li><a href="/home">Trang chủ</a></li>
-				<li class="active"><a href="#"><i class="fa fa-angle-right" aria-hidden="true"></i>Giỏ hàng</a></li>
+				<li><a href="/home">Home</a></li>
+				<li class="active"><a href="#"><i class="fa fa-angle-right" aria-hidden="true"></i>Cart</a></li>
 			</ul>
 		</div>
 		
@@ -19,12 +19,12 @@
 							<table>
 								<thead>
 									<tr>
-										<th>Ảnh</th>
-										<th>Tên sản phẩm</th>
-										<th>Giá</th>
-										<th>Số lượng</th>
-										<th>Giảm giá</th>
-										<th>Tổng giá</th>
+										<th></th>
+										<th>Name</th>
+										<th>Price</th>
+										<th>Amount</th>
+										<th>Discount</th>
+										<th>Total</th>
 										<th></th>
 									</tr>
 								</thead>
@@ -37,7 +37,7 @@
 											<td class="qua-col first-row">
 												<div class="quantity">
 													<div class="pro-qty">
-														<a @click="decreaseQty(item)"><span  class="dec qtybtn">-</span> </a>
+														<a @click=" item.numProduct > 1 ? decreaseQty(item) : null" ><span class="dec qtybtn" :class="{ disabled: item.numProduct <= 1 }">-</span> </a>
 														<input class="id-1" type="text" :value="item.numProduct" readonly="readonly"> 
 														<a @click="increaseQty(item)"><span  class="inc qtybtn">+</span></a>
 													</div>
@@ -50,7 +50,7 @@
 									</template >
 									<template v-else>
 										<tr>
-											<td colspan="12"><h5 class="text-start p-4">Không có bản ghi nào!!!</h5></td>
+											<td colspan="12"><h5 class="text-start p-4">There are no records!!!</h5></td>
 										</tr>
 									</template>
 								</tbody>
@@ -62,8 +62,8 @@
 								<div class="proceed-checkout">
 									<a @click="clearCart" class="proceed-btn mb-3">Clear All</a>
 									<ul>
-										<li class="subtotal">Tổng số lượng <span v-if="listCart">{{totalQuantity}}</span></li>
-										<li class="cart-total">Tổng tiền <span v-if="listCart">{{ formatCurrency(totalMoney) }}</span></li>
+										<li class="subtotal">Total quantity <span v-if="listCart">{{totalQuantity}}</span></li>
+										<li class="cart-total">Total price <span v-if="listCart">{{ formatCurrency(totalMoney) }}</span></li>
 									</ul>
 									<a href='/order' class="proceed-btn">PROCEED TO ORDER</a>
 								</div>

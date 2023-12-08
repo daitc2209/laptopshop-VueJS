@@ -2,11 +2,14 @@
 
 .top-navbar {
 	background-color: #a9a9a926;
+	/* position: sticky;
+	top: 0;
+	z-index: 9; */
 }
 
 .top-navbar .container-fluid {
 	max-width: 1440px;
-	width: 100%;
+	width: 100%; 
 	height: 7vh;
 	display: flex;
 	align-items: center;
@@ -25,6 +28,8 @@
 
 .other-links {
 	margin-right: 33px;
+	display: inherit;
+	z-index: 99;
 }
 
 .other-links i {

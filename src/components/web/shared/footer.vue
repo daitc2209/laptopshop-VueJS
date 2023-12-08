@@ -28,6 +28,55 @@
         </div>
 	</div>
 	<hr>
+  <div class="d-flex m-4">
+    <div class="container py-4 text-center">
+      <span class="footer__heading">Store Location</span>
+      <ul class="footer-list">
+        <li class="footer-item"><a href="#" class="footer-item__link">60-49 Road 11378 New York</a> </li>
+        <li class="footer-item"><a href="#" class="footer-item__link">daitc2209@gmail.com </a></li>
+        <li class="footer-item"><a href="#" class="footer-item__link">0906088493</a></li>
+      </ul>
+    </div>
+    <div class="container py-4 text-center">
+      <span class="footer__heading">Contact</span>
+      <ul class="footer-list">
+        <li class="footer-item">
+          <a href="#" class="footer-item__link">
+              <i class="fab fa-facebook"></i>
+              Facebook
+          </a>
+        </li>
+        <li class="footer-item">
+          <a href="#" class="footer-item__link">
+              <i class="fab fa-instagram"></i>
+              Instagram
+          </a>
+        </li>
+        <li class="footer-item">
+          <a href="#" class="footer-item__link">
+              <i class="fa-brands fa-twitter"></i>
+              Twitter
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="container py-4 text-center">
+      <span class="footer__heading">Policy</span>
+      <ul class="footer-list">
+        <li class="footer-item"><a href="#" class="footer-item__link">Shipping & Returns</a> </li>
+        <li class="footer-item"><a href="#" class="footer-item__link">Terms & Conditions</a></li>
+        <li class="footer-item"><a href="#" class="footer-item__link">Payment Methods </a></li>
+        <li class="footer-item"><a href="#" class="footer-item__link">FAQ</a></li>
+      </ul>
+    </div>
+    <div class="container py-4 text-center">
+      <span class="footer__heading">Support</span>
+      <ul class="footer-list">
+        <li class="footer-item"><a href="/contact" class="footer-item__link">Contact Us</a> </li>
+        <li class="footer-item"><a href="/about" class="footer-item__link">About Us</a></li>
+      </ul>
+    </div>
+  </div>
 	<div class="container py-4 ">
 		<div class="copyright">
 			&copy; Copyright 
@@ -49,5 +98,23 @@ export default {
 </script>
 
 <style>
-
+.footer__heading{
+  text-transform: uppercase;
+  font-size: 24px;
+  color: #fff;
+}
+.footer-list{
+  list-style: none;
+  margin-top: 12px;
+}
+.footer-item{
+  padding: 2px 0;
+  margin: 6px 0;
+}
+.footer-item__link{
+  line-height: 24px;
+  font-size: 16px;
+  color: #fff;
+  transition: color .3s ease;
+}
 </style>

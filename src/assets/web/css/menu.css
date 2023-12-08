@@ -3,10 +3,11 @@
 #navbar {
 	background-color: #1c1c50;
 	font-size: 16px;
-	font-family: 'Roboto Slab', serif;
+	/* font-family: 'Roboto Slab', serif; */
 	position: sticky;
 	top: 0;
 	z-index: 9;
+    font-family: sans-serif;
 }
 #navbar .nav-link {
 	color: white;
@@ -43,9 +44,16 @@
 	background: gray;
 }
 
-#navbar .container-fluid {
+#navbar .navbar-menu {
 	max-width: 1440px;
 }
+
+.navbar-menu__item 
+.navbar-menu__nav-item
+.navbar-menu__nav-link{
+    font-weight: 100;
+}
+
 
 /* SEARCH */
 .search__product-img{
@@ -88,12 +96,6 @@
 	margin: 0 20px;
     height: 100%;
 }
-
-/* .search__product-item{
-	display: flex;
-    align-items: center;
-	margin: 0 20px;
-} */
 
 .search__product-item:hover{
 	background-color: #0d6efd;

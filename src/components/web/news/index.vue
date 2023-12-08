@@ -8,8 +8,8 @@
 				<div class="row">
 					<div class="breadcrumbs d-flex flex-row align-items-center col-12 mt-3 mx-3">
 						<ul>
-							<li><a href="/home">Trang chủ</a></li>
-							<li class="active"><a href="#"><i class="fa fa-angle-right" aria-hidden="true"></i>Tin tức</a></li>
+							<li><a href="/home">Home</a></li>
+							<li class="active"><a href="#"><i class="fa fa-angle-right" aria-hidden="true"></i>News</a></li>
 						</ul>
 					</div>
 					<div class="col-12">

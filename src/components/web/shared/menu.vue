@@ -1,8 +1,9 @@
 <template>
   <nav class="navbar navbar-expand-lg menu" id="navbar">
-		<div class="container-fluid">
-			<a class="navbar-brand" href="/home">
-				<img src="../../../images/anh.jpg" width="180px" height="50px"></a>
+		<div class="navbar-menu container-fluid"> 
+			<!-- <a class="navbar-brand" href="/home"> -->
+				<!-- <img src="../../../images/anh.jpg" width="180px" height="50px"></a> -->
+				
 				<button 
 				class="navbar-toggler" 
 				type="button" 
@@ -14,9 +15,9 @@
 				<span><i class="fa-solid fa-bars" style="color: white;"></i></span>
 			</button>
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
-				<ul class="navbar-nav me-auto mb-2 mb-lg-0">
-					<li class="nav-item"><a class="nav-link active" aria-current="page" href="/home">Home</a></li>
-					<li class="nav-item"><a class="nav-link" href="/store">Store</a></li>
+				<ul class="navbar-menu__nav navbar-nav me-auto mb-2 mb-lg-0">
+					<li class="navbar-menu__nav-item"><a class="nav-link active" aria-current="page" href="/home">Home</a></li>
+					<li class="navbar-menu__nav-item"><a class="nav-link" href="/store">Store</a></li>
 					<!-- <li class="nav-item dropdown">
 						<a 
 							class="nav-link dropdown-toggle" 
@@ -33,9 +34,9 @@
 							<li><a class="dropdown-item" href="#">USB</a></li>
 						</ul>
 					</li> -->
-					<li class="nav-item"><a class="nav-link" href="/about">About</a></li>
-					<li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
-					<li class="nav-item"><a class="nav-link" href="/news">News</a></li>
+					<li class="navbar-menu__nav-item"><a class="nav-link" href="/about">About</a></li>
+					<li class="navbar-menu__nav-item"><a class="nav-link" href="/contact">Contact</a></li>
+					<li class="navbar-menu__nav-item"><a class="nav-link" href="/news">News</a></li>
 				</ul>
 	
 				<div class="d-flex form-search ">
@@ -118,97 +119,4 @@ export default {
 </script>
 
 <style>
-
-/* Search */
-
-.header__cart-list-item{
-    padding-left: 0;
-    list-style: none;
-    height: 56vh;  /*view port height*/
-    /* khi đơn hàng nhiều, nó sẽ tự động tạo scroll */
-    overflow-y: auto;
-}
-
-.header__cart-item{
-    display: flex;
-    align-items: center;
-}
-
-.header__cart-item:hover{
-    background-color: #F8F8F8;
-}
-
-.header__cart-img{
-    width: 42px;
-    height: 42px;
-    margin: 12px;
-    border: 1px solid #E8E8E8;
-}
-.header__cart-item-info{
-    width: 100%;
-    margin-right: 12px;
-}
-.header__cart-item-head{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-.header__cart-item-name{
-    font-size: 1.4rem;
-    font-weight: 500;
-    color: var(--text-color);
-    margin: 0;
-    
-    flex: 1;
-    padding-right: 16px;
-    /* tạo dấu 3 chấm ... khi tên sản phẩm dài quá */
-    max-height: 4rem;
-    line-height: 2rem;
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    text-align: left;
-
-}
-.header__cart-item-price{
-    font-size: 1.4rem;
-    font-weight: 400;
-    color: var(--primary-color);
-}
-.header__cart-item-mul{
-    font-size: 0.9rem;
-    margin: 0 4px;
-    color: #757575;
-}
-.header__cart-item-qnt{
-    font-size: 1.2rem;
-    color: #757575;
-}
-.header__cart-item-body{
-    display: flex;
-    justify-content: space-between;
-    margin-top: 6px;
-}
-.header__cart-item-desc{
-    color: #757575;
-    font-size: 1.2rem;
-    font-weight: 300;
-}
-.header__cart-item-remove{
-    color: var(--text-color);
-    font-size: 1.2rem;
-    font-weight: 400;
-}
-.header__cart-item-remove:hover{
-    color: var(--primary-color);
-    cursor: pointer;
-}
-.header__cart-viewcart{
-    float: right;
-    margin: 0 12px 12px 0;
-}
-.header__cart-viewcart:hover{
-    background-color: #F05D41;
-}
 </style>

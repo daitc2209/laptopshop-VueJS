@@ -159,7 +159,8 @@ export default {
 			this.$router.push("/auth/sign-in")
 			sessionStorage.setItem("auth",true)
 		}
-		this.init()
+		else
+			this.init()
 	}
 }
 </script>

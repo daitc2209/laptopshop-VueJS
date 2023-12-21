@@ -139,7 +139,7 @@
 																							<label>Số lượng sản phẩm :</label><label>{{item.num}}</label>
 																						</div>
 																						<div class="col-lg-12 d-flex align-items-center">
-																							<label>Tổng tiền :</label> <label>{{formatCurrency(item.total_money)}}đ</label>
+																							<label>Tổng tiền :</label> <label>{{formatCurrency(item.total_money)}}</label>
 																						</div>
 																						<div class="col-lg-12 d-flex align-items-center">
 																							<label>Hình thức thanh toán :</label> <label>{{item.payment}}</label>
@@ -155,13 +155,19 @@
 																					<h4>Thông tin sản phẩm</h4>
 																					<div class="order-total">
 																						<ul class="order-table p-0">
-																							<li><span>id</span><span>Sản phẩm</span><span>Số lượng</span><span>Giá</span></li>
+																							<li><span>id</span><span>Sản phẩm</span><span>Số lượng</span><span>Giá gốc</span><span>Discount</span><span>Giá</span></li>
 																							<span v-for="items in item.orderdetail" :key="items.id">
 																								<li class="fw-normal"><span>#{{items.product.id}}</span>
-																								<span><img :src="`/src/images/product/${items.product.img}`" width="50px" height="50px" />{{items.product.name}}</span> <span>{{items.num}}</span><span>{{formatCurrency(items.totalPrice)}}</span></li>
+																								<span><img :src="`/src/images/product/${items.product.img}`" width="50px" height="50px" />{{items.product.name}}</span> 
+																								<span>{{items.num}}</span>
+																								<span>{{ formatCurrency(items.product.price*items.num) }}</span>
+																								<span>{{ items.product.discount }}%</span>
+																								<span>{{formatCurrency(items.totalPrice)}}</span></li>
 																							</span>
 																							<li class="total-price">Tổng số lượng <p>{{item.num}}</p></li>
-																							<li class="total-price">Tổng giá <p>{{formatCurrency(item.total_money)}}</p></li>
+																							<li class="total-price">Tổng tiền <p>{{formatCurrency(item.total_money-40000)}}</p></li>
+																							<li class="total-price">Phí vận chuyển <p>{{formatCurrency(40000)}}</p></li>
+																							<li class="total-price">Thành tiền <p>{{formatCurrency(item.total_money)}}</p></li>
 																						</ul>
 																					</div>
 																				</div>
@@ -191,7 +197,7 @@
 															<div id="logins-part" class="content" role="tabpanel" aria-labelledby="logins-part-trigger">
 																<div class="form-group">
 																	<label for="">Id</label> 
-																	<input type="text" name="id" :v-model="orderDto.id" class="form-control" readonly="readonly" />
+																	<input type="text" v-model="orderDto.id" class="form-control" readonly="readonly" />
 																</div>
 																<div class="form-group">
 																	<label for="">Status</label> 
@@ -358,7 +364,14 @@ export default {
     	},
     },
 	mounted(){
-		this.getListOrder()
+		if(!sessionStorage.getItem("login") && sessionStorage.getItem("role")!="ROLE_ADMIN")
+		{
+			// window.location.href = "/auth/sign-in"
+			this.$router.push("/auth/sign-in")
+			sessionStorage.setItem("auth",true)
+		}
+		else
+			this.getListOrder()
 	}
 }
 </script>

@@ -61,8 +61,25 @@
 										<td class="td9"><h6>{{item.description}}</h6></td>
 										<td class="td10">
 											<a data-bs-toggle="modal" :data-bs-target="`#edit`+item.id"  class="btn btn-sm btn-primary">Edit</a> 
-											<a @click="clickDeleteProduct(item.id)" class="btn btn-sm btn-danger">Delete</a>
+											<a data-bs-toggle="modal" :data-bs-target="'#delete'+ item.id" class="btn btn-sm btn-danger">Delete</a>
 										</td>
+										<div class="modal delete-new" :id="'delete'+item.id">
+											<div class="modal-dialog">
+												<div class="modal-content">
+													<div class="modal-header">
+														<h4 class="modal-title">Xóa sản phẩm</h4>
+														<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+													</div>
+													<div class="modal-body">
+														Bạn có chắc là xóa không ?
+													</div>
+													<div class="modal-footer">
+														<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Hủy</button>
+														<button @click="clickDeleteProduct(item.id)" class="btn btn-primary">Xác nhận</button>
+													</div>
+												</div>
+											</div>
+										</div>
 									</tr>
 							</template>
 							<template v-else>
@@ -124,6 +141,7 @@ export default {
 		},
         async clickDeleteProduct(id){
 			try{
+				bootstrap.Modal.getInstance(document.getElementById('delete' + id)).hide()
 				const res = await productApi.deleteProduct(id)
 				// this.getListProduct(this.currentPage,this.searchdata)
 				if(res.success){
@@ -135,11 +153,9 @@ export default {
 					let mess='Có lỗi xảy ra'
 					this.showToastr(false,mess)
 				}
-
 			}
 			catch(err){
-				let mess='Có lỗi xảy ra'
-				this.showToastr(false,mess)
+				console.log("err: "+err)
 			}
 		},
 		async getListProduct(currentPage, searchdata){

@@ -56,14 +56,13 @@
                     </div>
                   </div>
                   <div class="col-md-3 col-6 p-1">
-                    <div class="select-option">
-                      <p>Price: </p>
-                      <select class="price" v-model="formFilterProduct.price" @change="getFilterProduct()">
-                        <option value="all">ALL</option>
-                        <option value="1-5">1 - 5 million</option>
-                        <option value="5-10">5 - 10 million</option>
-                        <option value="10-100">10 - 100 million</option>
-                      </select>
+                    <div id="price-range-container">
+                      <label for="price-range-slider">Price Range:</label>
+                      <div id="price-range-slider"></div>
+                      <div id="price-values">
+                        <span class="price-values__min">{{ formFilterProduct.minPrice }}đ</span>
+                        <span class="price-values__max" style="margin-left: 20px;">{{ formFilterProduct.maxPrice }}đ</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -121,7 +120,6 @@
   
 <script>
 import { showSuccessToast, showErrorToast } from "../../../assets/web/js/main";
-// import Products from '../../../service/Product';
 import productApi from '../../../service/Product';
 import Cart from '../../../service/Cart';
 export default {
@@ -131,7 +129,9 @@ export default {
         sort: 'low-high',
         cateogryName: 'all',
         brandName: 'all',
-        price: 'all',
+        // price: 'all',
+        minPrice: 0,
+        maxPrice: 50000000
       },
       currentPage: '',
       paginationButtons:[],
@@ -161,8 +161,8 @@ export default {
           this.formFilterProduct.sort,
           this.formFilterProduct.cateogryName,
           this.formFilterProduct.brandName,
-          this.formFilterProduct.price,this.currentPage)
-
+          this.formFilterProduct.minPrice,
+          this.formFilterProduct.maxPrice,this.currentPage)
         console.log("Res: "+res.data.listProduct)
         this.listProduct = res.data.listProduct;
         this.brand = res.data.brand;
@@ -222,7 +222,7 @@ export default {
           this.formFilterProduct.sort,
           this.formFilterProduct.cateogryName,
           this.formFilterProduct.brandName,
-          this.formFilterProduct.price,page)
+          this.formFilterProduct.minPrice,this.formFilterProduct.maxPrice,page)
 
           this.listProduct = res.data.listProduct
           this.brand = res.data.brand
@@ -233,10 +233,30 @@ export default {
         // }).catch(err => {console.log("loi store pagination !!!!")})
       }
       catch(err) {console.log("loi store pagination !!!!")}
-		}
+		},
+    initPrice(){
+      let timeout = null;
+      const delay = 500;
+      $("#price-range-slider").slider({
+        range: true,
+        min: 0,
+        max: 50000000,
+        values: [this.formFilterProduct.minPrice, this.formFilterProduct.maxPrice],
+        slide: (event, ui) => {
+          this.formFilterProduct.minPrice = ui.values[0];
+          this.formFilterProduct.maxPrice = ui.values[1];
+          clearTimeout(timeout); // Xóa timeout hiện tại (nếu có)
+          timeout = setTimeout(() => {
+            this.getFilterProduct();
+          }, delay);
+        }
+      });
+    },
   },
    mounted() {
      this.getFilterProduct();
+     this.initPrice();
+    //  this.updatePriceValues()
   },
 };
 </script>
@@ -254,4 +274,21 @@ export default {
 .pi-pic:hover img {
   transform: scale(1.2);
 }
+
+#price-range-container {
+  width: 80%;
+  /* margin: 50px auto; */
+  margin-left: 20px;
+}
+
+#price-range-slider {
+  width: 100%;
+}
+
+#price-values {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
 </style>

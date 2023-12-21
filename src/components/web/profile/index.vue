@@ -231,7 +231,7 @@ export default {
 				.then(res => {
 					// Xử lý phản hồi thành công
 						this.profile = res.data.data.profile
-
+						sessionStorage.setItem("img",this.profile.img)
 						this.urlImg = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- ./?%&=]*)?/.test(this.profile.img);
 						console.log("urlImg: "+this.urlImg)
 					
@@ -260,6 +260,7 @@ export default {
 				this.url = URL.createObjectURL(file);
 				this.imgDto = file
 				console.log("url: ", this.imgDto);
+				sessionStorage
 			}
 		},
 		ChangePassword(){

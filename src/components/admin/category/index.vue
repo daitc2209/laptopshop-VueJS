@@ -64,8 +64,25 @@
                                     <td class="td2">{{item.name}}</td>
                                     <td class="td3">
                                         <a data-bs-toggle="modal" :data-bs-target="'#edit'+item.id" @click="getEditCategory(item.id)" class="btn btn-sm btn-primary">Edit</a> 
-                                        <a @click="clickDeleteCategory(item.id)" class="btn btn-sm btn-danger">Delete</a>
+                                        <a data-bs-toggle="modal" :data-bs-target="'#delete'+ item.id" class="btn btn-sm btn-danger">Delete</a>
                                     </td>
+                                    <div class="modal delete-new" :id="'delete'+item.id">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title">Xóa danh mục</h4>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Bạn có chắc là xóa không ?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Hủy</button>
+                                                    <button @click="clickDeleteCategory(item.id)" class="btn btn-primary">Xác nhận</button>
+                                                </div>
+                                            </div>
+                                        </div>
+									</div>
                                     <div class="modal" :id="'edit'+ item.id">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
@@ -179,6 +196,7 @@ export default {
                 const res = await categoriesApi.postAddCategories(categoryDto)
                     if(res.success){
                         await this.getListCategory(this.currentPage,"")
+                        this.categoryDto = {}
                         let mess='Thêm thành công'
 				        this.showToastr(1,mess)
                         bootstrap.Modal.getInstance(document.getElementById("add")).hide()
@@ -221,6 +239,7 @@ export default {
         },
         async clickDeleteCategory(id){
             try{
+                bootstrap.Modal.getInstance(document.getElementById('delete' + id)).hide()
                 const res = await categoriesApi.deleteCategories(id)
                     if(res.success){
                         await this.getListCategory(this.currentPage,"")

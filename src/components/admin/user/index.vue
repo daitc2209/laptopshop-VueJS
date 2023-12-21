@@ -130,9 +130,27 @@
 										<td class="td10"><h6>{{item.role}}</h6></td>
 										<td class="td11">
 											<a data-bs-toggle="modal" @click="getEditUser(item.id)" :data-bs-target="`#edit`+item.id" class="btn btn-sm btn-primary">Edit</a> 
-											<a v-if="item.lock==true" @click="clickClockUser(item)" class="btn btn-sm btn-danger">Clock</a>
-											<a v-else @click="clickUnClockUser(item)" class="btn btn-sm btn-danger">unClock</a>
+											<a v-if="item.lock==true" @click="clicklockUser(item)" class="btn btn-sm btn-danger">Lock</a>
+											<a v-else @click="clickUnlockUser(item)" class="btn btn-sm btn-danger">Unlock</a>
+											<a data-bs-toggle="modal" :data-bs-target="'#delete'+ item.id" class="btn btn-sm btn-danger">Delete</a>
 										</td>
+										<div class="modal delete-new" :id="'delete'+item.id">
+											<div class="modal-dialog">
+												<div class="modal-content">
+													<div class="modal-header">
+														<h4 class="modal-title">Xóa tài khoản</h4>
+														<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+													</div>
+													<div class="modal-body">
+														Bạn có chắc là xóa không ?
+													</div>
+													<div class="modal-footer">
+														<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Hủy</button>
+														<button @click="clickDeleteUser(item.id)" class="btn btn-primary">Xác nhận</button>
+													</div>
+												</div>
+											</div>
+										</div>
 									</tr>
 							</template>
 							<template v-else>
@@ -323,12 +341,10 @@ export default {
 								user.lock = true
 							console.log("lock: "+user.lock)
 						});
-						console.log("total: "+this.totalPage)
 						this.setupPagination(this.totalPage)
 						
 						this.user.forEach(user => {
 							user.urlImg = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- ./?%&=]*)?/.test(user.img);
-							console.log("urlImg: "+user.urlImg)
 						});
 					}
 					else
@@ -351,15 +367,11 @@ export default {
 						mess='Có lỗi xảy ra'
 						this.showToastr(0,mess)
 					}
-
-					this.formAddUser=[]
-
+					this.formAddUser={}
 					this.getListUserAdmin();
 					bootstrap.Modal.getInstance(document.getElementById("add")).hide()
 				})
 				.catch(err=>{
-					// let mess = 'Something wrong !!!'
-					// this.showToastr(0,mess)
 					console.log("err: "+err)
 				})
 		},
@@ -414,7 +426,7 @@ export default {
 					console.error("err: "+error);
 				});
 		},
-        clickClockUser(item){
+        clicklockUser(item){
 			Users.lockUser(item.id)
 				.then(res => {
 					this.getListUserAdmin()
@@ -432,7 +444,7 @@ export default {
 					console.error("err: "+error);
 				})
 		},
-        clickUnClockUser(item){
+        clickUnlockUser(item){
 			Users.unlockUser(item.id)
 				.then(res => {
 					if(res.data.success)
@@ -440,6 +452,25 @@ export default {
 						let mess='Mở khóa thành công'
 						this.showToastr(1,mess)
 						this.getListUserAdmin()
+					}
+					if(res.data.error){
+						let mess='Có lỗi xảy ra'
+						this.showToastr(0,mess)
+					}
+				})
+				.catch(err => {
+					console.error("err: "+error);
+				})
+		},
+		clickDeleteUser(id){
+			Users.deleteUser(id)
+				.then(res => {
+					if(res.data.success)
+					{
+						let mess='Xoá thành công'
+						this.showToastr(1,mess)
+						this.getListUserAdmin()
+						bootstrap.Modal.getInstance(document.getElementById("delete" + id)).hide()
 					}
 					if(res.data.error){
 						let mess='Có lỗi xảy ra'
@@ -506,6 +537,11 @@ export default {
 					this.user = res.data.data.listUser.content
 					this.totalPage = res.data.data.listUser.totalPages
 					this.currentPage = res.data.data.currentPage
+					this.user.forEach(user => {
+							if(user.stateUser == "ACTIVED")
+								user.lock = true
+							console.log("lock: "+user.lock)
+						});
 					this.user.forEach(user => {
 						user.urlImg = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- ./?%&=]*)?/.test(user.img);
 						console.log("urlImg: "+user.urlImg)

@@ -157,4 +157,10 @@
 .product-item .pi-pic img {
 	height: 220px;
 }
+
+#price-range-container {
+	width: 80%;
+	font-size: 10px;
+	margin-left: 20px;
+  }
 }

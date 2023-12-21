@@ -72,6 +72,10 @@ class Users{
     unlockUser(id){
         return axios.post("admin/user/unlock?id="+id)
     }
+
+    deleteUser(id){
+        return axios.post("admin/user/delete?id="+id)
+    }
 }
 
 // const Users = {

@@ -38,7 +38,7 @@
                                     <a href="/user/profile" class="header__navbar-item-link">Tài khoản của tôi</a>
                                 </li>
 								<li v-if  ="isAuthenticated == 'ROLE_ADMIN'" class="header__navbar-user-item">
-                                    <a href="/user/purchase-history" class="header__navbar-item-link">Trang quản trị</a>
+                                    <a href="/admin/home" class="header__navbar-item-link">Trang quản trị</a>
                                 </li>
                                 <li class="header__navbar-user-item">
                                     <a href="/user/purchase-history" class="header__navbar-item-link">Đơn mua của tôi</a>
@@ -48,14 +48,13 @@
                                 </li>
                             </ul>
                         </li>
-						<li class="header__navbar-item header__navbar-user">
-							<a href="/cart"><i class="header__navbar-item-link fa-solid fa-cart-shopping"></i></a>
-						</li>
 				</ul>
 				<!-- <a href="/user/purchase-history"><i class="fa-solid fa-money-check-dollar"></i></a>
 				<a href="/user/profile"><i class="fa-solid fa-address-card"></i></a> -->
 			</template >
-			<!-- <a href="/cart"><i class="header__navbar-item-link fa-solid fa-cart-shopping"></i></a> -->
+			<div class="header__navbar-item header__navbar-user">
+				<a href="/cart"><i class="header__navbar-item-link fa-solid fa-cart-shopping"></i></a>
+			</div>
 		</div>
 	</div>
 
@@ -69,7 +68,6 @@ export default {
 	data() {
 		return {
 			isAuthenticated: sessionStorage.getItem("role"),
-			isAdmin: false,
 			checklogin: "",
 			name: sessionStorage.getItem("name"),
 			img: sessionStorage.getItem("img"),

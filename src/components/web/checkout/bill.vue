@@ -82,12 +82,20 @@
 							<div class="place-order py-4">
 								<div class="order-total">
 									<ul class="order-table p-0">
-										<li><span>Sản phẩm</span><span>Số lượng</span><span>Giá</span></li>
+										<li><span>Sản phẩm</span><span>Số lượng</span><span>Giá gốc</span><span>Discount</span><span>Giá</span></li>
 										<div v-for="item in orderdetail" v-bind:key="item.id">
-											<li class="fw-normal"><span><img :src="`/src/images/product/` + item.product.img" style="width: 50px; height: 50px;"/></span> <span>{{item.num}}</span><span>{{formatCurrency(item.totalPrice)}}</span></li>
+											<li class="fw-normal">
+												<span><img :src="`/src/images/product/` + item.product.img" style="width: 50px; height: 50px;"/></span>
+												<span>{{item.num}}</span>
+												<span>{{formatCurrency(item.product.price*item.num)}}</span>
+												<span>{{item.product.discount}}%</span>
+												<span>{{formatCurrency(item.totalPrice)}}</span>
+											</li>
 										</div>
 										<li class="total-price">Tổng số lượng <p>{{order.num}}</p></li>
-										<li class="total-price">Tổng giá <p>{{formatCurrency(order.total_money)}}</p></li>
+										<li class="total-price">Tổng tiền <p>{{formatCurrency(order.total_money-40000)}}</p></li>
+										<li class="total-price">Phí vận chuyển <p>{{formatCurrency(40000)}}</p></li>
+										<li class="total-price">Thành tiền <p>{{formatCurrency(order.total_money)}}</p></li>
 									</ul>
 								</div>
 							</div>

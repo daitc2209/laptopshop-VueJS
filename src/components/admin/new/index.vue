@@ -349,8 +349,10 @@ export default {
 			this.$router.push("/auth/sign-in")
 			sessionStorage.setItem("auth",true)
 		}
-		this.initializeEditor()
-		this.getNewsAdmin();
+		else{
+			this.initializeEditor()
+			this.getNewsAdmin();
+		}
  	},
 }
 </script>

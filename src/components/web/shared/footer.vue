@@ -28,7 +28,7 @@
         </div>
 	</div>
 	<hr>
-  <div class="d-flex m-4">
+  <div class="footer-container">
     <div class="container py-4 text-center">
       <span class="footer__heading">Store Location</span>
       <ul class="footer-list">
@@ -116,5 +116,9 @@ export default {
   font-size: 16px;
   color: #fff;
   transition: color .3s ease;
+}
+.footer-container{
+  display: flex;
+  margin: 4px;
 }
 </style>

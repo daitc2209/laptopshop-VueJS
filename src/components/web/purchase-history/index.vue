@@ -125,14 +125,18 @@
 												<h4>Thông tin sản phẩm</h4>
 												<div class="order-total">
 													<ul class="order-table p-0">
-														<li><span>Sản phẩm</span><span>Số lượng</span><span>Giá</span></li>
+														<li><span>Sản phẩm</span><span>Số lượng</span><span>Giá gốc</span><span>Discount</span><span>Giá</span></li>
 														<li class="fw-normal" v-for="(orderdetail, index) in item.orderdetail" :key="index">
 																<span><img :src="`/src/images/product/`+orderdetail.product.img" style="height: 50px; width: 50px;" alt="Product Image" /></span>
 																<span>{{orderdetail.num}}</span>
+																<span>{{ formatCurrency(orderdetail.product.price*orderdetail.num) }}</span>
+																<span>{{ orderdetail.product.discount }}%</span>
 																<span>{{ formatCurrency(orderdetail.price) }}</span>
 														</li>
 														<li class="total-price">Tổng số lượng <p>{{item.num}}</p></li>
-														<li class="total-price">Tổng giá <p>{{ formatCurrency(item.total_money) }}</p></li>
+														<li class="total-price">Tổng tiền <p>{{ formatCurrency(item.total_money) }}</p></li>
+														<li class="total-price">Phí vận chuyển <p>{{formatCurrency(40000)}}</p></li>
+														<li class="total-price">Thành tiền <p>{{formatCurrency(item.total_money+40000)}}</p></li>
 													</ul>
 													<div :id="'cancelOrderBtn_'+ item.id" v-if="(item.stateOrder === 'PENDING')" class="order-btn"><a @click="clickCancelOrder(item.id)"><button type="button" class="site-btn place-btn">Hủy đơn hàng</button></a></div>
 																								
@@ -211,15 +215,11 @@ export default {
 		User.postPurchaseHistory(id)
 			.then((res)=>{
 				if(res.data){
-					$('#trow_' + id + ' .td7').empty();
-					$('#cancelOrderBtn_' + id).empty();
-					$('#trow_' + id + ' .td7').append(`<h6>${res.data.data}</h6>`);
 						$('.modal').modal('hide');
 						let message = 'Hủy đơn hàng thành công'
+						this.order = res.data.data.order
 						showSuccessToast(message)
-						// toastr["success"]('Cancel order successfully!', "Cancel Order")
 				}else{
-						// toastr["error"]('Cancel order failed!', "Cancel Order")
 						showErrorToast()
 				}
 			})
@@ -233,7 +233,14 @@ export default {
     },
   },
   mounted(){
-	this.getPurchaseHistory()
+	if(sessionStorage.getItem("login"))
+		this.getPurchaseHistory()
+	else
+	{
+		window.location.href = "/auth/sign-in"
+		sessionStorage.setItem("err",true)
+	}
+	
   }
 };
 </script>

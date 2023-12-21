@@ -118,4 +118,8 @@
 	#footer .footer-top h4 {
     padding-bottom: 0;
 }
+
+.footer-container{
+	display: block;
+}
 }

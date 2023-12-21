@@ -194,7 +194,14 @@ export default {
         }
     },
     mounted() {
-        this.init()
+        if(!sessionStorage.getItem("login") && sessionStorage.getItem("role")!="ROLE_ADMIN")
+		{
+			// window.location.href = "/auth/sign-in"
+			this.$router.push("/auth/sign-in")
+			sessionStorage.setItem("auth",true)
+		}
+		else
+            this.init()
     }
 }
 </script>

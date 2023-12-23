@@ -130,8 +130,8 @@
 										<td class="td10"><h6>{{item.role}}</h6></td>
 										<td class="td11">
 											<a data-bs-toggle="modal" @click="getEditUser(item.id)" :data-bs-target="`#edit`+item.id" class="btn btn-sm btn-primary">Edit</a> 
-											<a v-if="item.lock==true" @click="clicklockUser(item)" class="btn btn-sm btn-danger">Lock</a>
-											<a v-else @click="clickUnlockUser(item)" class="btn btn-sm btn-danger">Unlock</a>
+											<a v-if="item.lock==true" data-bs-toggle="modal" :data-bs-target="'#lock'+ item.id" class="btn btn-sm btn-danger">Lock</a>
+											<a v-else data-bs-toggle="modal" :data-bs-target="'#unlock'+ item.id" class="btn btn-sm btn-danger">Unlock</a>
 											<a data-bs-toggle="modal" :data-bs-target="'#delete'+ item.id" class="btn btn-sm btn-danger">Delete</a>
 										</td>
 										<div class="modal delete-new" :id="'delete'+item.id">
@@ -147,6 +147,40 @@
 													<div class="modal-footer">
 														<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Hủy</button>
 														<button @click="clickDeleteUser(item.id)" class="btn btn-primary">Xác nhận</button>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="modal lock-new" :id="'lock'+item.id">
+											<div class="modal-dialog">
+												<div class="modal-content">
+													<div class="modal-header">
+														<h4 class="modal-title">Khóa tài khoản</h4>
+														<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+													</div>
+													<div class="modal-body">
+														Bạn có chắc là khóa tài khoản này không ?
+													</div>
+													<div class="modal-footer">
+														<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Hủy</button>
+														<button @click="clicklockUser(item.id)" class="btn btn-primary">Xác nhận</button>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="modal unlock-new" :id="'unlock'+item.id">
+											<div class="modal-dialog">
+												<div class="modal-content">
+													<div class="modal-header">
+														<h4 class="modal-title">Mở tài khoản</h4>
+														<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+													</div>
+													<div class="modal-body">
+														Bạn có chắc là mở tài khoản này không ?
+													</div>
+													<div class="modal-footer">
+														<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Hủy</button>
+														<button @click="clickUnlockUser(item.id)" class="btn btn-primary">Xác nhận</button>
 													</div>
 												</div>
 											</div>
@@ -426,8 +460,8 @@ export default {
 					console.error("err: "+error);
 				});
 		},
-        clicklockUser(item){
-			Users.lockUser(item.id)
+        clicklockUser(id){
+			Users.lockUser(id)
 				.then(res => {
 					this.getListUserAdmin()
 					if(res.data.success)
@@ -439,13 +473,14 @@ export default {
 						let mess='Có lỗi xảy ra'
 						this.showToastr(0,mess)
 					}
+					bootstrap.Modal.getInstance(document.getElementById("lock"+id)).hide()
 				})
 				.catch(err => {
 					console.error("err: "+error);
 				})
 		},
-        clickUnlockUser(item){
-			Users.unlockUser(item.id)
+        clickUnlockUser(id){
+			Users.unlockUser(id)
 				.then(res => {
 					if(res.data.success)
 					{
@@ -457,6 +492,7 @@ export default {
 						let mess='Có lỗi xảy ra'
 						this.showToastr(0,mess)
 					}
+					bootstrap.Modal.getInstance(document.getElementById("unlock"+id)).hide()
 				})
 				.catch(err => {
 					console.error("err: "+error);

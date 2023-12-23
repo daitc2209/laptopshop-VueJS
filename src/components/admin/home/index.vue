@@ -1,6 +1,8 @@
 <template>
   <div>
     <head><title>Admin Home Page</title></head>
+	<div id="toast">
+    </div>	
     <section class="content-header">
 			<div class="container-fluid">
 				<div class="row mb-2">
@@ -12,10 +14,25 @@
 							<li class="breadcrumb-item"><a href="#">Home</a></li>
 						</ol>
 					</div>
+					<select class="form-control form-select" v-model="this.select" @change="updateSelect()">
+						<option selected="selected" value="1">Thống kê theo năm</option>
+						<option value="2">Thống kê theo khoảng ngày</option>
+					</select>
 					<div class="d-flex">
-						<ul>
+						<ul v-if="this.select==1">
 							<label for="">Thống kê doanh thu theo năm</label>
 							<li @click="update(year)" style="cursor: pointer; width: 300px;" v-for="year in years" :key="year" :value="year">Năm {{ year }}: {{ this.revenueWithYear[year] }}</li>
+	
+						</ul>
+						<ul v-if="this.select==2">
+							<div class="statistical">
+								<label class="statistical-from" for="startDate">Từ ngày:</label>
+								<VueDatePicker v-model="startDate" format="yyyy-MM-dd"></VueDatePicker>
+
+								<label class="statistical-from" for="endDate">Đến ngày:</label>
+								<VueDatePicker v-model="endDate" format="yyyy-MM-dd"></VueDatePicker>
+								<button class="statistical-btn btn btn-primary" @click="thongKe">Thống kê</button>
+							</div>
 						</ul>
 						<div style="width: 1000px; height: 600px;">
 							<canvas id="myChart"></canvas>
@@ -28,31 +45,40 @@
 </template>
 
 <script>
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css'
 import Chart from 'chart.js/auto'
 import revenueApi from '../../../service/revenue';
+import { showErrorToastMess, showErrorToast } from "../../../assets/web/js/main";
 export default {
+	components: {
+		VueDatePicker 
+	},
 	data(){
 		return {
+			select: 1,
       		years: [],
 			revenue: [],
 			revenueWithYear: {},
-			myChart: null
+			myChart: null,
+			startDate: null,
+			endDate: null,
 		}
 	},
 
 	methods: {
 		async getRevenue() {
             try{
-                const res = await revenueApi.getRevenue()
+				console.log("select: " + this.select)
+				const res = await revenueApi.getRevenue()
 
-                this.revenue = res.data.revenue
+				this.revenue = res.data.revenue
+				console.log(this.revenue)
+
 				this.revenue.forEach(revenue => {
 					if(!this.years.includes(revenue.year))
 						this.years.push(revenue.year)
-						console.log("revenue.year: "+revenue.year)
 				})
-
-				this.years.forEach(r=> console.log("year: "+r))
 				this.revenue.forEach(r => {
 					const year = r.year;
 					const totalMoney = r.total_money_month;
@@ -65,11 +91,10 @@ export default {
 						// Nếu năm chưa tồn tại, khởi tạo tổng tiền cho năm đó
 						this.revenueWithYear[year] = totalMoney;
 					}
-
-					console.log("eda: "+this.revenueWithYear)
 				});
 
-                this.updateChart(this.revenue, this.years[this.years.length-1])
+				this.updateChart(this.revenue, this.years[this.years.length-1])
+			
             }
             catch(err){
                 console.log("err: "+err)
@@ -149,6 +174,82 @@ export default {
         getRandomValue(min, max) {
             return Math.floor(Math.random() * (max - min + 1) + min);
         },
+		async thongKe() {
+			let start = this.formatDate(this.startDate)
+			let end = this.formatDate(this.endDate)
+			let data = {start,end}
+			if (start > end) {
+				let error = 'Ngày bắt đầu không được lớn hơn ngày kết thúc.';
+				showErrorToastMess(error)
+			} else {
+				try{
+					const res = await revenueApi.getStatistical(data)
+					this.revenue = res.data.revenueDay
+					this.updateChartByDay(this.revenue)
+
+				}
+				catch(err){
+					showErrorToastMess("loi r")
+					console.log("err: "+err)
+				}
+			}
+		},
+		formatDate(date) {
+			const formattedDate = new Date(date);
+			const hours = ('0' + formattedDate.getHours()).slice(-2);
+			const minutes = ('0' + formattedDate.getMinutes()).slice(-2);
+			const day = ('0' + formattedDate.getDate()).slice(-2);
+			const month = ('0' + (formattedDate.getMonth() + 1)).slice(-2);
+			const year = formattedDate.getFullYear();
+			return `${year}-${month}-${day} ${hours}:${minutes}`;
+		},
+
+		updateChartByDay(data) {
+			// Xử lý dữ liệu và cập nhật biểu đồ theo từng ngày
+			const startDate = new Date(this.startDate);
+			const endDate = new Date(this.endDate);
+			// Tính toán số ngày trong khoảng từ startDate đến endDate
+			const daysInRange = Math.floor((endDate - startDate) / (24 * 60 * 60 * 1000)) + 1;
+
+			// Tạo mảng labels từ ngày bắt đầu đến ngày kết thúc
+			const labels = Array.from({ length: daysInRange }, (_, i) => {
+				const date = new Date(startDate);
+				date.setDate(date.getDate() + i);
+				return date.toLocaleDateString();
+			});
+			// Tạo mảng data với giá trị 0 cho mỗi ngày
+			const dataArr = Array.from({ length: daysInRange }, () => 0);
+
+			// Cập nhật giá trị data dựa trên dữ liệu thống kê
+			data.forEach((item) => {
+				const year = item.year;
+				const month = item.month;
+				const day = item.day;
+
+				// Tạo đối tượng Date từ năm, tháng và ngày
+				const date = new Date(year, month - 1, day);
+				const dayDifference = Math.floor((date - startDate) / (24 * 60 * 60 * 1000));
+				dataArr[dayDifference] = item.total_money_day;
+			});
+
+			const colors = this.generateColors(labels.length);
+
+			// Gán dữ liệu từ khu revenue vào data
+			this.myChart.data.datasets[0].data = dataArr;
+			this.myChart.data.labels = labels;
+			this.myChart.data.datasets[0].backgroundColor = colors;
+
+			// Cập nhật biểu đồ
+			this.myChart.update();
+		},
+
+		updateSelect(){
+			if(this.select == 1){
+				this.getRevenue()
+			}
+			if(this.select == 2)
+				console.log("select: "+this.select)
+		}
 	},
 
 
@@ -159,12 +260,21 @@ export default {
 			this.$router.push("/auth/sign-in")
 			sessionStorage.setItem("auth",true)
 		}
-		else
+		if(this.select == 1)
 			this.init()
 	}
 }
 </script>
 
 <style>
-
+.statistical{
+	margin: 20px 20px 0 0;
+}
+.statistical-from{
+	margin: 4px 0;
+}
+.statistical-btn{
+	margin-top: 8px;
+	border-color: #fff;
+}
 </style>

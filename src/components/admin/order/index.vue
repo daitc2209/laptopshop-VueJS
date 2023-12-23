@@ -268,7 +268,7 @@ export default {
 						this.totalPage = res.data.data.listOrders.totalPages
 						this.currentPage = res.data.data.currentPage
 						this.setupPagination(this.totalPage)
-					
+						console.log("type of status: "+typeof(this.order.status))
 				})
 				.catch(err => {
 					this.order = false
@@ -307,6 +307,8 @@ export default {
 				})
 		},
 		search(currentPage,formSearchOrder){
+			console.log("type of formSearchOrder: "+typeof(this.formSearchOrder.status))
+			console.log("formSearchOrder: "+this.formSearchOrder.status)
 			this.getListOrder(currentPage,formSearchOrder.name,formSearchOrder.payment,formSearchOrder.stateOrder)
 		},
 

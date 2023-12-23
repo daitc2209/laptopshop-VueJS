@@ -19,6 +19,11 @@ const revenueApi = {
     getRevenueProducts: async () => {
         const res = await axios.get(`/admin/revenue/products`)
         return res.data
+    },
+
+    getStatistical: async (data) =>{
+        const res = await axios.post(`/admin/revenue/day`,data)
+        return res.data
     }
 }
 

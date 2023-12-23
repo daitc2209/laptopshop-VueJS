@@ -1,6 +1,6 @@
 <template>
 	<aside class="main-sidebar sidebar-dark-primary elevation-4">
-		<a href="/admin/home" class="brand-link" style="text-align: center;">
+		<a href="/home" class="brand-link" style="text-align: center;">
 			<span class="brand-text font-weight-light">TCD Laptopshop</span>
 		</a>
 		<div class="sidebar">

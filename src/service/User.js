@@ -27,12 +27,12 @@ class Users{
         return axios.post('getInfo',accessToken) 
     }
 
-    getPurchaseHistory(){
-        return axios.get('purchase-history');
+    getPurchaseHistory(status){
+        return axios.get('purchase-history?status='+status);
     }
 
-    postPurchaseHistory(id){
-        return axios.post(`purchase-history/delete?id=`+id)
+    postPurchaseHistory(id,status){
+        return axios.post(`purchase-history/delete?id=`+id+`&status=`+status)
     }
 
     postProfile(data){

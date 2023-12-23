@@ -1,9 +1,10 @@
 <template>
-  <div>
+  <div class="container">
     <head>
         <title>Profile Page</title>
     </head>
     <div class="breadcrumbs d-flex flex-row align-items-center col-12 container mt-3">
+		
 		<div id="toast">
     	</div>
 			<ul>
@@ -11,34 +12,41 @@
 				<li class="active"><a href="#"><i class="fa fa-angle-right" aria-hidden="true"></i>Profile</a></li>
 			</ul>
 		</div>
-		<section class="container mb-4">
-			<div class="row">
-				<div class="col-md-4 col-12 p-0" id="side1">
-					<span v-if="this.urlImg">
-						<img id="image" :src="this.profile.img" />
-					</span>
-					<span v-else>
-						<img class="image" alt="logo"
-							:src="`/src/images/user/`+this.profile.img" />
-					</span>
-					
-				</div>
-				<div class="col-md-8 col-12 p-0" id="side2">
-					<form class="form-login" action="">
-						<div class="inp">
-							<h3>Profile</h3>
-							<input type="text" v-model="profile.fullname" disabled="disabled" title="Họ và tên">
-							<input type="email" v-model="profile.email" disabled="disabled" title="Email">  
-							<input type="text" v-model="profile.sex" disabled="disabled" title="Giới tính">
-							<input type="text" v-model="profile.birthday" disabled="disabled" title="Ngày sinh">
-							<input type="text" v-model="profile.address" disabled="disabled" title="Địa chỉ">
-							<input type="text" v-model="profile.phone" disabled="disabled" title="SDT">
+		<section class="profile mb-4">
+			<div class="col-3"><menuShared/></div>
+			<div class="col-9">
+				
+				<div class="row">
+					<div class="profile-container col-md-8 col-12 p-0" >
+						<div class="profile-container__img">
+							<div class="profile-img">
+								<span v-if="this.urlImg">
+									<img class="profile-img__link" :src="this.profile.img" />
+								</span>
+								<span v-else>
+									<img class="profile-img__link" alt="logo"
+										:src="`/src/images/user/`+this.profile.img" />
+								</span>
+								
+							</div>
 						</div>
-						<div id="login">
-							<button type="button" @click="getProfile()" data-bs-toggle="modal" data-bs-target="#myModal">Click Edit</button>
-							<button type="button" data-bs-toggle="modal" data-bs-target="#myModal1">Click Change Password</button>
+						<div class="profile-form" >
+							<div class="inp">
+								<!-- <h3>Profile</h3> -->
+								<div class="profile-form__feild"><label class="profile-form__name" for="">Fullname</label> <input class="profile-form__feild-item" type="text" v-model="profile.fullname" disabled="disabled" title="Tên"></div>
+								<div class="profile-form__feild"><label class="profile-form__name" for="">Email</label> <input class="profile-form__feild-item" type="email" v-model="profile.email" disabled="disabled" title="Email"></div>
+								<div class="profile-form__feild"><label class="profile-form__name" for="">Gender</label> <input class="profile-form__feild-item" type="text" v-model="profile.sex" disabled="disabled" title="Giới tính"></div>
+								<div class="profile-form__feild"><label class="profile-form__name" for="">Birthday</label> <input class="profile-form__feild-item" type="text" v-model="profile.birthday" disabled="disabled" title="Ngày sinh"> </div>
+								<div class="profile-form__feild"><label class="profile-form__name" for="">Address</label> <input class="profile-form__feild-item" type="text" v-model="profile.address" disabled="disabled" title="Địa chỉ"></div>
+								<div class="profile-form__feild"><label class="profile-form__name" for="">Phone</label> <input class="profile-form__feild-item" type="text" v-model="profile.phone" disabled="disabled" title="SDT"></div>
+								
+							</div>
+							<div id="login">
+								<button type="button" @click="getProfile()" data-bs-toggle="modal" data-bs-target="#myModal">Click Edit</button>
+								<button type="button" data-bs-toggle="modal" data-bs-target="#myModal1">Click Change Password</button>
+							</div>
 						</div>
-					</form>
+					</div>
 				</div>
 			</div>
 		</section>
@@ -58,43 +66,60 @@
 					<div class="row">
 						<div class="col-md-4 col-12 p-0" id="side1" @dragover.prevent="onDragover" @dragleave.prevent="onDragleave" @drop.prevent="onDrop">
 							<!-- <img id="image" alt="" :src="'/images/user/' + profile.img" /> -->
-							<span v-if="!isDragging">
+							<template v-if="!isDragging">
 								<span v-if="this.url==null || this.url == ''">
 									<img id="image" alt="" :src="`/src/images/user/`+this.profile.img" />
 								</span>
 								<span v-else>
 									<img id="image" alt="" :src="this.url" />
 								</span>
-							</span>
+							</template>
 						</div>
 						<div class="col-md-8 col-12 p-0" id="side2">
 							<form 
-								class="form-login" 
+								class="profile-form " 
 								@submit.prevent="editProfile()" 
 								enctype="multipart/form-data"
 							>
 								<h3>Edit Profile</h3>
 								<div class="inp">
-									<input title="ID" type="text" hidden="" v-model="profile.id"> 
-									<input title="Họ và tên" type="text" v-model="profile.fullname">
-									<input title="Email" type="text" v-model="profile.email">
-									<select title="Giới tính" class="form-control form-select" v-model="profile.sex">
-										<option value="MALE">MALE</option>
-										<option value="FEMALE">FEMALE</option>
-									</select>
-									<input title="Ngày sinh" type="text" placeholder="yyyy-mm-dd" v-model="profile.birthday"> 
-									<input title="Địa chỉ" type="text" v-model="profile.address"> 
-									<input title="SDT" type="text" v-model="profile.phone"> 
+									<div class="profile-form__feild">
+										<label class="profile-form__name" for="">Fullname</label>
+										<input class="profile-form__feild-item" title="Họ và tên" type="text" v-model="profile.fullname"> 
+									</div>
+									<div class="profile-form__feild">
+										<label class="profile-form__name" for="">Email</label>
+										<input class="profile-form__feild-item" title="Email" type="text" v-model="profile.email">
+									</div>
+									<div class="profile-form__feild">
+										<label class="profile-form__name" for="">Gender</label>
+										<select  title="Giới tính" class="profile-form__feild-item"  v-model="profile.sex">
+											<option value="MALE">MALE</option>
+											<option value="FEMALE">FEMALE</option>
+										</select>
+									</div>
+									<div class="profile-form__feild">
+										<label class="profile-form__name" for="">Birthday</label>
+										<input class="profile-form__feild-item" title="Email" type="text" v-model="profile.birthday">
+									</div>
+									<div class="profile-form__feild">
+										<label class="profile-form__name" for="">Phone</label>
+										<input class="profile-form__feild-item" title="Email" type="text" v-model="profile.phone">
+									</div>
 									<input hidden="" type="text" v-model="profile.img" > 
-									<input 
-										class="p-0" 
-										@change="chooseFile" 
-										type="file" 
-										name="fileImage" 
-										ref="file"
-										accept=".png, .jpg, jpeg"
-										:maxFileSize="1000000"
-									/>
+									<div class="profile-form__feild">
+										<label class="profile-form__name" for=""></label>
+										<input 
+											class="p-0 profile-form__feild-item" 
+											@change="chooseFile" 
+											type="file" 
+											name="fileImage" 
+											ref="file"
+											accept=".png, .jpg, jpeg"
+											:maxFileSize="1000000"
+										/>
+									</div>
+									
 								</div>
 								<div id="login">
 									<button type="submit">Edit</button>
@@ -117,7 +142,7 @@
 
 		<div class="modal" id="myModal1">
 		  <div class="modal-dialog">
-		    <div class="modal-content">
+		    <div class="modal-content changePW-container">
 		
 		      <!-- Modal Header -->
 		      <div class="modal-header">
@@ -131,13 +156,19 @@
 					<div class="row">
 						<div class="col-md-12 col-12 p-0" id="side2">
 							<form 
-								class="form-login" 
+								class="profile-form" 
 								@submit.prevent="ChangePassword()" 
 							>
 								<h3>Change Password</h3>
 								<div class="inp">
-									<input title="Old Password" type="text" v-model="oldPw">
-									<input title="New Password" type="text" v-model="newPw">  
+									<div class="profile-form__feild">
+										<label class="profile-form__name" for="">Old Password:</label>
+										<input class="profile-form__feild-item" title="Old Password" type="text" v-model="oldPw">
+									</div>
+									<div class="profile-form__feild">
+										<label class="profile-form__name" for="">New Password:</label>
+										<input class="profile-form__feild-item" title="New Password" type="text" v-model="newPw">
+									</div>
 								</div>
 								<div id="login">
 									<button type="submit">Save</button>
@@ -165,7 +196,11 @@
 <script>
 import { showSuccessToast, showErrorToast } from "../../../assets/web/js/main";
 import User from '../../../service/User';
+import menuShared from "./menu-shared.vue";
 export default {
+	components: {
+        menuShared
+    },
     data(){
         return {
             profile: {
@@ -300,5 +335,57 @@ export default {
 </script>
 
 <style>
-
+.profile{
+	display: flex;
+}
+.profile-container{
+	width: 1024px;
+	box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+.profile-container__img{
+	display: flex;
+    margin: auto;
+    justify-content: center;
+    align-items: center;
+}
+.profile-img{
+	width: 256px;
+	height: 256px;
+	text-align: center;
+	
+}
+.profile-img__link{
+	margin-top: 12px;
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+	object-fit: cover;
+}
+.profile-form{
+	width: 80%;
+    margin: auto;
+    padding: 20px 0;
+}
+.profile-form__feild{
+	display: flex;
+}
+.profile-form__name{
+	width: 20%;
+	margin-top: 20px;
+	margin-left: 20px;
+    height: 40px;
+    padding: 10px;
+}
+.profile-form__feild-item{
+	width: 70%;
+    margin-top: 20px;
+	margin-left: 20px;
+    height: 40px;
+    padding: 10px;
+}
+.changePW-container{
+	width: 70%;
+	display: flex;
+	margin: auto;
+}
 </style>

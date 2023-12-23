@@ -119,6 +119,15 @@ export function showErrorToast() {
     })
 }
 
+export function showErrorToastMess(message) {
+    toast({
+        title: 'Error',
+        message: message,
+        type: 'error',
+        duration: 1000
+    })
+}
+
 export function showInforToast() {
     toast({
         title: 'Info',

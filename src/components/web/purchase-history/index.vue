@@ -25,14 +25,27 @@
 				<div class="purchase-history__order">
 					<div class="purchase-history__order-container">
 						<div class="content-item">
-							<p class="item-content title">0</p>
-							<p class="item-content text">Đơn hàng</p>
+							<p class="item-content title">{{ this.total_order }}</p>
+							<p class="item-content text">Đơn hàng đã mua</p>
 						</div>
 						<div class="content-item">
-							<p class="item-content title">0</p>
+							<p class="item-content title">{{ formatCurrency(this.total_money) }}</p>
 							<p class="item-content text">Tổng tiền tích lũy</p>
 						</div>
 					</div>
+				</div>
+				<div class="order-range">
+					<div class="order-date">
+						<label class="order-range__from" for="startDate">Từ </label>
+						<div class="date-picker">
+							<VueDatePicker v-model="startDate" format="yyyy-MM-dd"></VueDatePicker>
+						</div>
+					</div>
+					<div class="order-date">
+						<label class="order-range__from" for="endDate">Đến </label>
+						<VueDatePicker v-model="endDate" format="yyyy-MM-dd"></VueDatePicker>
+					</div>
+					<button class="order-range__btn btn btn-primary" @click="search">Tìm kiếm</button>
 				</div>
 				<div class="order-container__status">
 					<div class="order-status">
@@ -199,16 +212,24 @@
 </template>
   
 <script>
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css'
 import User from '../../../service/User';
-import {showSuccessToast,showErrorToast } from "../../../assets/web/js/main";
+import {showSuccessToast,showErrorToast, showErrorToastMess } from "../../../assets/web/js/main";
 import menuShared from "../profile/menu-shared.vue";
 export default {
 	components: {
-        menuShared
+        menuShared,
+		VueDatePicker
     },
 	data() {
 		return {
 			order: [],
+			total_order: 0,
+			total_money:0,
+			status:"",
+			startDate: null,
+			endDate: null,
 		};
 	},
   methods: {
@@ -235,40 +256,78 @@ export default {
 			buttons[i].classList.remove('active');
 		} 
 		var selectedButton = document.getElementById('btn-' + data);
-			console.log("selectedButton: "+selectedButton)
-			console.log("data: "+data)
     		selectedButton.classList.add('active');
 
-		User.getPurchaseHistory(data)
-			.then((res)=>{
-				this.order = res.data.data.order
-			})
-			.catch((err)=>{console.log("loi purchase history !!!" + err)})
+		//Cập nhật lại trạng thái đơn hàng
+		this.status = data
+
+		//Nếu không chọn ngày thì sẽ lọc bình thường
+		if(this.startDate !== null || this.endDate !== null){
+			this.search()
+		}
+		else{
+			User.getPurchaseHistory(data)
+				.then((res)=>{
+					this.order = res.data.data.order
+				})
+				.catch((err)=>{console.log("loi purchase history !!!" + err)})
+		}
+		
+	},
+	search(){
+		let start = this.formatDate(this.startDate)
+		let end = this.formatDate(this.endDate)
+		let status = this.status
+		let data = {start,end,status}
+		if (start > end) {
+			let error = 'Ngày bắt đầu không được lớn hơn ngày kết thúc.';
+			showErrorToastMess(error)
+		} else {
+			User.findByRangeDay(data)
+				.then(res=>{
+					this.order = res.data.data.orderDay
+				})
+				.catch(err=>{
+					showErrorToastMess("loi r")
+					console.log("err: "+err)
+				})
+		}
 	},
 
 	clickCancelOrder(id,status){
 		User.postPurchaseHistory(id,status)
 			.then((res)=>{
 				if(res.data){
-						let message = 'Hủy đơn hàng thành công'
-						this.order = res.data.data.order
-						showSuccessToast(message)
+					let message = 'Hủy đơn hàng thành công'
+					this.order = res.data.data.order
+					showSuccessToast(message)
+					bootstrap.Modal.getInstance(document.getElementById("Modal"+id)).hide()
 				}else{
-						showErrorToast()
+					showErrorToast()
 				}
 			})
 			.catch((err)=>{console.log("loi purchase history !!!" + err)})
 	},
-	showSuccessToast(message){
-		showSuccessToast(message)
-    },
-	showErrorToast(){
-		showErrorToast()
-    },
+
+	getTotalOrderReceived(){
+		User.getTotalOrderReceived()
+			.then(res=>{
+				this.total_order = res.data.data.total_order
+				this.total_money = res.data.data.total_money
+			})
+			.catch(err=>{
+				console.log("loi lấy tổng đơn hàng đã nhận và tiền đã tiêu !!!" + err)
+			})
+	},
+
+	init(){
+		this.getTotalOrderReceived();
+		this.getOrderByStatus("all")
+	}
   },
   mounted(){
 	if(sessionStorage.getItem("login"))
-		this.getOrderByStatus("all")
+		this.init()
 	else
 	{
 		window.location.href = "/auth/sign-in"
@@ -291,6 +350,7 @@ export default {
 	display: flex;
 	justify-content: space-around;
 	padding-bottom: 15px;
+	background-color: #F4F6F8;
 }
 .content-item{
 	margin-top: 15px;
@@ -346,5 +406,26 @@ export default {
 .order-status__item.active{
 	background-color: #1c1c50;
 	color: #fff;
+}
+
+.order-range{
+	display: flex;
+	justify-content: end;
+	margin: 10px 0;
+}
+.order-date{
+	display: inline-flex;
+	align-items: center;
+	margin-right: 20px;
+}
+.order-date:first-of-type{
+	justify-content: start;
+}
+.order-range__from{
+    font-weight: 700;
+	margin-right: 10px;
+}
+.date-picker{
+	width: calc(100%-30%);
 }
 </style>

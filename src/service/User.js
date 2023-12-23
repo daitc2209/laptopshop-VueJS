@@ -35,6 +35,14 @@ class Users{
         return axios.post(`purchase-history/delete?id=`+id+`&status=`+status)
     }
 
+    findByRangeDay(data){
+        return axios.post(`purchase-history/range-day`,data)
+    }
+
+    getTotalOrderReceived(){
+        return axios.get('purchase-history/totalOrder');
+    }
+
     postProfile(data){
         return axios.post('user/profile', data)
     }

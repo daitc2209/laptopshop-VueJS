@@ -18,7 +18,7 @@
                         </li>
                         <li class="menu-item">
                             <a href="/user/purchase-history" class="menu-link">
-                                <i class="nav-icon fa-solid fa-bars"></i>
+                                <i class="fa-solid fa-clipboard"></i>
                                 <p>Quản lý đơn hàng</p>
                             </a>
                         </li>

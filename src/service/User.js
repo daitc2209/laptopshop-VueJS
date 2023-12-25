@@ -55,10 +55,16 @@ class Users{
         return axios.post('user/profile/change-password?oldPW='+oldPW+'&newPW='+newPW)
     }
 
-    getListUserAdmin(page, fullname,sex,address,email,stateUser,authType,role){
+    getListUserAdmin(page, fullname,sex,address,email,stateUser,authType){
         return axios.get('admin/user',
             {params: {fullname:fullname,sex:sex,address:address,
-                    email:email,stateUser:stateUser,authType:authType, role:role,page:page}}) 
+                    email:email,stateUser:stateUser,authType:authType,page:page}}) 
+    }
+
+    getListAdmin(page, fullname,sex,address,email,stateUser,authType){
+        return axios.get('admin/user/getAdmin',
+            {params: {fullname:fullname,sex:sex,address:address,
+                    email:email,stateUser:stateUser,authType:authType,page:page}}) 
     }
 
     addUser(data){

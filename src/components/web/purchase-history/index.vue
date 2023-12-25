@@ -46,7 +46,7 @@
 						<VueDatePicker v-model="endDate" format="yyyy-MM-dd"></VueDatePicker>
 					</div>
 					<button class="order-range__btn btn btn-primary" @click="search">Tìm kiếm</button>
-				</div>
+				</div> 
 				<div class="order-container__status">
 					<div class="order-status">
 						<button @click="getOrderByStatus('all')" id="btn-all" class="order-status__item active">Tất cả</button>
@@ -161,13 +161,13 @@
 														<h4>Thông tin sản phẩm</h4>
 														<div class="order-total">
 															<ul class="order-table p-0">
-																<li><span>Sản phẩm</span><span>Số lượng</span><span>Giá gốc</span><span>Discount</span><span>Giá</span></li>
+																<li><span>Sản phẩm</span><span>Số lượng</span><span>Giá</span><span>Discount</span><span>Tổng</span></li>
 																<li class="fw-normal" v-for="(orderdetail, index) in item.orderdetail" :key="index">
 																		<span><img :src="`/src/images/product/`+orderdetail.product.img" style="height: 50px; width: 50px;" alt="Product Image" /></span>
 																		<span>{{orderdetail.num}}</span>
-																		<span>{{ formatCurrency(orderdetail.product.price*orderdetail.num) }}</span>
+																		<span>{{ formatCurrency(orderdetail.product.price) }}</span>
 																		<span>{{ orderdetail.product.discount }}%</span>
-																		<span>{{ formatCurrency(orderdetail.price) }}</span>
+																		<span>{{ formatCurrency(orderdetail.totalPrice) }}</span>
 																</li>
 																<li class="total-price">Tổng số lượng <p>{{item.num}}</p></li>
 																<li class="total-price">Tổng tiền <p>{{ formatCurrency(item.total_money) }}</p></li>
@@ -260,7 +260,7 @@ export default {
 
 		//Cập nhật lại trạng thái đơn hàng
 		this.status = data
-
+		
 		//Nếu không chọn ngày thì sẽ lọc bình thường
 		if(this.startDate !== null || this.endDate !== null){
 			this.search()
@@ -275,8 +275,13 @@ export default {
 		
 	},
 	search(){
-		let start = this.formatDate(this.startDate)
-		let end = this.formatDate(this.endDate)
+		let start = null
+		let end = null
+		if(this.startDate !== null || this.endDate !== null)
+		{
+			start = this.formatDate(this.startDate)
+			end = this.formatDate(this.endDate)
+		}
 		let status = this.status
 		let data = {start,end,status}
 		if (start > end) {
@@ -411,7 +416,7 @@ export default {
 .order-range{
 	display: flex;
 	justify-content: end;
-	margin: 10px 0;
+	margin: 10px 0 !important;
 }
 .order-date{
 	display: inline-flex;

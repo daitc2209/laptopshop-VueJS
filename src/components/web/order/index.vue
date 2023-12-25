@@ -84,11 +84,11 @@
 								<h4>Thông tin sản phẩm</h4>
 								<div class="order-total">
 									<ul class="order-table p-0">
-										<li><span>Sản phẩm</span><span>Số lượng</span><span>Giá gốc</span><span>Discount</span><span>Giá</span></li>
+										<li><span>Sản phẩm</span><span>Số lượng</span><span>Giá</span><span>Discount</span><span>Tổng</span></li>
 										<li class="fw-normal" v-for="(item, index) in listCart" :key="index">
 												<span><img :src="`/src/images/product/`+item.img" style="width:50px; height:50px" alt="Product Image" /></span>
 												<span>{{item.numProduct}}</span>
-												<span>{{ formatCurrency(item.price*item.numProduct) }}</span>
+												<span>{{ formatCurrency(item.price) }}</span>
 												<span>{{ item.discount }}%</span>
 												<span>{{ formatCurrency(item.totalPrice) }}</span>
 										</li>

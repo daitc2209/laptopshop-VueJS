@@ -107,15 +107,18 @@ export default {
         async getRevenueProducts(chart) {
             try{
                 const res = await revenueApi.getRevenueProducts()
-                this.revenue = res.data.revenueProduct
-                    
+                // this.revenue = res.data.revenueProduct
+                this.revenue =this.sortedProducts(res.data.revenueProduct)
                 this.updateChart(this.revenue, chart)
             }
             catch(err){
                 console.log("err: "+err)
             }
         },
-
+        sortedProducts(data) {
+            // Sắp xếp mảng sản phẩm theo số lượng giảm dần
+            return data.slice().sort((a, b) => b.amount - a.amount);
+        },
         PaginationButton(page) {
             return {
                 page,

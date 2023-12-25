@@ -17,7 +17,7 @@
 					<div>
 						<h3>Welcome Back!!</h3>
 	                	<p>Login Account</p>
-						<a href="/auth/sign-in"><button id="btn">Sign in</button></a>
+						<button @click="click" id="btn">Sign in</button>
 					</div>
 				</div>
 				<div class="col-md-8 col-12 p-0" id="side2">
@@ -66,6 +66,9 @@ export default {
 		};
     },
     methods: {
+		click(){
+			this.$router.push("/auth/sign-in")
+		},
 		signUp(){
 			if(this.user.fullname != "" || this.user.username != "" || this.user.email !="" || this.user.password != "" || this.user.address != "")
 			{

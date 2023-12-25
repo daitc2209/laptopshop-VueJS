@@ -1,7 +1,7 @@
 <template>
-	<aside class="main-sidebar sidebar-dark-primary elevation-4">
+	<aside class="main-sidebar menu-admin">
 		<a href="/home" class="brand-link" style="text-align: center;">
-			<span class="brand-text font-weight-light">TCD Laptopshop</span>
+			<span class="brand-text" style="font-weight: 800;">TCD Laptopshop</span>
 		</a>
 		<div class="sidebar">
 			<div class="user-panel mt-3 pb-3 mb-3 d-flex">
@@ -64,6 +64,13 @@
 							Products
 						</a>
 					</li>
+					<label for="" style="color: #fff;">Quản trị</label>
+					<li class="nav-item">
+						<a href="/admin" class="nav-link">
+							<i class="nav-icon fa-solid fa-bars"></i>
+							Admin
+						</a>
+					</li>
 					<div class="brand-link"></div>
 					<li class="nav-item">
 						<a @click="logout()" class="nav-link" style="cursor: pointer;">
@@ -109,4 +116,8 @@ export default {
 }
 </script>
   
-<style></style>
+<style>
+.menu-admin{
+	background-color: #1c1c50;
+}
+</style>

@@ -1,39 +1,95 @@
 <template>
-  <div>
-    <head><title>Admin Home Page</title></head>
-	<div id="toast">
-    </div>	
-    <section class="content-header">
-			<div class="container-fluid">
-				<div class="row mb-2">
-					<div class="col-sm-6">
-						<h1>Admin</h1>
-					</div>
-					<div class="col-sm-6">
-						<ol class="breadcrumb float-sm-right">
-							<li class="breadcrumb-item"><a href="#">Home</a></li>
-						</ol>
-					</div>
-					<select class="form-control form-select" v-model="this.select" @change="updateSelect()">
-						<option selected="selected" value="1">Thống kê theo năm</option>
-						<option value="2">Thống kê theo khoảng ngày</option>
-					</select>
-					<div class="d-flex">
-						<ul v-if="this.select==1">
-							<label for="">Thống kê doanh thu theo năm</label>
-							<li @click="update(year)" style="cursor: pointer; width: 300px;" v-for="year in years" :key="year" :value="year">Năm {{ year }}: {{ this.revenueWithYear[year] }}</li>
-	
-						</ul>
-						<ul v-if="this.select==2">
-							<div class="statistical">
-								<label class="statistical-from" for="startDate">Từ ngày:</label>
-								<VueDatePicker v-model="startDate" format="yyyy-MM-dd"></VueDatePicker>
+	<div>
 
-								<label class="statistical-from" for="endDate">Đến ngày:</label>
-								<VueDatePicker v-model="endDate" format="yyyy-MM-dd"></VueDatePicker>
-								<button class="statistical-btn btn btn-primary" @click="thongKe">Thống kê</button>
+		<head>
+			<title>Admin Home Page</title>
+		</head>
+		<div id="toast">
+		</div>
+		<section class="content-header">
+			<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Trang chủ</h1>
+						</div>
+						<div class="row gy-4 mb-3">
+						<!-- Congratulations card -->
+						<div class="col-md-12 col-lg-3">
+							<div class="card">
+								<div class=" card-body">
+									<div class="card-circle">
+										<i class="card-icon fa-solid fa-calendar"></i>
+									</div>
+									<div class="card-content">
+										<h4 class="card-label">DOANH THU (THÁNG)</h4>
+										<p class="mb-2 pb-1">{{ formatCurrency(card.revenue_month) }}</p>
+									</div>
+								</div>
 							</div>
-						</ul>
+						</div>
+						<div class="col-md-12 col-lg-3">
+							<div class="card">
+								<div class="card-body">
+									<div class="card-circle">
+										<i class="card-icon fa-solid fa-hand-holding-dollar"></i>
+									</div>
+									<div class="card-content">
+										<h4 class="card-label">DOANH THU (NĂM)</h4>
+										<p class="mb-2 pb-1">{{ formatCurrency(card.revenue_year) }}</p>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-12 col-lg-3">
+							<div class="card">
+								<div class="card-body">
+									<div class="card-circle">
+										<i class="card-icon fa-solid fa-user"></i>
+									</div>
+									<div class="card-content">
+										<h4 class="card-label">Khách hàng</h4>
+										<p class="mb-2 pb-1">{{ card.numUser }}</p>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-12 col-lg-3">
+							<div class="card">
+								<div class="card-body">
+									<div class="card-circle">
+										<i class="card-icon fa-solid fa-clipboard"></i>
+									</div>
+									<div class="card-content">
+										<h4 class="card-label">Đơn hàng chờ xử lý</h4>
+										<p class="mb-2 pb-1">{{ card.numOrder }}</p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="d-flex">
+						<div class="filter-statistical">
+							<select class="form-control form-select" v-model="this.select" @change="updateSelect()">
+								<option selected="selected" value="1">Thống kê theo tháng</option>
+								<option value="2">Thống kê theo khoảng ngày</option>
+							</select>
+							<ul v-if="this.select == 1">
+								<label style="padding-top: 10px;">Thống kê doanh thu theo năm</label>
+								<li @click="update(year)" style="cursor: pointer; width: 300px;" v-for="year in years"
+									:key="year" :value="year">Năm {{ year }}: {{ this.revenueWithYear[year] }}</li>
+
+							</ul>
+							<ul v-if="this.select == 2">
+								<div class="statistical">
+									<label class="statistical-from" for="startDate">Từ ngày:</label>
+									<VueDatePicker v-model="startDate" format="yyyy-MM-dd"></VueDatePicker>
+
+									<label class="statistical-from" for="endDate">Đến ngày:</label>
+									<VueDatePicker v-model="endDate" format="yyyy-MM-dd"></VueDatePicker>
+									<button class="statistical-btn btn btn-primary" @click="thongKe">Thống kê</button>
+								</div>
+							</ul>
+						</div>
 						<div style="width: 1000px; height: 600px;">
 							<canvas id="myChart"></canvas>
 						</div>
@@ -41,7 +97,7 @@
 				</div>
 			</div>
 		</section>
-</div>
+	</div>
 </template>
 
 <script>
@@ -52,31 +108,37 @@ import revenueApi from '../../../service/revenue';
 import { showErrorToastMess, showErrorToast } from "../../../assets/web/js/main";
 export default {
 	components: {
-		VueDatePicker 
+		VueDatePicker
 	},
-	data(){
+	data() {
 		return {
 			select: 1,
-      		years: [],
+			years: [],
 			revenue: [],
 			revenueWithYear: {},
 			myChart: null,
 			startDate: null,
 			endDate: null,
+			card:{
+				month: new Date().getMonth() + 1,
+				year: new Date().getFullYear(),
+				revenue_month:null,
+				revenue_year:null,
+				numUser:null,
+				numOrder:null
+			}
 		}
 	},
 
 	methods: {
 		async getRevenue() {
-            try{
-				console.log("select: " + this.select)
+			try {
 				const res = await revenueApi.getRevenue()
 
 				this.revenue = res.data.revenue
-				console.log(this.revenue)
 
 				this.revenue.forEach(revenue => {
-					if(!this.years.includes(revenue.year))
+					if (!this.years.includes(revenue.year))
 						this.years.push(revenue.year)
 				})
 				this.revenue.forEach(r => {
@@ -92,50 +154,63 @@ export default {
 						this.revenueWithYear[year] = totalMoney;
 					}
 				});
+				if(this.revenueWithYear.hasOwnProperty(this.card.year))
+					this.card.revenue_year = this.revenueWithYear[this.card.year]
+				this.updateChart(this.revenue, this.years[this.years.length - 1])
 
-				this.updateChart(this.revenue, this.years[this.years.length-1])
-			
-            }
-            catch(err){
-                console.log("err: "+err)
-            }
-        },
-		init(){
-            const ctx = document.getElementById("myChart")
+			}
+			catch (err) {
+				console.log("err: " + err)
+			}
+		},
+		async getCard() {
+			try {
+				const res = await revenueApi.getCard()
+
+				this.card.numUser = res.data.numUser
+				this.card.numOrder = res.data.numOrder
+			}
+			catch (err) {
+				console.log("err: " + err)
+			}
+		},
+		init() {
+			const ctx = document.getElementById("myChart")
 
 			if (!ctx) {
 				console.error("Không tìm thấy phần tử có ID là 'myChart'.");
 				return;
 			}
 
-            const labels = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'];
+			const labels = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'];
 			const data = {
 				labels: labels,
 				datasets: [{
 					label: 'Tổng doanh thu',
 					data: [65, 59, 80, 81, 56, 55, 40],
 					backgroundColor: [
-					'rgba(255, 99, 132, 0.2)',
-					'rgba(255, 159, 64, 0.2)',
+						'rgba(255, 99, 132, 0.2)',
+						'rgba(255, 159, 64, 0.2)',
 					],
 					borderColor: [
-					'rgb(255, 99, 132)',
-					'rgb(255, 159, 64)',
+						'rgb(255, 99, 132)',
+						'rgb(255, 159, 64)',
 					],
 					borderWidth: 1
 				}]
 			};
 
-            const chart = new Chart(ctx ,{
-                type: 'bar',
-                data: data,
-            });
+			const chart = new Chart(ctx, {
+				type: 'bar',
+				data: data,
+			});
 			Object.seal(chart)
 			this.myChart = chart
-            this.getRevenue(this.myChart)
-        },
-		updateChart(data, year){
-            const revenueData = new Array(12).fill(0);
+			this.getRevenue(this.myChart)
+			this.getCard()
+		},
+		updateChart(data, year) {
+			const revenueData = new Array(12).fill(0);
 			for (let i = 0; i < data.length; i++) {
 				if (data[i] == null || data[i] === "") {
 					continue;
@@ -145,6 +220,8 @@ export default {
 					}
 				}
 			}
+		
+				this.card.revenue_month = revenueData[this.card.month-1]
 			// Tạo một mảng màu sắc tương ứng với số lượng label
 			const colors = this.generateColors(this.myChart.data.labels.length);
 
@@ -155,42 +232,42 @@ export default {
 
 			// Cập nhật biểu đồ
 			this.myChart.update();
-        },
-
-		update(year){
-			this.updateChart(this.revenue,year)
 		},
 
-        generateColors(count) {
-            const colors = [];
+		update(year) {
+			this.updateChart(this.revenue, year)
+		},
 
-            for (let i = 0; i < count; i++) {
-                const color = `rgb(${this.getRandomValue(0, 255)}, ${this.getRandomValue(0, 255)}, ${this.getRandomValue(0, 255)})`;
-                colors.push(color);
-            }
+		generateColors(count) {
+			const colors = [];
 
-            return colors;
-        },
-        getRandomValue(min, max) {
-            return Math.floor(Math.random() * (max - min + 1) + min);
-        },
+			for (let i = 0; i < count; i++) {
+				const color = `rgb(${this.getRandomValue(0, 255)}, ${this.getRandomValue(0, 255)}, ${this.getRandomValue(0, 255)})`;
+				colors.push(color);
+			}
+
+			return colors;
+		},
+		getRandomValue(min, max) {
+			return Math.floor(Math.random() * (max - min + 1) + min);
+		},
 		async thongKe() {
 			let start = this.formatDate(this.startDate)
 			let end = this.formatDate(this.endDate)
-			let data = {start,end}
+			let data = { start, end }
 			if (start > end) {
 				let error = 'Ngày bắt đầu không được lớn hơn ngày kết thúc.';
 				showErrorToastMess(error)
 			} else {
-				try{
+				try {
 					const res = await revenueApi.getStatistical(data)
 					this.revenue = res.data.revenueDay
 					this.updateChartByDay(this.revenue)
 
 				}
-				catch(err){
+				catch (err) {
 					showErrorToastMess("loi r")
-					console.log("err: "+err)
+					console.log("err: " + err)
 				}
 			}
 		},
@@ -202,6 +279,14 @@ export default {
 			const month = ('0' + (formattedDate.getMonth() + 1)).slice(-2);
 			const year = formattedDate.getFullYear();
 			return `${year}-${month}-${day} ${hours}:${minutes}`;
+		},
+
+		formatCurrency(value) {
+			const formatter = new Intl.NumberFormat("vi-VN", {
+			style: "currency",
+			currency: "VND",
+			});
+			return formatter.format(value);
 		},
 
 		updateChartByDay(data) {
@@ -243,38 +328,68 @@ export default {
 			this.myChart.update();
 		},
 
-		updateSelect(){
-			if(this.select == 1){
+		updateSelect() {
+			if (this.select == 1) {
 				this.getRevenue()
 			}
-			if(this.select == 2)
-				console.log("select: "+this.select)
+			if (this.select == 2)
+				console.log("select: " + this.select)
 		}
 	},
 
-
-	mounted(){
-		if(!sessionStorage.getItem("login") && sessionStorage.getItem("role")!="ROLE_ADMIN")
-		{
+	mounted() {
+		if (!sessionStorage.getItem("login") && sessionStorage.getItem("role") != "ROLE_ADMIN") {
 			// window.location.href = "/auth/sign-in"
 			this.$router.push("/auth/sign-in")
-			sessionStorage.setItem("auth",true)
+			sessionStorage.setItem("auth", true)
 		}
-		if(this.select == 1)
+		if (this.select == 1)
 			this.init()
 	}
 }
 </script>
 
 <style>
-.statistical{
+.statistical {
 	margin: 20px 20px 0 0;
 }
-.statistical-from{
+
+.statistical-from {
 	margin: 4px 0;
 }
-.statistical-btn{
+
+.statistical-btn {
 	margin-top: 8px;
 	border-color: #fff;
+}
+.filter-statistical{
+	width: 340px;
+	margin-right: 30px;
+}
+
+.card-body{
+	display: flex;
+	border-left: 2px solid blue;
+	border-radius: 4px;
+}
+.card-circle{
+	margin-right: 16px;
+	width: 65px;
+    height: 65px;
+    border: 4px solid #A9C7F7;
+    border-radius: 50%;
+}
+.card-content .card-label{
+	padding: 4px 0;
+	font-size: 19px;
+	color: #3C434D;
+}
+.card-icon{
+	width: 100%;
+    height: 100%;
+	color: #4D91FC;
+    font-size: 35px;
+    text-align: center;
+    margin-top: 10px;
 }
 </style>

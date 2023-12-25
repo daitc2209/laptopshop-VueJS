@@ -53,7 +53,7 @@
 				<a href="/user/profile"><i class="fa-solid fa-address-card"></i></a> -->
 			</template >
 			<div class="header__navbar-item header__navbar-user">
-				<a href="/cart"><i class="header__navbar-item-link fa-solid fa-cart-shopping"></i></a>
+				<div @click="click()"><i class="header__navbar-item-link fa-solid fa-cart-shopping"></i></div>
 			</div>
 		</div>
 	</div>
@@ -75,6 +75,9 @@ export default {
 		};
   	},
 	methods: {
+		click(){
+			this.$router.push("/cart")
+		},
 		logout(){
 			axios.defaults.headers.Authorization = `Bearer ${sessionStorage.getItem("jwtToken")}`;
 			Users.logout(sessionStorage.getItem("jwtToken"))
@@ -121,62 +124,6 @@ export default {
 	
 }
 
-/* .top-icons {
-	position: relative;
-	display: flex;
-	margin-bottom: 0px;
-}
-
-.top-icons li{
-	position: relative;
-	list-style: none;
-	margin: 0 20px;
-	cursor: pointer;
-}
-.top-icons li a {
-	text-decoration: none;
-}
-
-.top-icons li a .fa-brands{
-	font-size: 20px;
-	color: #222;
-}
-
-.top-icons li::before {
-	font-family: "FontAwesome";
-	position: absolute;
-	top: 0;
-	left: 0;
-	font-size: 20px;
-	height: 0;
-	overflow: hidden;
-	transition: 0.5s ease-in-out;
-	margin: -4px 0 0 10px;
-}
-
-.top-icons li:nth-child(1)::before {
-	content: "\f16d";
-	background-image: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%, #cc2366 75%,#bc1888 100%);
-	-webkit-background-clip: text;
-	-webkit-text-fill-color: transparent;
-	border-bottom: 4px solid #dc2743;
-}
-
-.top-icons li:nth-child(2)::before {
-	content: "\f09a";
-	color: #25D366;
-	border-bottom: 4px solid #25D366;
-}
-
-.top-icons li:nth-child(3)::before {
-	content: "\f099";
-	color: #1DA1F2;
-	border-bottom: 4px solid #1DA1F2;
-}
-
-.top-icons li:hover::before {
-	height: 110%;
-} */
 .header__navbar-list{
     list-style-type: none;
     padding-left: 0;

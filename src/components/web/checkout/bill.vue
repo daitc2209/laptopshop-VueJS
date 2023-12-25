@@ -82,12 +82,12 @@
 							<div class="place-order py-4">
 								<div class="order-total">
 									<ul class="order-table p-0">
-										<li><span>Sản phẩm</span><span>Số lượng</span><span>Giá gốc</span><span>Discount</span><span>Giá</span></li>
+										<li><span>Sản phẩm</span><span>Số lượng</span><span>Giá</span><span>Discount</span><span>Tổng</span></li>
 										<div v-for="item in orderdetail" v-bind:key="item.id">
 											<li class="fw-normal">
 												<span><img :src="`/src/images/product/` + item.product.img" style="width: 50px; height: 50px;"/></span>
 												<span>{{item.num}}</span>
-												<span>{{formatCurrency(item.product.price*item.num)}}</span>
+												<span>{{formatCurrency(item.product.price)}}</span>
 												<span>{{item.product.discount}}%</span>
 												<span>{{formatCurrency(item.totalPrice)}}</span>
 											</li>

@@ -65,7 +65,7 @@
 										<li class="subtotal">Total quantity <span v-if="listCart">{{totalQuantity}}</span></li>
 										<li class="cart-total">Total price <span v-if="listCart">{{ formatCurrency(totalMoney) }}</span></li>
 									</ul>
-									<a href='/order' class="proceed-btn">PROCEED TO ORDER</a>
+									<a @click="click" class="proceed-btn">PROCEED TO ORDER</a>
 								</div>
 							</div>
 						</div>
@@ -91,6 +91,10 @@ export default {
         };
     },
     methods: {
+		click(e){
+			e.preventDefault()
+			this.$router.push("/order")
+		},
 		formatCurrency(value) {
 			const formatter = new Intl.NumberFormat("vi-VN", {
 				style: "currency",

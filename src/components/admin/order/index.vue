@@ -22,49 +22,98 @@
 		<section class="search">
 			<div id="toast">
     		</div>
-			<div class="container">
-				<form @submit.prevent="search(currentPage,formSearchOrder)">
-					<h5 class="px-3 mb-4">Form tìm kiếm</h5>
-					<div class="row">
-						<div class="col-12  px-4">
-							<div class="form-group ">
-								<label class="col-form-label">Tên người đặt:</label>
-								<input type="text" v-model="formSearchOrder.name" class="form-control">
-							</div>
-							<div class="form-group">
-								<label for="inputPassword6" class="col-form-label">Hình thức thanh toán:</label>
-								<select class="form-control form-select" v-model="formSearchOrder.payment">
-									<option selected="selected" value=""></option>
-									<option value="COD">COD</option>
-									<option value="TRANSFER">Chuyển khoản</option>
-								</select>
-							</div>
-							<div class="form-group  ">
-								<label for="">Trạng thái đơn hàng:</label> 
-								<select class="form-control form-select" v-model="formSearchOrder.status">
-									<option selected="selected" value=""></option>
-									<option value="PENDING">PENDING</option>
-									<option value="CONFIRMED">CONFIRMED</option>
-									<option value="DELIVERING">DELIVERING</option>
-									<option value="RECEIVED">RECEIVED</option>
-									<option value="CANCELLED">CANCELLED</option>
-								</select>
-							</div>
+				<div class="card-container container">
+					<div class="card-item">
+						<div class="card-circle">
+							<i class="card-icon fa-solid fa-clipboard"></i>
 						</div>
-						<div class="d-flex justify-content-center pr-4 mb-3">
-							<button class="btn btn-primary px-4" type="submit">Tìm kiếm</button>
+						<div class="card-status">
+							<h4 class="card-label">Tất cả đơn</h4>
+							<p class="mb-2 pb-1"><strong>{{ orderStatus.order_pending + orderStatus.order_confirmed + orderStatus.order_delivering + orderStatus.order_received + orderStatus.order_cancelled }}</strong> Đơn</p>
 						</div>
 					</div>
-				</form>
-			</div>
+					<div class="card-item">
+						<div class="card-circle pending">
+							<i class="card-icon pending fa-solid fa-bell"></i>
+						</div>
+						<div class="card-status">
+							<h4 class="card-label">Chờ xác nhận</h4>
+							<p class="mb-2 pb-1"><strong>{{ orderStatus.order_pending }}</strong> Đơn</p>
+						</div>
+					</div>
+					<div class="card-item">
+						<div class="card-circle confirmed">
+							<i class="card-icon confirmed fa-solid fa-clock"></i>
+						</div>
+						<div class="card-status">
+							<h4 class="card-label">Đã xác nhận</h4>
+							<p class="mb-2 pb-1"><strong>{{ orderStatus.order_confirmed }}</strong> Đơn</p>
+						</div>
+					</div>
+					<div class="card-item">
+						<div class="card-circle delivering">
+							<i class="card-icon delivering fa-solid fa-truck-fast"></i>
+						</div>
+						<div class="card-status">
+							<h4 class="card-label">Đang vận chuyển</h4>
+							<p class="mb-2 pb-1"><strong>{{ orderStatus.order_delivering }}</strong> Đơn</p>
+						</div>
+					</div>
+					<div class="card-item">
+						<div class="card-circle received">
+							<i class="card-icon received fa-solid fa-circle-check"></i>
+						</div>
+						<div class="card-status">
+							<h4 class="card-label">Đã giao</h4>
+							<p class="mb-2 pb-1"><strong>{{ orderStatus.order_received }}</strong> Đơn</p>
+						</div>
+					</div>
+					<div class="card-item">
+						<div class="card-circle cancelled">
+							<i class="card-icon cancelled fa-solid fa-circle-xmark"></i>
+						</div>
+						<div class="card-status">
+							<h4 class="card-label">Đã hủy</h4>
+							<p class="mb-2 pb-1"><strong>{{ orderStatus.order_cancelled }}</strong> Đơn</p>
+						</div>
+					</div>
+				</div>
 		</section>
 
 		<section class="content">
-
-			<!-- Default box -->
 			<div class="card">
 				<div class="card-header">
-					<h3 class="card-title">Danh sách đơn hàng</h3>
+					<h3 class="card-title" style="padding-bottom: 10px;">Trạng thái đơn hàng</h3>
+					<div class="order-container__status">
+						<div class="order-status">
+							<button @click="getOrderByStatus('all')" id="btn-all" class="order-status__item active">Tất cả</button>
+							<button @click="getOrderByStatus('pending')" id="btn-pending" class="order-status__item">Chờ xác nhận</button>
+							<button @click="getOrderByStatus('confirmed')" id="btn-confirmed" class="order-status__item">Đã xác nhận</button>
+							<button @click="getOrderByStatus('delivering')" id="btn-delivering" class="order-status__item">Đang vận chuyển</button>
+							<button @click="getOrderByStatus('received')" id="btn-received" class="order-status__item">Đã giao</button>
+							<button @click="getOrderByStatus('cancelled')" id="btn-cancelled" class="order-status__item">Đã hủy</button>
+						</div>
+					</div>
+					
+					<div class="order-range">
+						<div class="order-search">
+							<i class="fas fa-search"></i>
+							<input type="text" class="order-search__input" v-model="search_text" placeholder="Tên/ Mã đơn hàng/ Hình thức thanh toán">
+						</div>
+						<div>
+							<div class="order-date">
+								<label class="order-range__from" for="startDate">Từ </label>
+								<div class="date-picker">
+									<VueDatePicker v-model="startDate" format="yyyy-MM-dd"></VueDatePicker>
+								</div>
+							</div>
+							<div class="order-date">
+								<label class="order-range__from" for="endDate">Đến </label>
+								<VueDatePicker v-model="endDate" format="yyyy-MM-dd"></VueDatePicker>
+							</div>
+							<button class="order-range__btn btn btn-primary" @click="search()">Tìm kiếm</button>
+						</div>
+					</div> 
 				</div>
 				<div class="card-body">
 					<table class="text-center order-table">
@@ -155,12 +204,12 @@
 																					<h4>Thông tin sản phẩm</h4>
 																					<div class="order-total">
 																						<ul class="order-table p-0">
-																							<li><span>id</span><span>Sản phẩm</span><span>Số lượng</span><span>Giá gốc</span><span>Discount</span><span>Giá</span></li>
+																							<li><span>id</span><span>Sản phẩm</span><span>Số lượng</span><span>Giá</span><span>Discount</span><span>Tổng</span></li>
 																							<span v-for="items in item.orderdetail" :key="items.id">
 																								<li class="fw-normal"><span>#{{items.product.id}}</span>
 																								<span><img :src="`/src/images/product/${items.product.img}`" width="50px" height="50px" />{{items.product.name}}</span> 
 																								<span>{{items.num}}</span>
-																								<span>{{ formatCurrency(items.product.price*items.num) }}</span>
+																								<span>{{ formatCurrency(items.product.price) }}</span>
 																								<span>{{ items.product.discount }}%</span>
 																								<span>{{formatCurrency(items.totalPrice)}}</span></li>
 																							</span>
@@ -244,35 +293,66 @@
 </template>
 
 <script>
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css'
 import Order from '../../../service/Order';
 import { showSuccessToast, showErrorToast } from "../../../assets/web/js/main";
 export default {
+	components: {
+		VueDatePicker
+    },
     data(){
         return {
 			order: [],
-            formSearchOrder: [],
+            search_text: '',
+			startDate: null,
+			endDate: null,
+			status:'all',
 			currentPage:'',
 			totalPage:'',
 			paginationButtons:[],
-			orderDto:{}
+			orderDto:{},
+			orderStatus:{}
         }
     },
     methods: {
-		getListOrder(){
-			Order.getListOrder(this.currentPage,
-				this.formSearchOrder.name,
-				this.formSearchOrder.payment,
-				this.formSearchOrder.status)
-				.then(res => {
-						this.order = res.data.data.listOrders.content
-						this.totalPage = res.data.data.listOrders.totalPages
-						this.currentPage = res.data.data.currentPage
-						this.setupPagination(this.totalPage)
-						console.log("type of status: "+typeof(this.order.status))
+		getAllOrderByStatus(){
+			Order.getAllOrderByStatus()
+				.then(res=>{
+					this.orderStatus = res.data.data
 				})
-				.catch(err => {
-					this.order = false
+				.catch(err=>{
+					console.log("loi khi lay tat ca don hang cua cac trang thai: "+err)
 				})
+		},
+
+		getOrderByStatus(data){
+			var buttons = document.getElementsByClassName('order-status__item');
+			for (var i = 0; i < buttons.length; i++) {
+				buttons[i].classList.remove('active');
+			} 
+			var selectedButton = document.getElementById('btn-' + data);
+				selectedButton.classList.add('active');
+
+			//Kiểm tra xem trạng thái đơn hàng có thay đổi không, nếu có thì đặt lại page
+			this.currentPage = this.status !== data ? 1 : this.currentPage;
+			this.status = data
+
+			if(this.startDate !== null || this.endDate !== null){
+				this.search()
+			}
+			else{
+				Order.getListOrderByStatus(this.currentPage,this.search_text,this.status)
+					.then(res => {
+							this.order = res.data.data.listOrders
+							this.totalPage = res.data.data.totalPage
+							this.currentPage = res.data.data.currentPage
+							this.setupPagination(this.totalPage)
+					})
+					.catch(err => {
+						this.order = false
+					})
+			}
 		},
 		getOrder(id){
 			Order.getOrderById(id)
@@ -285,7 +365,6 @@ export default {
 				})
 		},
         clickVerifyOrder(item){
-			console.log("item: "+item.stateCheckout)
 			Order.verify(item.id,item.stateOrder)
 				.then(res => {
 					let mess=''
@@ -293,23 +372,44 @@ export default {
 					{
 						mess='Sửa thành công'
 						this.showToastr(1,mess)
-						this.getListOrder()
+						this.getOrderByStatus(this.status)
 					}
 					if(res.data.error){
 						mess='Có lỗi xảy ra'
 						this.showToastr(0,mess)
 					}
 					bootstrap.Modal.getInstance(document.getElementById("vertify"+item.id)).hide()
-			
 				})
 				.catch(err => {
 					console.log("err: "+err)
 				})
 		},
-		search(currentPage,formSearchOrder){
-			console.log("type of formSearchOrder: "+typeof(this.formSearchOrder.status))
-			console.log("formSearchOrder: "+this.formSearchOrder.status)
-			this.getListOrder(currentPage,formSearchOrder.name,formSearchOrder.payment,formSearchOrder.stateOrder)
+		search(){
+			let start = null
+			let end = null
+			if(this.startDate !== null || this.endDate !== null)
+			{
+				start = this.formatDate(this.startDate)
+				end = this.formatDate(this.endDate)
+			}
+			let status = this.status
+			let search_text = this.search_text
+			let data = {search_text,start,end,status}
+			if (start > end) {
+				let error = 'Ngày bắt đầu không được lớn hơn ngày kết thúc.';
+				showErrorToastMess(error)
+			} else {
+				Order.findByRangeDay(1,data)
+					.then(res=>{
+							this.order = res.data.data.listOrders
+							this.totalPage = res.data.data.totalPage
+							this.currentPage = res.data.data.currentPage
+							this.setupPagination(this.totalPage)
+					})
+					.catch(err=>{
+						console.log("err: "+err)
+					})
+			}
 		},
 
 		formatDate(date) {
@@ -335,15 +435,13 @@ export default {
 			
 			if(condition == false)
 				showErrorToast(message)
-			
         },
         PaginationButton (page) {
 			return {
 				page,
 				isActive: this.currentPage === page,
 				handleClick: async () => {
-					console.log("page: "+page)
-					await this.loadOrders(page);
+					await this.loadOrders(page,this.search_text,this.status);
 				},
 			};
 		},
@@ -355,29 +453,204 @@ export default {
 				this.paginationButtons.push(i);
 			}
 		},
-		async loadOrders(page) {
-				Order.getListOrder(page)
+		async loadOrders(page, search_text, status) {
+			if(this.startDate !== null || this.endDate !== null){
+				let start = this.formatDate(this.startDate)
+				let end = this.formatDate(this.endDate)
+				let data = {search_text,start,end,status}
+				if (start > end) {
+					let error = 'Ngày bắt đầu không được lớn hơn ngày kết thúc.';
+					showErrorToastMess(error)
+				} else {
+					Order.findByRangeDay(page,data)
+						.then(res=>{
+								this.order = res.data.data.listOrders
+								this.totalPage = res.data.data.totalPage
+								this.currentPage = res.data.data.currentPage
+						})
+						.catch(err=>{
+							console.log("err: "+err)
+						})
+				}
+			}
+			else{
+				Order.getListOrderByStatus(page,search_text,status)
 				.then(res => {
-					this.order = res.data.data.listOrders.content
-					this.totalPage = res.data.data.listOrders.totalPages
+					this.order = res.data.data.listOrders
+					this.totalPage = res.data.data.totalPage
 					this.currentPage = res.data.data.currentPage
 				})
 				.catch(err => {console.log("err: "+err)})
+			}
     	},
+		init(){
+			this.getAllOrderByStatus();
+			this.getOrderByStatus(this.status)
+		}
     },
+	watch: {
+		search_text () {
+			this.getOrderByStatus(this.status);
+		}
+	},
 	mounted(){
 		if(!sessionStorage.getItem("login") && sessionStorage.getItem("role")!="ROLE_ADMIN")
 		{
-			// window.location.href = "/auth/sign-in"
 			this.$router.push("/auth/sign-in")
 			sessionStorage.setItem("auth",true)
 		}
 		else
-			this.getListOrder()
+			this.init()
 	}
 }
 </script>
 
 <style>
+.card-container{
+	display: flex;
+	border: 0 solid rgba(0,0,0,.125);
+    border-radius: 0.25rem;
+	background-color: #fff;
+	box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2);
+    margin-bottom: 16px;
+}
+.card-container.container{
+	max-width: 1600px;
+}
 
+.card-item{
+	width: 300px;
+	height: 70px;
+	display: flex;
+	margin: 16px 0 16px 16px;
+	justify-content: center;
+	align-content: center;
+	padding-right: 16px;
+	border-right: 1px solid 
+}
+.card-item:last-of-type{
+	border-right: none 
+}
+.card-item .card-circle{
+	margin-right: 16px;
+	width: 65px;
+    height: 65px;
+    border: 4px solid #A9C7F7;
+    border-radius: 50%;
+}
+.card-icon{
+	width: 100%;
+    height: 100%;
+	color: #4D91FC;
+    font-size: 35px;
+    text-align: center;
+    margin-top: 10px;
+}
+.card-item .card-circle.pending{
+    border: 4px solid #EFC2C3;
+}
+.card-item .card-circle.confirmed{
+    border: 4px solid #EFC2C3;
+}
+.card-item .card-circle.delivering{
+    border: 4px solid #F1DA88;
+}
+.card-item .card-circle.received{
+    border: 4px solid #B8E693;
+}
+.card-item .card-circle.cancelled{
+    border: 4px solid #B7BDC4;
+}
+.card-icon.pending{
+	color: #EB4746;
+}
+.card-icon.confirmed{
+	color: #EB4746;
+}
+.card-icon.delivering{
+	color: #F3C003;
+}
+.card-icon.received{
+	color: #73D619;
+}
+.card-icon.cancelled{
+	color: #667281;
+}
+.card-status .card-label{
+	padding: 4px 0;
+	font-size: 19px;
+	color: #3C434D;
+}
+
+
+/* Order Status */
+.order-container__status{
+    width: 100%;
+    overflow: auto;
+    padding: 10px 0;
+    top: 64px;
+    background-color: #f4f6f8;
+	margin-bottom: 10px;
+}
+.order-status{
+	display: flex;
+	grid-gap: 10px;
+    gap: 10px;
+	width: fit-content;
+    padding: 5px 10px;
+    margin: auto;
+}
+.order-status__item{
+	font-size: 18px;
+	padding: 7px 15px;
+    border: 1px solid #eaedef;
+    border-radius: 5px;
+    white-space: nowrap;
+    background-color: #fff;
+    cursor: pointer;
+}
+.order-status__item.active{
+	background-color: #1c1c50;
+	color: #fff;
+}
+
+.order-range{
+	display: flex;
+	justify-content: space-between;
+	margin: 10px 0 !important;
+	position: relative;
+}
+.order-date{
+	display: inline-flex;
+	align-items: center;
+	margin-right: 20px;
+}
+.order-date:first-of-type{
+	justify-content: start;
+}
+.order-range__from{
+    font-weight: 700;
+	margin-right: 10px;
+}
+.date-picker{
+	width: calc(100%-30%);
+}
+
+.order-search i {
+  position: absolute;
+  left: 5px; /* Khoảng cách từ biểu tượng đến viền trái của phần tử input */
+  top: 50%;
+  transform: translateY(-50%);
+}
+.order-search__input {
+  padding-left: 30px;
+  width: 400px;
+  line-height: 40px;
+  font-size: 18px;
+  border: none;
+  border-bottom: 1px solid;
+}
+.order-search__input:focus{
+  outline: none;
+}
 </style>

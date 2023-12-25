@@ -43,14 +43,6 @@
 								<label for="inputPassword6" class="col-form-label">Address:</label>
 								<input type="text" v-model="formSearchUser.address" class="form-control" />
 							</div>
-							<div class="form-group d-flex justify-content-between">
-								<label for="inputPassword6" class="col-form-label">Role:</label>
-								<select class="form-control form-select" v-model="formSearchUser.role">
-									<option selected="selected" value="0"></option>
-									<option value="1">ROLE_ADMIN</option>
-									<option value="2">ROLE_USER</option>
-								</select>
-							</div>
 						</div>
 						<div class="col-6 right px-4">
 							<div class="form-group d-flex justify-content-between">
@@ -109,7 +101,6 @@
 								<th>Address</th>
 								<th>State User</th>
 								<th>Auth Type</th>
-								<th>Role</th>
 								<th>Action</th>
 							</tr>
 						</thead>
@@ -127,7 +118,6 @@
 										<td class="td7"><h6>{{item.address}}</h6></td>
 										<td class="td8"><h6>{{item.stateUser}}</h6></td>
 										<td class="td9"><h6>{{item.authType}}</h6></td>
-										<td class="td10"><h6>{{item.role}}</h6></td>
 										<td class="td11">
 											<a data-bs-toggle="modal" @click="getEditUser(item.id)" :data-bs-target="`#edit`+item.id" class="btn btn-sm btn-primary">Edit</a> 
 											<a v-if="item.lock==true" data-bs-toggle="modal" :data-bs-target="'#lock'+ item.id" class="btn btn-sm btn-danger">Lock</a>
@@ -232,14 +222,6 @@
 									<label for="">Password</label> 
 									<input autocomplete="" type="password" v-model="formAddUser.password" class="form-control" required="required" />
 								</div>
-								<div class="form-group">
-									<label for="">Role</label> 
-									<select class="form-control form-select" v-model="formAddUser.role" required="required">
-										<option hidden="" value="0"></option>
-										<option value="1">ROLE_ADMIN</option>
-										<option value="2">ROLE_USER</option>
-									</select>
-								</div>
 							</div>
 						</div>
 						<div class="modal-footer">
@@ -298,21 +280,6 @@
 										</select>
 									</div>
 									<div class="form-group">
-										<label for="">AuthType</label> 
-										<select class="form-control form-select" id="authTypeEdit" v-model="formEditUser.authType" required="required">
-											<option value="DATABASE">DATABASE</option>
-											<option value="GOOGLE">GOOGLE</option>
-											<option value="FACEBOOK">FACEBOOK</option>
-										</select>
-									</div>
-									<div class="form-group">
-										<label for="">Role</label> 
-											<select class="form-control form-select" id="roleEdit" v-model="formEditUser.role" required="required">
-											<option value="ROLE_ADMIN">ROLE_ADMIN</option>
-											<option value="ROLE_USER">ROLE_USER</option>
-										</select>
-									</div>
-									<div class="form-group">
 										<label for="">Img</label> 
 										<input hidden="" type="text" v-model="formEditUser.img" id="imgEdit" /> 
 										<input class="form-control" @change="chooseFile" type="file" id="fileImage" name="fileImage" 
@@ -348,7 +315,7 @@ export default {
 			currentPage:'',
 			totalPage:"",
             formSearchUser: {},
-            formAddUser: {},
+            formAddUser: {role:2},
             formEditUser: {},
 			paginationButtons:[],
 			imgDto:'',
@@ -356,15 +323,13 @@ export default {
     },
     methods: {
 		getListUserAdmin(){
-			console.log("page: "+this.currentPage)
 			Users.getListUserAdmin(this.currentPage,
 			 	this.formSearchUser.fullname,
 				this.formSearchUser.sex,
 				this.formSearchUser.address,
 				this.formSearchUser.email,
 				this.formSearchUser.stateUser,
-				this.formSearchUser.authType,
-				this.formSearchUser.role)
+				this.formSearchUser.authType)
 				.then(res => {
 					if(res.data.data.listUser != null){
 						this.user = res.data.data.listUser.content.map(user => {return {...user,urlImg: false,lock:false}})
@@ -373,7 +338,6 @@ export default {
 						this.user.forEach(user => {
 							if(user.stateUser == "ACTIVED")
 								user.lock = true
-							console.log("lock: "+user.lock)
 						});
 						this.setupPagination(this.totalPage)
 						
@@ -420,11 +384,6 @@ export default {
 				})
 		},
 		editUser(formEditUser){
-			if(formEditUser.role == "ROLE_ADMIN")
-				formEditUser.role = 1
-			if(formEditUser.role == "ROLE_USER")
-				formEditUser.role = 2
-			console.log("role: "+formEditUser.role)
 			const formData = new FormData();
 			if(this.imgDto != "" && this.imgDto != null)
 				formEditUser.img = this.imgDto
@@ -435,8 +394,6 @@ export default {
 			formData.append('sex', formEditUser.gender);
 			formData.append('birthday', formEditUser.dob);
 			formData.append('stateUser', formEditUser.stateUser);
-			formData.append('authType', formEditUser.authType);
-			formData.append('role', formEditUser.role);
 			formData.append('phone', formEditUser.phone);
 
 			Users.postEditUser(formData)
@@ -525,8 +482,7 @@ export default {
 				formSearchUser.address,
 				formSearchUser.email,
 				formSearchUser.stateUser,
-				formSearchUser.authType,
-				formSearchUser.role)
+				formSearchUser.authType)
 		},
 
 		chooseFile(e){

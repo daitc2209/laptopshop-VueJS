@@ -11,7 +11,7 @@
 					<div>
 						<h3>Hello Friend!</h3>
 						<p>Create New Account</p>
-						<a href="/auth/sign-up"><button id="btn">Sign up</button></a>
+						<button @click="click" id="btn">Sign up</button>
 					</div>
 				</div>
 				<div class="col-md-8 col-12 p-0" id="side2">
@@ -68,6 +68,9 @@ export default {
         }
     },
 	methods: {
+		click(){
+			this.$router.push("/auth/sign-up")
+		},
 		login(){
 			console.log("user: "+this.user)
 			Users.login(this.user)

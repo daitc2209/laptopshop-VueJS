@@ -10,8 +10,16 @@ class Order{
     getBill(id){
         return axios.get(`checkout/getBill?id=`+id);
     }
-    getListOrder(page,name,payment,status){
-        return axios.get("admin/order", {params:{page:page, name:name, payment:payment, status:status}})
+
+    // Admin
+    getAllOrderByStatus(){
+        return axios.get(`admin/order/total-order-status`)
+    }
+    getListOrderByStatus(page,search_text,status){
+        return axios.get("admin/order", {params:{page:page, search_text:search_text, status:status}})
+    }
+    findByRangeDay(page,data){
+        return axios.post("admin/order/range-day?page="+page,data)
     }
     getOrderById(id){
         return axios.get("admin/order/"+id)

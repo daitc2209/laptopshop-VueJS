@@ -24,6 +24,11 @@ const revenueApi = {
     getStatistical: async (data) =>{
         const res = await axios.post(`/admin/revenue/range-day`,data)
         return res.data
+    },
+
+    getCard: async () => {
+        const res = await axios.get(`/admin/revenue/card`)
+        return res.data
     }
 }
 

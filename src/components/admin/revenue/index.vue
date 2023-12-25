@@ -99,13 +99,16 @@ export default {
         async getRevenueCategories(chart) {
             try{
                 const res = await revenueApi.getRevenueCategories()
-                this.revenue = res.data.revenue
+                this.revenue = this.sortedProducts(res.data.revenue)
                     
                 this.updateChart(res.data.revenue, chart)
             }
             catch(err){
                 console.log("err: "+err)
             }
+        },
+        sortedProducts(data) {
+            return data.slice().sort((a, b) => b.total_sell - a.total_sell);
         },
 
         formatCurrency(value) {

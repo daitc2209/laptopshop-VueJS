@@ -146,6 +146,11 @@ const router = createRouter({
           name: 'List_revenue_products',
           component: () => import('../components/admin/revenue/revenue-products.vue')
         },
+        {
+          path: '/admin',
+          name: 'List_admin',
+          component: () => import('../components/admin/user/admin.vue')
+        },
       ]
     }
   ]

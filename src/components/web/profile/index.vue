@@ -162,12 +162,12 @@
 								<h3>Change Password</h3>
 								<div class="inp">
 									<div class="profile-form__feild">
-										<label class="profile-form__name" for="">Old Password:</label>
-										<input class="profile-form__feild-item" title="Old Password" type="text" v-model="oldPw">
+										<label class="profile-form__name" for="">Old Password <span style="color: red;">*</span></label>
+										<input class="profile-form__feild-item" title="Old Password" required type="text" v-model="oldPw">
 									</div>
 									<div class="profile-form__feild">
-										<label class="profile-form__name" for="">New Password:</label>
-										<input class="profile-form__feild-item" title="New Password" type="text" v-model="newPw">
+										<label class="profile-form__name" for="">New Password <span style="color: red;">*</span></label>
+										<input class="profile-form__feild-item" title="New Password" required type="text" v-model="newPw">
 									</div>
 								</div>
 								<div id="login">

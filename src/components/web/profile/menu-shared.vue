@@ -5,22 +5,22 @@
                     <ul class="menu-container nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                         <!-- Add icons to the links using the .nav-icon class with font-awesome or any other icon font library -->
                         <li class="menu-item">
-                            <a href="/home" class="menu-link">
+                            <router-link to="/home" class="menu-link">
                                 <i class="fa-solid fa-house mr-2"></i>
                                 <p>Trang chủ</p>
-                            </a>
+                            </router-link>
                         </li>
                         <li class="menu-item">
-                            <a href="/user/profile" class="menu-link">
+                            <router-link to="/user/profile" class="menu-link">
                                 <i class="fa-solid fa-user"></i>
                                 <p>Thông tin tài khoản</p>
-                            </a>
+                            </router-link>
                         </li>
                         <li class="menu-item">
-                            <a href="/user/purchase-history" class="menu-link">
+                            <router-link to="/user/purchase-history" class="menu-link">
                                 <i class="fa-solid fa-clipboard"></i>
                                 <p>Quản lý đơn hàng</p>
-                            </a>
+                            </router-link>
                         </li>
                         
                         <div class="brand-link"></div>

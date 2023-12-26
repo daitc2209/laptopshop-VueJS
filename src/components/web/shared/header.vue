@@ -1,14 +1,6 @@
 <template>
   <header class="top-navbar">
 	<div class="container-fluid">
-		<!-- <ul class="top-icons">
-			<li><a href=""><i class="fa-brands fa-instagram"></i></a></li>
-			<li><a href=""><i class="fa-brands fa-facebook-f"></i></a></li>
-			<li><a href=""><i class="fa-brands fa-twitter"></i> </a></li> -->
-			<!-- <i class="fa-brands fa-twitter"></i> 
-			<i class="fa-brands fa-facebook-f"></i> 
-			<i class="fa-brands fa-instagram"></i> -->
-		<!-- </ul> -->
 		<a href="/home"><h1 class="shop-name">TCD Shop</h1></a>
 		<div class="other-links">
 			<template  v-if="(checklogin)">
@@ -20,8 +12,8 @@
 				<!-- <a @click="logout()"><button id="btn-login">Logout</button></a>  -->
 			</template >
 			<template  v-if="(checklogin == null)  || (checklogin == '') || (checklogin == false)">
-				<a href="/auth/sign-in"><button id="btn-login">Login</button></a> 
-				<a href="/auth/sign-up"><button id="btn-signup">Sign up</button></a> 
+				<a href="/auth/sign-in"><button id="btn-login">Đăng nhập</button></a> 
+				<a href="/auth/sign-up"><button id="btn-signup">Đăng ký</button></a> 
 				
 			</template >
 			<template  v-if="(checklogin)">
@@ -49,8 +41,9 @@
                             </ul>
                         </li>
 				</ul>
-				<!-- <a href="/user/purchase-history"><i class="fa-solid fa-money-check-dollar"></i></a>
-				<a href="/user/profile"><i class="fa-solid fa-address-card"></i></a> -->
+				<div class="header__navbar-item header__navbar-user">
+					<router-link to="/favour"><i class="header__navbar-item-link fa-solid fa-heart"></i></router-link>
+				</div>
 			</template >
 			<div class="header__navbar-item header__navbar-user">
 				<div @click="click()"><i class="header__navbar-item-link fa-solid fa-cart-shopping"></i></div>
@@ -104,10 +97,6 @@ export default {
 		},
 	},
 	mounted() {
-		// this.emitter.on("login-success", () => {
-		// 	this.checklogin = sessionStorage.getItem("login"); // Thay đổi trạng thái đăng nhập trong header
-		// 	console.log("checklogin: "+this.checklogin)
-		// });
 		if(sessionStorage.getItem("login")){
 			this.checklogin = sessionStorage.getItem("login");
 			this.checkImg = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- ./?%&=]*)?/.test(this.img);

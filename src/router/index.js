@@ -88,6 +88,11 @@ const router = createRouter({
           name: 'bill',
           component: () => import('../components/web/checkout/bill.vue')
         },
+        {
+          path: '/favour',
+          name: 'favour',
+          component: () => import('../components/web/favour/index.vue')
+        },
       ]
     },
 
@@ -125,11 +130,6 @@ const router = createRouter({
           path: '/admin/order',
           name: 'List_order',
           component: () => import('../components/admin/order/index.vue')
-        },
-        {
-          path: '/admin/feedback',
-          name: 'List_feedback',
-          component: () => import('../components/admin/feedback/index.vue')
         },
         {
           path: '/admin/product',

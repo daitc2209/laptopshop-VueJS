@@ -6,7 +6,7 @@
             <div class="row align-items-center">
               <div class="col-lg-4 my-3">
                 <div class="footer-top-data d-flex gap-30 align-items-center">
-                  <h2 class='mb-0 text-white'>Sign Up for Newsletter</h2>
+                  <h2 class='mb-0 text-white'>Đăng ký nhận thông báo</h2>
                 </div>
               </div>
               <div class="col-lg-8 my-3">
@@ -19,7 +19,7 @@
                   aria-describedby="basic-addon2"
                   />
                   <span class="input-group-text py-2" id="basic-addon2">
-                    Subscribe
+                    Đăng ký
                   </span>
                 </div>
               </div>
@@ -30,7 +30,7 @@
 	<hr>
   <div class="footer-container">
     <div class="container py-4 text-center">
-      <span class="footer__heading">Store Location</span>
+      <span class="footer__heading">Địa chỉ cửa hàng</span>
       <ul class="footer-list">
         <li class="footer-item"><a href="#" class="footer-item__link">60-49 Road 11378 New York</a> </li>
         <li class="footer-item"><a href="#" class="footer-item__link">daitc2209@gmail.com </a></li>
@@ -38,7 +38,7 @@
       </ul>
     </div>
     <div class="container py-4 text-center">
-      <span class="footer__heading">Contact</span>
+      <span class="footer__heading">Liên hệ</span>
       <ul class="footer-list">
         <li class="footer-item">
           <a href="#" class="footer-item__link">
@@ -61,19 +61,19 @@
       </ul>
     </div>
     <div class="container py-4 text-center">
-      <span class="footer__heading">Policy</span>
+      <span class="footer__heading">Chính sách</span>
       <ul class="footer-list">
-        <li class="footer-item"><a href="#" class="footer-item__link">Shipping & Returns</a> </li>
-        <li class="footer-item"><a href="#" class="footer-item__link">Terms & Conditions</a></li>
-        <li class="footer-item"><a href="#" class="footer-item__link">Payment Methods </a></li>
+        <li class="footer-item"><a href="#" class="footer-item__link">Vận chuyển & Đổi trả</a> </li>
+        <li class="footer-item"><a href="#" class="footer-item__link">Điều khoản & Điều kiện</a></li>
+        <li class="footer-item"><a href="#" class="footer-item__link">Phương thức thanh toán </a></li>
         <li class="footer-item"><a href="#" class="footer-item__link">FAQ</a></li>
       </ul>
     </div>
     <div class="container py-4 text-center">
-      <span class="footer__heading">Support</span>
+      <span class="footer__heading">Hỗ trợ</span>
       <ul class="footer-list">
-        <li class="footer-item"><a href="/contact" class="footer-item__link">Contact Us</a> </li>
-        <li class="footer-item"><a href="/about" class="footer-item__link">About Us</a></li>
+        <li class="footer-item"><a href="/contact" class="footer-item__link">Liên hệ</a> </li>
+        <li class="footer-item"><a href="/about" class="footer-item__link">Giới thiệu</a></li>
       </ul>
     </div>
   </div>

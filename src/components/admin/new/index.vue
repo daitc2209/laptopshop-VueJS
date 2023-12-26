@@ -1,6 +1,6 @@
 <template>
   <div>
-	<head><title>News Page</title></head>
+	<head><title>Quản lý tin tức</title></head>
     <section class="content-header">
 			<div class="container-fluid">
 				<div class="row mb-2">
@@ -9,7 +9,7 @@
 					</div>
 					<div class="col-sm-6">
 						<ol class="breadcrumb float-sm-right">
-							<li class="breadcrumb-item"><a href='/admin/home'>Trang chủ</a></li>
+							<li class="breadcrumb-item"><a href='/admin/home'>Quản lý</a></li>
 							<li class="breadcrumb-item active">Tin tức</li>
 						</ol>
 					</div>
@@ -22,11 +22,10 @@
     		</div>
 			<div class="container">
 				<form @submit.prevent="search(1,keyword)">
-					<h5 class="px-3 mb-4">Form tìm kiếm</h5>
 					<div class="row">
 						<div class="col-6 left pl-4">
 							<div class="form-group d-flex justify-content-between">
-								<label for="inputPassword6" class="col-form-label">Name:</label>
+								<label for="inputPassword6" class="col-form-label">Tên bài viết, tin tức:</label>
 								<input type="text" name="keyword" v-model="this.keyword" class="form-control">
 							</div>
 						</div>
@@ -45,7 +44,7 @@
 				<div class="card-header">
 					<h3 class="card-title">Danh sách tin tức</h3>
 					<div class="card-tools">
-						<a data-bs-toggle="modal" data-bs-target="#add" class="btn btn-primary">Thêm mới</a>
+						<a data-bs-toggle="modal" data-bs-target="#add" class="btn btn-primary"><span style="font-size: 18px;">+</span> Thêm mới</a>
 					</div>
 				</div>
 				<div class="card-body">
@@ -65,8 +64,8 @@
 										<td class="td2">{{ item.title }}</td>
 										<td class="td2">{{ item.shortDescription }}</td>
 										<td class="td3">
-											<a data-bs-toggle="modal" :data-bs-target="'#edit'+ item.id" @click="getEditNewsAdmin(item.id)" class="btn btn-sm btn-primary">Edit</a> 
-											<a data-bs-toggle="modal" :data-bs-target="'#delete'+ item.id" class="btn btn-sm btn-danger">Delete</a>
+											<a data-bs-toggle="modal" :data-bs-target="'#edit'+ item.id" @click="getEditNewsAdmin(item.id)" class="btn btn-sm btn-primary mb-2"><i class="fa-solid fa-pen-to-square"></i></a> 
+											<a data-bs-toggle="modal" :data-bs-target="'#delete'+ item.id" class="btn btn-sm btn-danger"><i class="fa-solid fa-trash"></i></a>
 										</td>
 										<div class="modal add-new" :id="'edit'+item.id">
 											<div class="modal-dialog">
@@ -112,7 +111,7 @@
 														</div>
 														<div class="modal-footer">
 															<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Hủy</button>
-															<button type="submit" class="btn btn-primary">Cập nhật</button>
+															<button type="submit" class="btn btn-primary">Xác nhận</button>
 														</div>
 													</form>
 												</div>
@@ -183,7 +182,7 @@
 											</div>
 											<div class="modal-footer">
 												<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Hủy</button>
-												<button type="submit" class="btn btn-primary">Thêm</button>
+												<button type="submit" class="btn btn-primary">Xác nhận</button>
 											</div>
 										</form>
 									</div>
@@ -191,13 +190,13 @@
 							</div>
 						</tbody>
 					</table>
-					<div class="pagination" id="pagination" v-if="paginationButtons.length >= 2">
-						<button v-for="page in paginationButtons" :key="page" 
-						:class="{ active: currentPage === page }" 
-						@click="PaginationButton(page).handleClick()">
-							{{ page }}
-						</button>
-                  </div>
+				</div>
+				<div class="pagination" id="pagination" v-if="paginationButtons.length >= 2">
+					<button v-for="page in paginationButtons" :key="page" 
+					:class="{ active: currentPage === page }" 
+					@click="PaginationButton(page).handleClick()">
+						{{ page }}
+					</button>
 				</div>
 			</div>
 		</section>

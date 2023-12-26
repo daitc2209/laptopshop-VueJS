@@ -1,16 +1,16 @@
 <template>
   <div>
     <head>
-        <title>About Page</title>
+        <title>Giới thiệu</title>
     </head>
     <section class="container p-0" id="about">
 			<div class="breadcrumbs d-flex flex-row align-items-center col-12 mb-3">
 				<ul>
-					<li><a href="/home">Home</a></li>
-					<li class="active"><a href="#"><i class="fa fa-angle-right" aria-hidden="true"></i>About</a></li>
+					<li><a href="/home">Trang chủ</a></li>
+					<li class="active"><a href="#"><i class="fa fa-angle-right" aria-hidden="true"></i>Giới thiệu</a></li>
 				</ul>
 			</div>
-			<h1>ABOUT US</h1>
+			<h1>Giới thiệu</h1>
 			<div class="row" style="margin-top: 50px;">
 				<div class="col-md-6 py-3 py-md-0">
 					<div class="card">

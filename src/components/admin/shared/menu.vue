@@ -6,8 +6,8 @@
 		<div class="sidebar">
 			<div class="user-panel mt-3 pb-3 mb-3 d-flex">
 				<div class="info">
-					<a href="/admin/home" class="d-block"><i class="fa-solid fa-house mr-2"></i><label
-							style="color: #fff; cursor: pointer;">Trang chủ</label></a>
+					<router-link to="/admin/home" class="d-block"><i class="fa-solid fa-house mr-2"></i><label
+							style="color: #fff; cursor: pointer;">Trang chủ</label></router-link>
 				</div>
 			</div>
 
@@ -16,60 +16,60 @@
 					<!-- Add icons to the links using the .nav-icon class with font-awesome or any other icon font library -->
 					<label for="" style="color: #fff;">Quản lý</label>
 					<li class="nav-item">
-						<a href="/admin/category" class="nav-link">
+						<router-link to="/admin/category" class="nav-link">
 							<i class="nav-icon fa-solid fa-bars"></i>
-							Category
-						</a>
+							Danh mục
+						</router-link>
 					</li>
 					<li class="nav-item">
-						<a href="/admin/brand" class="nav-link">
+						<router-link to="/admin/brand" class="nav-link">
 							<i class="nav-icon fa-solid fa-bars"></i>
-							Brand
-						</a>
+							Thương hiệu
+						</router-link>
 					</li>
 					<li class="nav-item">
-						<a href="/admin/product" class="nav-link">
+						<router-link to="/admin/product" class="nav-link">
 							<i class="nav-icon fa-solid fa-bars"></i>
-							Product
-						</a>
+							Sản phẩm
+						</router-link>
 					</li>
 					<li class="nav-item">
-						<a href="/admin/order" class="nav-link">
+						<router-link to="/admin/order" class="nav-link">
 							<i class="nav-icon fa-solid fa-bars"></i>
-							Order
-						</a>
+							Đơn hàng
+						</router-link>
 					</li>
 					<li class="nav-item">
-						<a href="/admin/user" class="nav-link">
+						<router-link to="/admin/user" class="nav-link">
 							<i class="nav-icon fa-solid fa-bars"></i>
-							User
-						</a>
+							Người dùng
+						</router-link>
 					</li>
 					<li class="nav-item">
-						<a href="/admin/news" class="nav-link">
+						<router-link to="/admin/news" class="nav-link">
 							<i class="nav-icon fa-solid fa-bars"></i>
-							News
-						</a>
+							Tin tức
+						</router-link>
 					</li>
 					<label for="" style="color: #fff;">Thống kê</label>
 					<li class="nav-item">
-						<a href="/admin/revenue/categories" class="nav-link">
+						<router-link to="/admin/revenue/categories" class="nav-link">
 							<i class="nav-icon fa-solid fa-bars"></i>
-							Categories
-						</a>
+							Danh mục
+						</router-link>
 					</li>
 					<li class="nav-item">
-						<a href="/admin/revenue/products" class="nav-link">
+						<router-link to="/admin/revenue/products" class="nav-link">
 							<i class="nav-icon fa-solid fa-bars"></i>
-							Products
-						</a>
+							Sản phẩm
+						</router-link>
 					</li>
 					<label for="" style="color: #fff;">Quản trị</label>
 					<li class="nav-item">
-						<a href="/admin" class="nav-link">
+						<router-link to="/admin" class="nav-link">
 							<i class="nav-icon fa-solid fa-bars"></i>
 							Admin
-						</a>
+						</router-link>
 					</li>
 					<div class="brand-link"></div>
 					<li class="nav-item">

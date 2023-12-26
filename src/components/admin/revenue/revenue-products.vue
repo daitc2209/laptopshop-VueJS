@@ -2,18 +2,18 @@
     <div>
 
         <head>
-            <title>Revenue Products Page</title>
+            <title>Thống kê sản phẩm</title>
         </head>
         <section class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Manage Revenue Products</h1>
+                        <h1>Thống kê sản phẩm</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href='/admin/home'>Home</a></li>
-                            <li class="breadcrumb-item active">Revenue</li>
+                            <li class="breadcrumb-item"><a href='/admin/home'>Thống kê</a></li>
+                            <li class="breadcrumb-item active">Thống kê sản phẩm</li>
                         </ol>
                     </div>
                 </div>

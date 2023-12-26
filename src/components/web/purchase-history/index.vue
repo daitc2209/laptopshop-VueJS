@@ -68,7 +68,7 @@
 						<th>Hình thức thanh toán</th>
 						<th>Thanh toán</th>
 						<th>Trạng thái</th>
-						<th>Action</th>
+						<th>Thao tác</th>
 					</tr>
 					</thead>
 					<tbody>
@@ -111,73 +111,73 @@
 												<div class="row">
 													<div class="col-lg-6">
 													<div class="information-detail">
-														<h4>Thông tin đơn hàng</h4>
+														<h4 class="order-text">Thông tin đơn hàng</h4>
 														<div class="col-12 mb-2 border info-user p-3">
-														<div class="col-lg-12 d-flex align-items-center">
-															<label>Mã đơn hàng:</label>
-															<label>#{{ item.codeOrder }}</label>
-														</div>
-														<div class="col-lg-12 d-flex align-items-center">
-															<label>Họ và tên :</label>
-															<label>{{ item.name }}</label>
-														</div>
-														<div class="col-lg-12 d-flex align-items-center">
-															<label>Email :</label>
-															<label>{{ item.email }}</label>
-														</div>
-														<div class="col-lg-12 d-flex align-items-center">
-															<label>SĐT :</label>
-															<label>{{ item.phone }}</label>
-														</div>
-														<div class="col-lg-12 d-flex align-items-center">
-															<label>Địa chỉ nhận hàng :</label>
-															<label>{{ item.address_delivery }}</label>
-														</div>
-														<div class="col-lg-12 d-flex align-items-center">
-															<label>Ngày đặt:</label>
-															<label>{{ formatDate(item.created_at) }}</label>
-														</div>
-														<div class="col-lg-12 d-flex align-items-center">
-															<label>Số lượng :</label>
-															<label>{{ item.num }}</label>
-														</div>
-														<div class="col-lg-12 d-flex align-items-center">
-															<label>Tổng tiền :</label>
-															<label>{{ formatCurrency(item.total_money) }}</label>
-														</div>
-														<div class="col-lg-12 d-flex align-items-center">
-															<label>Hình thức thanh toán :</label>
-															<label>{{ item.payment }}</label>
-														</div>
-														<div class="col-lg-12 d-flex align-items-center">
-															<label>Ghi chú :</label>
-															<label>{{ item.note }}</label>
-														</div>
+															<div class="col-lg-12 d-flex align-items-center">
+																<label class="info-user_text">Mã đơn hàng:</label>
+																<label>#{{ item.codeOrder }}</label>
+															</div>
+															<div class="col-lg-12 d-flex align-items-center">
+																<label class="info-user_text">Họ và tên :</label>
+																<label>{{ item.name }}</label>
+															</div>
+															<div class="col-lg-12 d-flex align-items-center">
+																<label class="info-user_text">Email :</label>
+																<label>{{ item.email }}</label>
+															</div>
+															<div class="col-lg-12 d-flex align-items-center">
+																<label class="info-user_text">SĐT :</label>
+																<label>{{ item.phone }}</label>
+															</div>
+															<div class="col-lg-12 d-flex align-items-center">
+																<label class="info-user_text">Địa chỉ nhận hàng :</label>
+																<label>{{ item.address_delivery }}</label>
+															</div>
+															<div class="col-lg-12 d-flex align-items-center">
+																<label class="info-user_text">Ngày đặt:</label>
+																<label>{{ formatDate(item.created_at) }}</label>
+															</div>
+															<div class="col-lg-12 d-flex align-items-center">
+																<label class="info-user_text">Số lượng :</label>
+																<label>{{ item.num }}</label>
+															</div>
+															<div class="col-lg-12 d-flex align-items-center">
+																<label class="info-user_text">Tổng tiền :</label>
+																<label>{{ formatCurrency(item.total_money) }}</label>
+															</div>
+															<div class="col-lg-12 d-flex align-items-center">
+																<label class="info-user_text">Hình thức thanh toán :</label>
+																<label>{{ item.payment }}</label>
+															</div>
+															<div class="col-lg-12 d-flex align-items-center">
+																<label class="info-user_text">Ghi chú :</label>
+																<label>{{ item.note }}</label>
+															</div>
 														</div>
 													</div>
 													</div>
 													<div class="col-lg-6">
-													<div class="place-order">
-														<h4>Thông tin sản phẩm</h4>
-														<div class="order-total">
-															<ul class="order-table p-0">
-																<li><span>Sản phẩm</span><span>Số lượng</span><span>Giá</span><span>Discount</span><span>Tổng</span></li>
-																<li class="fw-normal" v-for="(orderdetail, index) in item.orderdetail" :key="index">
-																		<span><img :src="`/src/images/product/`+orderdetail.product.img" style="height: 50px; width: 50px;" alt="Product Image" /></span>
-																		<span>{{orderdetail.num}}</span>
-																		<span>{{ formatCurrency(orderdetail.product.price) }}</span>
-																		<span>{{ orderdetail.product.discount }}%</span>
-																		<span>{{ formatCurrency(orderdetail.totalPrice) }}</span>
-																</li>
-																<li class="total-price">Tổng số lượng <p>{{item.num}}</p></li>
-																<li class="total-price">Tổng tiền <p>{{ formatCurrency(item.total_money) }}</p></li>
-																<li class="total-price">Phí vận chuyển <p>{{formatCurrency(40000)}}</p></li>
-																<li class="total-price">Thành tiền <p>{{formatCurrency(item.total_money+40000)}}</p></li>
-															</ul>
-															<div :id="'cancelOrderBtn_'+ item.id" v-if="(item.stateOrder === 'PENDING')" class="order-btn"><a @click="clickCancelOrder(item.id,item.stateOrder)"><button type="button" class="site-btn place-btn">Hủy đơn hàng</button></a></div>
-																										
+														<div class="place-order">
+															<h4 class="order-text">Thông tin sản phẩm</h4>
+															<div class="order-total">
+																<ul class="order-table p-0">
+																	<li><span>Sản phẩm</span><span>Số lượng</span><span>Giá</span><span>Discount</span><span>Tổng</span></li>
+																	<li class="fw-normal" v-for="(orderdetail, index) in item.orderdetail" :key="index">
+																			<span><img :src="`/src/images/product/`+orderdetail.product.img" style="height: 50px; width: 50px;" alt="Product Image" /></span>
+																			<span>{{orderdetail.num}}</span>
+																			<span>{{ formatCurrency(orderdetail.product.price) }}</span>
+																			<span>{{ orderdetail.product.discount }}%</span>
+																			<span>{{ formatCurrency(orderdetail.totalPrice) }}</span>
+																	</li>
+																	<li class="total-price">Tổng số lượng <p>{{item.num}}</p></li>
+																	<li class="total-price">Tổng tiền <p>{{ formatCurrency(item.total_money) }}</p></li>
+																	<li class="total-price">Phí vận chuyển <p>{{formatCurrency(40000)}}</p></li>
+																	<li class="total-price">Thành tiền <p>{{formatCurrency(item.total_money+40000)}}</p></li>
+																</ul>
+																<div :id="'cancelOrderBtn_'+ item.id" v-if="(item.stateOrder === 'PENDING')" class="order-btn"><a @click="clickCancelOrder(item.id,item.stateOrder)"><button type="button" class="site-btn place-btn">Hủy đơn hàng</button></a></div>
+																											
+															</div>
 														</div>
-													</div>
 													</div>
 												</div>
 												</div>

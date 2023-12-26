@@ -1,15 +1,15 @@
 <template>
   <div class="container">
     <head>
-        <title>Profile Page</title>
+        <title>Thông tin tài khoản</title>
     </head>
     <div class="breadcrumbs d-flex flex-row align-items-center col-12 container mt-3">
 		
 		<div id="toast">
     	</div>
 			<ul>
-				<li><a href="/home">Home</a></li>
-				<li class="active"><a href="#"><i class="fa fa-angle-right" aria-hidden="true"></i>Profile</a></li>
+				<li><a href="/home">Trang chủ</a></li>
+				<li class="active"><a href="#"><i class="fa fa-angle-right" aria-hidden="true"></i>Thông tin tài khoản</a></li>
 			</ul>
 		</div>
 		<section class="profile mb-4">
@@ -33,17 +33,17 @@
 						<div class="profile-form" >
 							<div class="inp">
 								<!-- <h3>Profile</h3> -->
-								<div class="profile-form__feild"><label class="profile-form__name" for="">Fullname</label> <input class="profile-form__feild-item" type="text" v-model="profile.fullname" disabled="disabled" title="Tên"></div>
+								<div class="profile-form__feild"><label class="profile-form__name" for="">Họ và tên</label> <input class="profile-form__feild-item" type="text" v-model="profile.fullname" disabled="disabled" title="Tên"></div>
 								<div class="profile-form__feild"><label class="profile-form__name" for="">Email</label> <input class="profile-form__feild-item" type="email" v-model="profile.email" disabled="disabled" title="Email"></div>
-								<div class="profile-form__feild"><label class="profile-form__name" for="">Gender</label> <input class="profile-form__feild-item" type="text" v-model="profile.sex" disabled="disabled" title="Giới tính"></div>
-								<div class="profile-form__feild"><label class="profile-form__name" for="">Birthday</label> <input class="profile-form__feild-item" type="text" v-model="profile.birthday" disabled="disabled" title="Ngày sinh"> </div>
-								<div class="profile-form__feild"><label class="profile-form__name" for="">Address</label> <input class="profile-form__feild-item" type="text" v-model="profile.address" disabled="disabled" title="Địa chỉ"></div>
-								<div class="profile-form__feild"><label class="profile-form__name" for="">Phone</label> <input class="profile-form__feild-item" type="text" v-model="profile.phone" disabled="disabled" title="SDT"></div>
+								<div class="profile-form__feild"><label class="profile-form__name" for="">Giới Tính</label> <input class="profile-form__feild-item" type="text" v-model="profile.sex" disabled="disabled" title="Giới tính"></div>
+								<div class="profile-form__feild"><label class="profile-form__name" for="">Ngày sinh</label> <input class="profile-form__feild-item" type="text" v-model="profile.birthday" disabled="disabled" title="Ngày sinh"> </div>
+								<div class="profile-form__feild"><label class="profile-form__name" for="">Địa chỉ</label> <input class="profile-form__feild-item" type="text" v-model="profile.address" disabled="disabled" title="Địa chỉ"></div>
+								<div class="profile-form__feild"><label class="profile-form__name" for="">SĐT</label> <input class="profile-form__feild-item" type="text" v-model="profile.phone" disabled="disabled" title="SDT"></div>
 								
 							</div>
 							<div id="login">
-								<button type="button" @click="getProfile()" data-bs-toggle="modal" data-bs-target="#myModal">Click Edit</button>
-								<button type="button" data-bs-toggle="modal" data-bs-target="#myModal1">Click Change Password</button>
+								<button type="button" @click="getProfile()" data-bs-toggle="modal" data-bs-target="#myModal">Cập nhật thông tin</button>
+								<button type="button" data-bs-toggle="modal" data-bs-target="#myModal1">Đổi mật khẩu</button>
 							</div>
 						</div>
 					</div>
@@ -56,7 +56,7 @@
 		
 		      <!-- Modal Header -->
 		      <div class="modal-header">
-		        <h4 class="modal-title">Edit Profile</h4>
+		        <h4 class="modal-title">Cập nhật thông tin</h4>
 		        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 		      </div>
 		
@@ -84,7 +84,7 @@
 								<h3>Edit Profile</h3>
 								<div class="inp">
 									<div class="profile-form__feild">
-										<label class="profile-form__name" for="">Fullname</label>
+										<label class="profile-form__name" for="">Họ và tên</label>
 										<input class="profile-form__feild-item" title="Họ và tên" type="text" v-model="profile.fullname"> 
 									</div>
 									<div class="profile-form__feild">
@@ -92,18 +92,18 @@
 										<input class="profile-form__feild-item" title="Email" type="text" v-model="profile.email">
 									</div>
 									<div class="profile-form__feild">
-										<label class="profile-form__name" for="">Gender</label>
+										<label class="profile-form__name" for="">Giới tính</label>
 										<select  title="Giới tính" class="profile-form__feild-item"  v-model="profile.sex">
-											<option value="MALE">MALE</option>
-											<option value="FEMALE">FEMALE</option>
+											<option value="MALE">Nam</option>
+											<option value="FEMALE">Nữ</option>
 										</select>
 									</div>
 									<div class="profile-form__feild">
-										<label class="profile-form__name" for="">Birthday</label>
+										<label class="profile-form__name" for="">Ngày sinh</label>
 										<input class="profile-form__feild-item" title="Email" type="text" v-model="profile.birthday">
 									</div>
 									<div class="profile-form__feild">
-										<label class="profile-form__name" for="">Phone</label>
+										<label class="profile-form__name" for="">SĐT</label>
 										<input class="profile-form__feild-item" title="Email" type="text" v-model="profile.phone">
 									</div>
 									<input hidden="" type="text" v-model="profile.img" > 
@@ -122,7 +122,7 @@
 									
 								</div>
 								<div id="login">
-									<button type="submit">Edit</button>
+									<button type="submit">Cập nhật</button>
 								</div>
 							</form>
 						</div>
@@ -133,7 +133,7 @@
 		
 		      <!-- Modal footer -->
 		      <div class="modal-footer">
-		        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+		        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
 		      </div>
 		
 		    </div>
@@ -146,7 +146,7 @@
 		
 		      <!-- Modal Header -->
 		      <div class="modal-header">
-		        <h4 class="modal-title">Change Password</h4>
+		        <h4 class="modal-title">Đổi mật khẩu</h4>
 		        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 		      </div>
 		
@@ -159,19 +159,19 @@
 								class="profile-form" 
 								@submit.prevent="ChangePassword()" 
 							>
-								<h3>Change Password</h3>
+								<h3>Đổi mật khẩu</h3>
 								<div class="inp">
 									<div class="profile-form__feild">
-										<label class="profile-form__name" for="">Old Password <span style="color: red;">*</span></label>
+										<label class="profile-form__name" for="">Mật khẩu hiện tại: <span style="color: red;">*</span></label>
 										<input class="profile-form__feild-item" title="Old Password" required type="text" v-model="oldPw">
 									</div>
 									<div class="profile-form__feild">
-										<label class="profile-form__name" for="">New Password <span style="color: red;">*</span></label>
+										<label class="profile-form__name" for="">Mật khẩu mới: <span style="color: red;">*</span></label>
 										<input class="profile-form__feild-item" title="New Password" required type="text" v-model="newPw">
 									</div>
 								</div>
 								<div id="login">
-									<button type="submit">Save</button>
+									<button type="submit">Xác nhận</button>
 								</div>
 							</form>
 						</div>

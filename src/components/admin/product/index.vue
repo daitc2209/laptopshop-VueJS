@@ -1,17 +1,17 @@
 <template>
   <div>
-    <head><title>Product Page</title></head>
+    <head><title>Quản lý sản phẩm</title></head>
 
     <section class="content-header">
 			<div class="container-fluid">
 				<div class="row mb-2">
 					<div class="col-sm-6">
-						<h1>Manage product</h1>
+						<h1>Quản lý sản phẩm</h1>
 					</div>
 					<div class="col-sm-6">
 						<ol class="breadcrumb float-sm-right">
-							<li class="breadcrumb-item"><a href='/admin/home'>Home</a></li>
-							<li class="breadcrumb-item active">Product</li>
+							<li class="breadcrumb-item"><a href='/admin/home'>Quản lý</a></li>
+							<li class="breadcrumb-item active">Sản phẩm</li>
 						</ol>
 					</div>
 				</div>
@@ -26,9 +26,9 @@
 			<!-- Default box -->
 			<div class="card">
 				<div class="card-header ">
-					<h3 class="card-title mt-1">List of product</h3>
+					<h3 class="card-title mt-1">Danh sách sản phẩm</h3>
 					<div class="card-tools mr-1">
-						<a data-bs-toggle="modal" data-bs-target="#add" class="btn btn-primary">Add new</a>
+						<a data-bs-toggle="modal" data-bs-target="#add" class="btn btn-primary"><span style="font-size: 18px;">+</span> Thêm mới</a>
 					</div>
 				</div>
 				<div class="card-body">
@@ -37,14 +37,14 @@
 							<tr>
 								<th>STT</th>
 								<th>Img</th>
-								<th>Name</th>
-								<th>Category</th>
-								<th>Brand</th>
-								<th>Price</th>
-								<th>Quantity</th>
+								<th>Tên sản phẩm</th>
+								<th>Danh mục</th>
+								<th>Thương hiệu</th>
+								<th>Giá</th>
+								<th>Số lượng</th>
 								<th>Discount</th>
-								<th>Description</th>
-								<th>Action</th>
+								<th>Mô tả</th>
+								<th>Thao tác</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -60,8 +60,8 @@
 										<td class="td8"><h6>{{item.discount}}%</h6></td>
 										<td class="td9"><h6>{{item.description}}</h6></td>
 										<td class="td10">
-											<a data-bs-toggle="modal" :data-bs-target="`#edit`+item.id"  class="btn btn-sm btn-primary">Edit</a> 
-											<a data-bs-toggle="modal" :data-bs-target="'#delete'+ item.id" class="btn btn-sm btn-danger">Delete</a>
+											<a data-bs-toggle="modal" :data-bs-target="`#edit`+item.id"  class="btn btn-sm btn-primary mr-2"><i class="fa-solid fa-pen-to-square"></i></a> 
+											<a data-bs-toggle="modal" :data-bs-target="'#delete'+ item.id" class="btn btn-sm btn-danger"><i class="fa-solid fa-trash"></i></a>
 										</td>
 										<div class="modal delete-new" :id="'delete'+item.id">
 											<div class="modal-dialog">
@@ -89,13 +89,13 @@
 							</template>
 						</tbody>
 					</table>
-					<div class="pagination" id="pagination" v-if="paginationButtons.length >= 2">
-						<button v-for="page in paginationButtons" :key="page" 
-						:class="{ active: currentPage === page }" 
-						@click="PaginationButton(page).handleClick()">
-							{{ page }}
-						</button>
-					</div>
+				</div>
+				<div class="pagination" id="pagination" v-if="paginationButtons.length >= 2">
+					<button v-for="page in paginationButtons" :key="page" 
+					:class="{ active: currentPage === page }" 
+					@click="PaginationButton(page).handleClick()">
+						{{ page }}
+					</button>
 				</div>
 			</div>
 		</section>

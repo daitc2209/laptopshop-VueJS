@@ -6,7 +6,7 @@
 					href="#" role="button"> <i class="fas fa-bars"></i>
 				</a></li>
 				<li class="nav-item d-none d-sm-inline-block">
-				<a href='#' class="nav-link">Home</a></li>
+				<a href='#' class="nav-link">Trang chủ</a></li>
 			</ul>
 		</div>
 			<!-- <div class="header__navbar-list">
@@ -39,23 +39,4 @@ export default {
 </script>
 
 <style>
-/* 
-.header__navbar-list{
-    list-style-type: none;
-    padding-left: 0;
-    margin: 4px 0 0 0;
-    display: flex;
-}
-.header__navbar-item{
-    margin: 0 8px;
-    position: relative;
-    min-height: 26px;
-	display: inline-flex;
-}
-.header__navabar-user-img{
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-} */
 </style>

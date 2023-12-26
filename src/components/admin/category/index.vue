@@ -1,16 +1,16 @@
 <template>
   <div>
-    <head><title>Category Page</title></head>
+    <head><title>Quản lý danh mục</title></head>
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Manage categories</h1>
+                    <h1>Quản lý danh mục</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href='/admin/home'>Home</a></li>
-                        <li class="breadcrumb-item active">Category</li>
+                        <li class="breadcrumb-item"><a href='/admin/home'>Quản lý</a></li>
+                        <li class="breadcrumb-item active">Danh mục</li>
                     </ol>
                 </div>
             </div>
@@ -22,16 +22,15 @@
     		</div>
         <div class="container">
             <form @submit.prevent="search(name)">
-                <h5 class="px-3 mb-4">Form search category</h5>
                 <div class="row">
                     <div class="col-6 left pl-4">
                         <div class="form-group d-flex justify-content-between">
-                            <label for="inputPassword6" class="col-form-label">Name:</label>
+                            <label for="inputPassword6" class="col-form-label">Tên danh mục:</label>
                             <input type="text" name="name" v-model="name" class="form-control">
                         </div>
                     </div>
                     <div class="col-6 right pl-4">
-                        <button class="btn btn-primary px-4" type="submit">Search</button>
+                        <button class="btn btn-primary px-4" type="submit">Tìm kiếm</button>
                     </div>
                 </div>
             </form>
@@ -43,9 +42,9 @@
         <!-- Default box -->
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">List of categories</h3>
+                <h3 class="card-title">Danh sách danh mục</h3>
                 <div class="card-tools">
-                    <a data-bs-toggle="modal" data-bs-target="#add" class="btn btn-primary">Add new</a>
+                    <a data-bs-toggle="modal" data-bs-target="#add" class="btn btn-primary"><span style="font-size: 18px;">+</span> Thêm mới</a>
                 </div>
             </div>
             <div class="card-body">
@@ -54,7 +53,7 @@
                         <tr>
                             <th>STT</th>
                             <th>Tên danh mục</th>
-                            <th>Action</th>
+                            <th>Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -63,8 +62,8 @@
 									<td class="td1" :text="index + ((currentPage - 1) * 3)">{{ index + 1 }}</td>
                                     <td class="td2">{{item.name}}</td>
                                     <td class="td3">
-                                        <a data-bs-toggle="modal" :data-bs-target="'#edit'+item.id" @click="getEditCategory(item.id)" class="btn btn-sm btn-primary">Edit</a> 
-                                        <a data-bs-toggle="modal" :data-bs-target="'#delete'+ item.id" class="btn btn-sm btn-danger">Delete</a>
+                                        <a data-bs-toggle="modal" :data-bs-target="'#edit'+item.id" @click="getEditCategory(item.id)" class="btn btn-sm btn-primary mr-2"><i class="fa-solid fa-pen-to-square"></i></a> 
+                                        <a data-bs-toggle="modal" :data-bs-target="'#delete'+ item.id" class="btn btn-sm btn-danger"><i class="fa-solid fa-trash"></i></a>
                                     </td>
                                     <div class="modal delete-new" :id="'delete'+item.id">
                                         <div class="modal-dialog">
@@ -88,7 +87,7 @@
                                             <div class="modal-content">
                                                 <form @submit.prevent="clickEditCategory(categoryDto)" >
                                                     <div class="modal-header">
-                                                        <h4 class="modal-title">Edit category</h4>
+                                                        <h4 class="modal-title">Chỉnh sửa danh mục</h4>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                                     </div>
                                                     <div class="modal-body">
@@ -99,15 +98,15 @@
                                                                 <div class="text-danger"></div>
                                                             </div>
                                                             <div class="form-group">
-                                                                <label for="">Name</label> 
+                                                                <label for="">Tên danh mục</label> 
                                                                 <input type="text" name="name" v-model="categoryDto.name" class="form-control" required="required" />
                                                                 <div class="text-danger"></div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer">
-                                                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
-                                                        <button type="submit" class="btn btn-primary">Edit</button>
+                                                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
+                                                        <button type="submit" class="btn btn-primary">Xác nhận</button>
                                                     </div>
                                                 </form>
                                             </div>
@@ -122,13 +121,13 @@
                         </template>
                     </tbody>
                 </table>
-                <div class="pagination" id="pagination" v-if="paginationButtons.length >= 2">
-                    <button v-for="page in paginationButtons" :key="page" 
-                    :class="{ active: currentPage === page }" 
-                    @click="PaginationButton(page).handleClick()">
-                        {{ page }}
-                    </button>
-                </div>
+            </div>
+            <div class="pagination" id="pagination" v-if="paginationButtons.length >= 2">
+                <button v-for="page in paginationButtons" :key="page" 
+                :class="{ active: currentPage === page }" 
+                @click="PaginationButton(page).handleClick()">
+                    {{ page }}
+                </button>
             </div>
         </div>
     </section>
@@ -138,21 +137,21 @@
             <div class="modal-content">
                 <form @submit.prevent="addCategory(categoryDto)">
                     <div class="modal-header">
-                        <h4 class="modal-title">Add new category</h4>
+                        <h4 class="modal-title">Thêm danh mục</h4>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
                         <div id="logins-part" class="content" role="tabpanel" aria-labelledby="logins-part-trigger">
                             <div class="form-group">
-                                <label for="">Name</label> 
-                                <input type="text" v-model="categoryDto.name" name="name" class="form-control" placeholder="Category name" required="required" />
+                                <label for="">Tên danh mục</label> 
+                                <input type="text" v-model="categoryDto.name" name="name" class="form-control" placeholder="" required="required" />
                                 <div class="text-danger"></div>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Add</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
+                        <button type="submit" class="btn btn-primary">Xác nhận</button>
                     </div>
                 </form>
             </div>

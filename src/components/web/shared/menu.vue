@@ -16,8 +16,8 @@
 			</button>
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
 				<ul class="navbar-menu__nav navbar-nav me-auto mb-2 mb-lg-0">
-					<li class="navbar-menu__nav-item"><a class="nav-link active" aria-current="page" href="/home">Home</a></li>
-					<li class="navbar-menu__nav-item"><a class="nav-link" href="/store">Store</a></li>
+					<li class="navbar-menu__nav-item"><a class="nav-link active" aria-current="page" href="/home">Trang chủ</a></li>
+					<li class="navbar-menu__nav-item"><a class="nav-link" href="/store">Cửa hàng</a></li>
 					<!-- <li class="nav-item dropdown">
 						<a 
 							class="nav-link dropdown-toggle" 
@@ -34,15 +34,15 @@
 							<li><a class="dropdown-item" href="#">USB</a></li>
 						</ul>
 					</li> -->
-					<li class="navbar-menu__nav-item"><a class="nav-link" href="/about">About</a></li>
-					<li class="navbar-menu__nav-item"><a class="nav-link" href="/contact">Contact</a></li>
-					<li class="navbar-menu__nav-item"><a class="nav-link" href="/news">News</a></li>
+					<li class="navbar-menu__nav-item"><a class="nav-link" href="/about">Giới thiệu</a></li>
+					<li class="navbar-menu__nav-item"><a class="nav-link" href="/contact">Liên hệ</a></li>
+					<li class="navbar-menu__nav-item"><a class="nav-link" href="/news">Tin tức</a></li>
 				</ul>
 	
 				<div class="d-flex form-search ">
-					<input class="form-control me-2 text-search inputSearch" id="inputSearch"
+					<input class="form-control me-2 text-search inputSearch" style="width: 92%;" id="inputSearch"
 					name="inputSearch" type="text" 
-					placeholder="Search" aria-label="Search" v-model="searchText">
+					placeholder="Tìm kiếm" aria-label="Search" v-model="searchText">
 					<div class="search__product-list" v-show=" hasResults && searchText !== ''">
 						<ul class="search__product-list-item">
 							<li class="search__product-item" v-for="product in searchResults" :key="product.id">
@@ -67,7 +67,7 @@
 						</ul>
 					</div>
 
-					<button class="btn btn-outline-success" @click="searchText1" type="submit" id="search-btn">Search</button>
+					<button class="btn btn-outline-success" @click="searchText1" type="submit" id="search-btn" hidden></button>
 				
 				</div>
 				

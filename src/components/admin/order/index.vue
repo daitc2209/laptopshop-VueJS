@@ -1,18 +1,18 @@
 <template>
   <div>
     <head>
-        <title>Order Page</title>
+        <title>Quản lý đơn hàng</title>
     </head>
     <section class="content-header">
 			<div class="container-fluid">
 				<div class="row mb-2">
 					<div class="col-sm-6">
-						<h1>Manage order</h1>
+						<h1>Quản lý đơn hàng</h1>
 					</div>
 					<div class="col-sm-6">
 						<ol class="breadcrumb float-sm-right">
-							<li class="breadcrumb-item"><a href='/admin/home'>Home</a></li>
-							<li class="breadcrumb-item active">Order</li>
+							<li class="breadcrumb-item"><a href='/admin/home'>Quản lý</a></li>
+							<li class="breadcrumb-item active">Đơn hàng</li>
 						</ol>
 					</div>
 				</div>
@@ -116,7 +116,7 @@
 					</div> 
 				</div>
 				<div class="card-body">
-					<table class="text-center order-table">
+					<table class="order-table">
 						<thead>
 							<tr>
 								<th>No.</th>
@@ -126,7 +126,7 @@
 								<th>Hình thức thanh toán</th>
 								<th>Thanh toán</th>
 								<th>Trạng thái</th>
-								<th>Action</th>
+								<th>Thao tác</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -140,9 +140,9 @@
 										<td class="td6"><h6>{{item.stateCheckout}}</h6></td>
 										<td class="td7"><h6>{{item.stateOrder}}</h6></td>
 										<td class="td8">
-											<a data-bs-toggle="modal" :data-bs-target="'#see'+item.id" class="btn btn-sm btn-primary">See</a> 
-											<a v-if="item.stateOrder == 'CANCELLED'" class="btn btn-sm btn-secondary">Vertify</a>
-											<a v-if="item.stateOrder != 'CANCELLED'" data-bs-toggle="modal" :data-bs-target="'#vertify'+item.id" @click="getOrder(item.id)" class="btn btn-sm btn-danger">Vertify</a>
+											<a data-bs-toggle="modal" :data-bs-target="'#see'+item.id" class="btn btn-sm btn-primary mr-2"><i class="fa-solid fa-eye"></i></a> 
+											<a v-if="item.stateOrder == 'CANCELLED' || item.stateOrder == 'RECEIVED'" class="btn btn-sm btn-secondary">Status</a>
+											<a v-if="item.stateOrder != 'CANCELLED' && item.stateOrder != 'RECEIVED'" data-bs-toggle="modal" :data-bs-target="'#vertify'+item.id" @click="getOrder(item.id)" class="btn btn-sm btn-danger">Status</a>
 										</td>
 										<div class="modal see-order" :id="'see'+item.id">
 											<div class="modal-dialog">
@@ -227,7 +227,7 @@
 															</section>
 														</div>
 														<div class="modal-footer">
-															<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+															<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
 														</div>
 												</div>
 											</div>
@@ -238,7 +238,7 @@
 												<div class="modal-content">
 													<form @submit.prevent="clickVerifyOrder(orderDto)" >
 														<div class="modal-header">
-															<h4 class="modal-title">Verify order</h4>
+															<h4 class="modal-title">Cập nhật trạng thái đơn hàng</h4>
 															<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 														</div>
 
@@ -249,7 +249,7 @@
 																	<input type="text" v-model="orderDto.id" class="form-control" readonly="readonly" />
 																</div>
 																<div class="form-group">
-																	<label for="">Status</label> 
+																	<label for="">Trạng thái</label> 
 																	<select name="status" v-model="orderDto.stateOrder" class="form-control form-select" required="required">
 																		<option hidden="" :value="orderDto.stateOrder">{{orderDto.stateOrder}}</option>
 																		<option value="CONFIRMED">CONFIRMED</option>
@@ -261,8 +261,8 @@
 															</div>
 														</div>
 														<div class="modal-footer">
-															<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
-															<button type="submit" class="btn btn-primary">Verify</button>
+															<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
+															<button type="submit" class="btn btn-primary">Xác nhận</button>
 														</div>
 													</form>
 												</div>
@@ -277,16 +277,16 @@
 							</template>
 						</tbody>
 					</table>
-					<template v-if="order">
-						<div class="pagination" id="pagination" v-if="paginationButtons.length >= 2">
-							<button v-for="page in paginationButtons" :key="page" 
-							:class="{ active: currentPage === page }" 
-							@click="PaginationButton(page).handleClick()">
-								{{ page }}
-							</button>
-                  		</div>
-					</template>
 				</div>
+				<template v-if="order">
+					<div class="pagination" id="pagination" v-if="paginationButtons.length >= 2">
+						<button v-for="page in paginationButtons" :key="page" 
+						:class="{ active: currentPage === page }" 
+						@click="PaginationButton(page).handleClick()">
+							{{ page }}
+						</button>
+					</div>
+				</template>
 			</div>
 		</section>
   </div>
@@ -338,9 +338,9 @@ export default {
 			this.currentPage = this.status !== data ? 1 : this.currentPage;
 			this.status = data
 
-			if(this.startDate !== null || this.endDate !== null){
+			if(this.startDate !== null || this.endDate !== null)
 				this.search()
-			}
+			
 			else{
 				Order.getListOrderByStatus(this.currentPage,this.search_text,this.status)
 					.then(res => {
@@ -353,6 +353,7 @@ export default {
 						this.order = false
 					})
 			}
+			this.getAllOrderByStatus()
 		},
 		getOrder(id){
 			Order.getOrderById(id)
@@ -516,6 +517,11 @@ export default {
 }
 .card-container.container{
 	max-width: 1600px;
+}
+
+.information-detail h4,
+.place-order h4{
+	text-align: center;
 }
 
 .card-item{

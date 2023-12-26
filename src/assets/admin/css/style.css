@@ -161,7 +161,10 @@
 	font-size: 16px;
 	margin-bottom: 5px;
 	width: 200px;
+}
 
+.order-table tr td{
+	text-align: center;
 }
 
 .order-form .information-detail label span {

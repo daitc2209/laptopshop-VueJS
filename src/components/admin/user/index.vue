@@ -1,18 +1,18 @@
 <template>
   <div>
     <head>
-        <title>Admin User Page</title>
+        <title>Quản lý người dùng</title>
     </head>
     <section class="content-header">
 			<div class="container-fluid">
 				<div class="row mb-2">
 					<div class="col-sm-6">
-						<h1>Manage user</h1>
+						<h1>Quản lý người dùng</h1>
 					</div>
 					<div class="col-sm-6">
 						<ol class="breadcrumb float-sm-right">
-							<li class="breadcrumb-item"><a href='/admin/home'>Home</a></li>
-							<li class="breadcrumb-item active">User</li>
+							<li class="breadcrumb-item"><a href='/admin/home'>Quản lý</a></li>
+							<li class="breadcrumb-item active">Người dùng</li>
 						</ol>
 					</div>
 				</div>
@@ -24,23 +24,22 @@
     		</div>
 			<div class="container">
 				<form @submit.prevent="search(1,formSearchUser)">
-					<h5 class="px-3 mb-4">Form search user</h5>
 					<div class="row">
 						<div class="col-6 left px-4">
 							<div class="form-group d-flex justify-content-between">
-								<label for="inputPassword6" class="col-form-label">Fullname:</label>
+								<label for="inputPassword6" class="col-form-label">Họ và tên:</label>
 								<input type="text" v-model="formSearchUser.fullname" class="form-control" />
 							</div>
 							<div class="form-group d-flex justify-content-between">
-								<label for="inputPassword6" class="col-form-label">Sex:</label>
+								<label for="inputPassword6" class="col-form-label">Giới tính:</label>
 								<select class="form-control form-select" v-model="formSearchUser.sex">
 									<option selected="selected" value=""></option>
-									<option value="MALE">MALE</option>
-									<option value="FEMALE">FEMALE</option>
+									<option value="MALE">Nam</option>
+									<option value="FEMALE">Nữ</option>
 								</select>
 							</div>
 							<div class="form-group d-flex justify-content-between">
-								<label for="inputPassword6" class="col-form-label">Address:</label>
+								<label for="inputPassword6" class="col-form-label">Địa chỉ:</label>
 								<input type="text" v-model="formSearchUser.address" class="form-control" />
 							</div>
 						</div>
@@ -50,7 +49,7 @@
 								<input type="text" v-model="formSearchUser.email" class="form-control" />
 							</div>
 							<div class="form-group d-flex justify-content-between">
-								<label for="inputPassword6" class="col-form-label">State user:</label>
+								<label for="inputPassword6" class="col-form-label">Trạng thái:</label>
 								<select class="form-control form-select" v-model="formSearchUser.stateUser">
 									<option selected="selected" value=""></option>
 									<option value="PENDING">PENDING</option>
@@ -93,15 +92,15 @@
 							<tr>
 								<th>STT</th>
 								<th>Img</th>
-								<th>Fullname</th>
+								<th>Họ tên</th>
 								<th>Email</th>
-								<th>Phone</th>
-								<th>Sex</th>
-								<th>Birthday</th>
-								<th>Address</th>
-								<th>State User</th>
+								<th>SĐT</th>
+								<th>Giới tính</th>
+								<th>Ngày sinh</th>
+								<th>Địa chỉ</th>
+								<th>Trạng thái</th>
 								<th>Auth Type</th>
-								<th>Action</th>
+								<th>Thao tác</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -119,10 +118,10 @@
 										<td class="td8"><h6>{{item.stateUser}}</h6></td>
 										<td class="td9"><h6>{{item.authType}}</h6></td>
 										<td class="td11">
-											<a data-bs-toggle="modal" @click="getEditUser(item.id)" :data-bs-target="`#edit`+item.id" class="btn btn-sm btn-primary">Edit</a> 
-											<a v-if="item.lock==true" data-bs-toggle="modal" :data-bs-target="'#lock'+ item.id" class="btn btn-sm btn-danger">Lock</a>
-											<a v-else data-bs-toggle="modal" :data-bs-target="'#unlock'+ item.id" class="btn btn-sm btn-danger">Unlock</a>
-											<a data-bs-toggle="modal" :data-bs-target="'#delete'+ item.id" class="btn btn-sm btn-danger">Delete</a>
+											<a data-bs-toggle="modal" @click="getEditUser(item.id)" :data-bs-target="`#edit`+item.id" class="btn btn-sm btn-primary mr-2"><i class="fa-solid fa-pen-to-square"></i></a> 
+											<a v-if="item.lock==true" data-bs-toggle="modal" :data-bs-target="'#lock'+ item.id" class="btn btn-sm btn-confirmed mr-2"><i class="fa-solid fa-lock-open"></i></a>
+											<a v-else data-bs-toggle="modal" :data-bs-target="'#unlock'+ item.id" class="btn btn-sm btn-secondary mr-2"><i class="fa-solid fa-lock"></i></a>
+											<a data-bs-toggle="modal" :data-bs-target="'#delete'+ item.id" class="btn btn-sm btn-danger"><i class="fa-solid fa-trash"></i></a>
 										</td>
 										<div class="modal delete-new" :id="'delete'+item.id">
 											<div class="modal-dialog">
@@ -184,14 +183,13 @@
 							</template>
 						</tbody>
 					</table>
-
-						<div class="pagination" id="pagination" v-if="paginationButtons.length >= 2">
-							<button v-for="page in paginationButtons" :key="page" 
-							:class="{ active: currentPage === page }" 
-							@click="PaginationButton(page).handleClick()">
-								{{ page }}
-							</button>
-                  		</div>
+				</div>
+				<div class="pagination" id="pagination" v-if="paginationButtons.length >= 2">
+					<button v-for="page in paginationButtons" :key="page" 
+					:class="{ active: currentPage === page }" 
+					@click="PaginationButton(page).handleClick()">
+						{{ page }} 
+					</button>
 				</div>
 			</div>
 		</section>
@@ -201,13 +199,13 @@
 				<div class="modal-content">
 					<form @submit.prevent="addUser(formAddUser)">
 						<div class="modal-header">
-							<h4 class="modal-title">Add new user</h4>
+							<h4 class="modal-title">Thêm tài khoản</h4>
 							<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 						</div>
 						<div class="modal-body">
 							<div id="logins-part" class="content" role="tabpanel" aria-labelledby="logins-part-trigger">
 								<div class="form-group">
-									<label for="">Fullname</label> 
+									<label for="">Họ và tên</label> 
 									<input type="text" v-model="formAddUser.fullname" class="form-control" required="required" />
 								</div>
 								<div class="form-group">
@@ -215,18 +213,18 @@
 									<input type="text" v-model="formAddUser.email" class="form-control" required="required" />
 								</div>
 								<div class="form-group">
-									<label for="">Username</label> 
+									<label for="">Tên đăng nhập</label> 
 									<input type="text" v-model="formAddUser.username" class="form-control" required="required" />
 								</div>
 								<div class="form-group">
-									<label for="">Password</label> 
+									<label for="">Mật khẩu</label> 
 									<input autocomplete="" type="password" v-model="formAddUser.password" class="form-control" required="required" />
 								</div>
 							</div>
 						</div>
 						<div class="modal-footer">
-							<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
-							<button type="submit" class="btn btn-primary">Add</button>
+							<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
+							<button type="submit" class="btn btn-primary">Xác nhận</button>
 						</div>
 					</form>
 				</div>
@@ -238,7 +236,7 @@
 					<div class="modal-content">
 						<form id="formEditUser" @submit.prevent="editUser(formEditUser)" enctype="multipart/form-data">
 							<div class="modal-header">
-								<h4 class="modal-title">Edit new user</h4>
+								<h4 class="modal-title">Chỉnh sửa tài khoản</h4>
 								<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 							</div>
 							<div class="modal-body">
@@ -248,30 +246,30 @@
 										<input type="text" id="idEdit" v-model="formEditUser.id" class="form-control" readonly="readonly"/>
 									</div>
 									<div class="form-group">
-										<label for="">Fullname</label> 
+										<label for="">Họ và tên</label> 
 										<input type="text" id="fullnameEdit" v-model="formEditUser.fullname" class="form-control" required="required" />
 									</div>
 									<div class="form-group">
-										<label for="">Sex</label> 
+										<label for="">Giới tính</label> 
 										<select class="form-control form-select" id="sexEdit" v-model="formEditUser.gender" >
-											<option value="MALE">MALE</option>
-											<option value="FEMALE">FEMALE</option>
+											<option value="MALE">Nam</option>
+											<option value="FEMALE">Nữ</option>
 										</select>
 									</div>
 									<div class="form-group">
-										<label for="">Birthday</label> 
+										<label for="">Ngày sinh</label> 
 										<input type="text" class="form-control" id="birthdayEdit" v-model="formEditUser.dob" />
 									</div>
 									<div class="form-group">
-										<label for="">Address</label> 
+										<label for="">Địa chỉ</label> 
 										<input type="text" class="form-control" id="addressEdit" v-model="formEditUser.address" />
 									</div>
 									<div class="form-group">
-										<label for="">Phone</label> 
+										<label for="">SĐT</label> 
 										<input type="text" class="form-control" id="phoneEdit" v-model="formEditUser.phone" />
 									</div>
 									<div class="form-group">
-										<label for="">State user</label> 
+										<label for="">Trạng thái</label> 
 										<select class="form-control form-select" id="stateUserEdit" v-model="formEditUser.stateUser" required="required">
 											<option value="PENDING">PENDING</option>
 											<option value="ACTIVED">ACTIVED</option>
@@ -294,8 +292,8 @@
 								</div>
 							</div>
 							<div class="modal-footer">
-								<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
-								<button type="submit" class="btn btn-primary">Edit</button>
+								<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
+								<button type="submit" class="btn btn-primary">Xác nhận</button>
 							</div>
 						</form>
 					</div>

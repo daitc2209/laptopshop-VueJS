@@ -2,7 +2,7 @@
 	<div>
 
 		<head>
-			<title>Admin Home Page</title>
+			<title>Admin Page</title>
 		</head>
 		<div id="toast">
 		</div>

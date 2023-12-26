@@ -7,9 +7,9 @@
       <div class="row">
         <div class="breadcrumbs d-flex flex-row align-items-center col-12">
           <ul>
-            <li><a href="/home">Home</a></li>
-            <li><a href="/store"><i class="fa fa-angle-right" aria-hidden="true"></i>Store</a></li>
-            <li class="active"><a href="#"><i class="fa fa-angle-right" aria-hidden="true"></i>Product</a></li>
+            <li><a href="/home">Trang chủ</a></li>
+            <li><a href="/store"><i class="fa fa-angle-right" aria-hidden="true"></i>Cửa hàng</a></li>
+            <li class="active"><a href="#"><i class="fa fa-angle-right" aria-hidden="true"></i>Sản phẩm</a></li>
           </ul>
         </div>
         <div class="col-md-5 order-2 order-md-1">
@@ -34,7 +34,7 @@
           <h5>
             Discount: {{ product.discount }}%
           </h5>
-          <form @submit.prevent="addToCart" method="post">
+          <form @submit.prevent="addToCart()">
             <input name="productId" :value="product.id" hidden>
             <div class="quantity">
               <div class="pro-qty">
@@ -43,11 +43,8 @@
                 <input v-else class="id-1" id="quanty" type="text" :value="cart.num" name="numProduct">
                 <span @click="incFunction(1)" class="inc qtybtn">+</span>
               </div>
-              <a><button class="primary-btn pd-cart" type="submit">Add To Cart</button></a>
-            </div>
-            <div v-if="err">
-              <div v-if="!cart" class="alert alert-danger">{{ err }} products left in stock</div>
-              <div v-else class="alert alert-danger">There are {{ cart }} products in cart / {{ err }} products left in stock</div>
+              <a><button class="primary-btn pd-cart" type="submit">Thêm vào giỏ hàng</button></a>
+              <a class="favour-container"><button class="favour-btn" @click="addToFavour(item.id)"><i class="fa-solid fa-heart"></i></button></a>
             </div>
           </form>
         </div>
@@ -60,6 +57,7 @@
 import { decFunction, incFunction, showSuccessToast, showErrorToast } from "../../../assets/web/js/main";
 import productApi from "../../../service/Product";
 import Cart from "../../../service/Cart";
+import Favour from "../../../service/favour";
 export default {
   data() {
     return {
@@ -87,24 +85,38 @@ export default {
 			});
 			return formatter.format(price);
     },
+
     decFunction(num) {
       this.cart.num = decFunction(num);
     },
     incFunction(num) {
       this.cart.num = incFunction(num)
     },
+
     async addToCart() {
       this.cart.productId=this.product.id
-      console.log("cart num: "+this.cart.num)
 
       Cart.addToCart(this.cart).then(()=>{
-        console.log("add success")
         let message = 'Thêm vào giỏ hàng thành công'
         showSuccessToast(message)
       }).catch((err) => { 
         showErrorToast()
-        console.log("err cart: "+err)
       })
+    },
+    async addToFavour(id){
+      if(sessionStorage.getItem("login"))
+      {
+        Favour.addToFavour(id).then(()=>{
+          let message = 'Đã thêm sản phẩm vào yêu thích'
+          showSuccessToast(message)
+        }).catch((err)=>{
+          showErrorToast()
+        })
+      }
+      else{
+        sessionStorage.setItem("err",true)
+        this.$router.push("/auth/sign-in")
+      }
     },
     async getProductbyId(id){
       try{
@@ -114,19 +126,7 @@ export default {
       catch(err) {
         console.log("err: " + err)
       }
-      // .then((res)=>{
-      //   this.product = res.data.data
-      // }).catch((err)=> {console.log("err: "+err)})
     },
-
-
-    showSuccessToast(message){
-      showSuccessToast(message)
-    },
-     showErrorToast(){
-      showErrorToast()
-    }
-
   },
   mounted() {
     this.getProductbyId(this.$route.params.id);

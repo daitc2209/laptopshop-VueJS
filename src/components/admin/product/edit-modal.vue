@@ -11,7 +11,7 @@
 					enctype="multipart/form-data"
 				>
 					<div class="modal-header">
-						<h4 class="modal-title">Edit product</h4>
+						<h4 class="modal-title">Chỉnh sửa thông tin sản phẩm</h4>
 						<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 					</div>
 					<div class="modal-body">
@@ -22,12 +22,12 @@
 								<div class="text-danger"></div>
 							</div>
 							<div class="form-group">
-								<label for="">Name</label> 
+								<label for="">Tên sản phẩm</label> 
 								<input type="text" id="nameEdit" v-model="productDto.name" class="form-control" required="required" />
 								<div class="text-danger"></div>
 							</div>
 							<div class="form-group">
-								<label for="">Category</label> 
+								<label for="">Danh mục</label> 
 								<select v-model="productDto.categoryName" class="form-control form-select" id="categoryEdit" required="required">
 									
 										<option v-for="item in categories" :key="item.id" :value="item.name">{{item.name}}</option>
@@ -36,7 +36,7 @@
 								<div class="text-danger"></div>
 							</div>
 							<div class="form-group">
-								<label for="">Brand</label> 
+								<label for="">Thương hiệu</label> 
 								<select v-model="productDto.brandName" class="form-control form-select" id="brandEdit" required="required">
 									
 										<option v-for="item in brands" :key="item.id" :value="item.name">{{item.name}}</option>
@@ -45,7 +45,7 @@
 								<div class="text-danger"></div>
 							</div>
 							<div class="form-group">
-								<label for="">Price</label> 
+								<label for="">Giá</label> 
 								<input type="text" v-model="productDto.price" class="form-control" id="priceEdit" required="required" />
 								<div class="text-danger"></div>
 							</div>
@@ -55,12 +55,12 @@
 								<div class="text-danger"></div>
 							</div>
 							<div class="form-group">
-								<label for="">Quantity</label> 
+								<label for="">Số lượng</label> 
 								<input type="text" v-model="productDto.quantity" class="form-control" id="quantityEdit" required="required" />
 								<div class="text-danger"></div>
 							</div>
 							<div class="form-group">
-								<label for="">Description</label>
+								<label for="">Mô tả</label>
 								<textarea v-model="productDto.description" class="form-control" required="required" id="descriptionEdit" rows="4"></textarea>
 								<div class="text-danger"></div>
 							</div>
@@ -76,8 +76,8 @@
 						</div>
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
-						<button type="submit" class="btn btn-primary">Edit</button>
+						<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
+						<button type="submit" class="btn btn-primary">Xác nhận</button>
 					</div>
 				</form>
 			</div>

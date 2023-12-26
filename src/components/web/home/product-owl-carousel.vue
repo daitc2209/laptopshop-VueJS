@@ -27,6 +27,8 @@
               <span>
                 <a :href="'/store/' + item.id"><i class="fa-solid fa-eye"></i></a>
                 &emsp;
+                <a @click="addToFavour(item.id)"><i class="fa-solid fa-heart"></i></a>
+                &emsp;
                 <a @click="addToCart(item.id)"><i class="fa-solid fa-cart-shopping"></i></a>
               </span>
             </h5>
@@ -60,6 +62,8 @@
             <span>
               <a :href="`/store/${item.id}`"><i class="fa-solid fa-eye"></i></a>
               &emsp;
+              <a @click="addToFavour(item.id)"><i class="fa-solid fa-heart"></i></a>
+              &emsp;
               <a @click="addToCart(item.id)"><i class="fa-solid fa-cart-shopping"></i></a>
             </span>
           </h5>
@@ -91,6 +95,8 @@
             <span>
               <a :href="'/store/' + item.id"><i class="fa-solid fa-eye"></i></a>
               &emsp;
+              <a @click="addToFavour(item.id)"><i class="fa-solid fa-heart"></i></a>
+              &emsp;
               <a @click="addToCart(item.id)" ><i class="fa-solid fa-cart-shopping"></i></a>
             </span>
           </h5>
@@ -107,6 +113,7 @@ import { showSuccessToast, showErrorToast } from "../../../assets/web/js/main";
 // import Products from '../../../service/Product'
 import productApi from '../../../service/Product';
 import Cart from '../../../service/Cart';
+import Favour from '../../../service/favour';
 export default {
   data() {
     return {
@@ -145,20 +152,27 @@ export default {
       this.cart.productId=id
       console.log("id: "+id)
       Cart.addToCart(this.cart).then(()=>{
-        console.log("them thanh cong o trang home")
         let message = 'Thêm vào giỏ hàng thành công'
         showSuccessToast(message)
       }).catch((err)=>{
         showErrorToast()
-        console.log("err o trang home khi them gio hang: "+err)
       })
     },
-    showSuccessToast(message){
-      showSuccessToast(message)
+    async addToFavour(id){
+      if(sessionStorage.getItem("login"))
+      {
+        Favour.addToFavour(id).then(()=>{
+          let message = 'Đã thêm sản phẩm vào yêu thích'
+          showSuccessToast(message)
+        }).catch((err)=>{
+          showErrorToast()
+        })
+      }
+      else{
+        sessionStorage.setItem("err",true)
+        this.$router.push("/auth/sign-in")
+      }
     },
-     showErrorToast(){
-      showErrorToast()
-    }
   },
   mounted() {
     this.getAllProduct();

@@ -1,10 +1,10 @@
 <template>
   <div>
-    <head><title>Contact Page</title></head>
+    <head><title>Liên hệ</title></head>
     <div class="breadcrumbs d-flex flex-row align-items-center container mt-3 col-12">
 			<ul>
-				<li><a href="/home">Home</a></li>
-				<li class="active"><a href="#"><i class="fa fa-angle-right" aria-hidden="true"></i>Contact</a></li>
+				<li><a href="/home">Trang chủ</a></li>
+				<li class="active"><a href="#"><i class="fa fa-angle-right" aria-hidden="true"></i>Liên hệ</a></li>
 			</ul>
 		</div>
 			

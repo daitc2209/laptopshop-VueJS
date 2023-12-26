@@ -90,6 +90,25 @@
 .product-detail .quantity{
 	margin-top: 30px;
 }
+
+.product-detail .quantity a
+.favour-btn{
+	margin-left: 14px;
+	width: 60px;
+    height: 46px;
+    border: none;
+    border-radius: 10px;
+	text-align: center;
+	cursor: pointer;
+}
+.favour-container .favour-btn:hover{
+	background-color: #1c1c50;
+	color: #fff;
+}
+.favour-btn{
+	font-size: 24px;
+}
+
 @media only screen and (max-width: 1024px) {
     /*-- Code cho màn hình vừa (Table) viết ở đây --*/
 }

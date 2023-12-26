@@ -3,8 +3,8 @@
     <head><title>Trang giỏ hàng</title></head>
     <div class="breadcrumbs d-flex flex-row align-items-center col-12 container  mt-2">
 			<ul class="m-0">
-				<li><a href="/home">Home</a></li>
-				<li class="active"><a href="#"><i class="fa fa-angle-right" aria-hidden="true"></i>Cart</a></li>
+				<li><a href="/home">Trang chủ</a></li>
+				<li class="active"><a href="#"><i class="fa fa-angle-right" aria-hidden="true"></i>Giỏ hàng</a></li>
 			</ul>
 		</div>
 		
@@ -13,18 +13,15 @@
 				<div class="row">
 					<div class="col-lg-12">
 						<div class="cart-table">
-							<div v-if="param.err">
-			                	<div class="alert alert-danger">{{param.err}} products left in stock</div>
-			            	</div>
 							<table>
 								<thead>
 									<tr>
 										<th></th>
-										<th>Name</th>
-										<th>Price</th>
-										<th>Amount</th>
-										<th>Discount</th>
-										<th>Total</th>
+										<th>Tên sản phẩm</th>
+										<th>Giá</th>
+										<th>Số lượng</th>
+										<th>Giảm giá</th>
+										<th>Tổng</th>
 										<th></th>
 									</tr>
 								</thead>
@@ -50,7 +47,7 @@
 									</template >
 									<template v-else>
 										<tr>
-											<td colspan="12"><h5 class="text-start p-4">There are no records!!!</h5></td>
+											<td colspan="12"><h5 class="text-start p-4">Không có sản phẩm nào !!!</h5></td>
 										</tr>
 									</template>
 								</tbody>
@@ -60,12 +57,12 @@
 							<div class="col-lg-4"></div>
 							<div class="col-lg-4 offset-lg-4">
 								<div class="proceed-checkout">
-									<a @click="clearCart" class="proceed-btn mb-3">Clear All</a>
+									<a @click="clearCart" class="proceed-btn mb-3">Xóa tất cả</a>
 									<ul>
-										<li class="subtotal">Total quantity <span v-if="listCart">{{totalQuantity}}</span></li>
-										<li class="cart-total">Total price <span v-if="listCart">{{ formatCurrency(totalMoney) }}</span></li>
+										<li class="subtotal">Tổng số lượng <span v-if="listCart">{{totalQuantity}}</span></li>
+										<li class="cart-total">Tổng tiền <span v-if="listCart">{{ formatCurrency(totalMoney) }}</span></li>
 									</ul>
-									<a @click="click" class="proceed-btn">PROCEED TO ORDER</a>
+									<a @click="click" class="proceed-btn">Mua ngay</a>
 								</div>
 							</div>
 						</div>
@@ -93,7 +90,13 @@ export default {
     methods: {
 		click(e){
 			e.preventDefault()
-			this.$router.push("/order")
+			if(this.listCart)
+				this.$router.push("/order")
+			else{
+				this.$router.push("/store")
+				sessionStorage.setItem("cart-empty",1)
+			}
+			
 		},
 		formatCurrency(value) {
 			const formatter = new Intl.NumberFormat("vi-VN", {

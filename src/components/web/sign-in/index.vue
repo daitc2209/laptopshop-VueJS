@@ -1,45 +1,39 @@
 <template>
   <section class="container login">
 			<div class="row">
-				<div class="breadcrumbs d-flex flex-row align-items-center col-12">
-					<ul>
-						<li><a href="/home">Home</a></li>
-						<li class="active"><a href="#"><i class="fa fa-angle-right" aria-hidden="true"></i>Sign in</a></li>
-					</ul>
-				</div>
 				<div class="col-md-4 col-12 p-0" id="side1">
 					<div>
-						<h3>Hello Friend!</h3>
-						<p>Create New Account</p>
-						<button @click="click" id="btn">Sign up</button>
+						<h3>Chào mừng đến với TCD Shop</h3>
+						<p>Bạn chưa có tài khoản?</p>
+						<button @click="click" id="btn">Đăng ký ngay</button>
 					</div>
 				</div>
 				<div class="col-md-8 col-12 p-0" id="side2">
 					<form class="form-login" @submit.prevent="login">
 						<div v-if="param.error">
-			                <div class="alert alert-danger">Invalid Username or Password</div>
+			                <div class="alert alert-danger">Tên đăng nhập hoặc mật khẩu không đúng !!</div>
 			            </div>
 			            <div v-if="param.logout">
-			                <div class="alert alert-success"> You have been logged out.</div>
+			                <div class="alert alert-success"> Đăng xuất thành công.</div>
 			            </div>
 			            <div v-if="param.accessDenied">
-			                <div class="alert alert-danger"> You not authorize</div>
+			                <div class="alert alert-danger"> Bạn không có quyền.</div>
 			            </div>
 						<div v-if="param.checkLoginForCheckOut">
-			                <div class="alert alert-danger"> You must login. </div>
+			                <div class="alert alert-danger"> Vui lòng đăng nhập </div>
 			            </div>
-						<h3>Login Account</h3>
+						<h3>Đăng nhập</h3>
 						<div class="inp">
 							<input v-model="user.username" type="text" name="username" id="username" placeholder="User Name" required> 
 							<input v-model="user.password" autocomplete="" type="password" name="password" id="password" placeholder="Password" required>
 						</div>
 						<div class="m-0 p-2 mt-2"><input type="checkbox" /> Remember me</div>
-						<p class="m-0"><a href="/auth/forgot-password">Forgot Your Password</a></p>
+						<p class="m-0"><a href="/auth/forgot-password">Quên mật khẩu</a></p>
 						<div id="login">
-							<a href="http://localhost:8080/oauth2/authorization/google"><button  type="button"><i class="fa-brands fa-google"></i> &ensp; Sign in by Gmail</button></a>
+							<a href="http://localhost:8080/oauth2/authorization/google"><button  type="button"><i class="fa-brands fa-google"></i> &ensp; Đăng nhập bằng Google</button></a>
 						</div>
 						<div id="login">
-							<button type="submit">Sign in</button>
+							<button type="submit">Đăng nhập</button>
 						</div>
 					</form>
 				</div>

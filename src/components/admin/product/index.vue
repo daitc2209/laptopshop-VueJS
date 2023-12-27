@@ -106,26 +106,9 @@
 										<td class="td10">
 											<a v-if="item.state == `ACTIVED`" @click="stateProduct(item.id,1)" class="btn btn-sm btn-confirmed mr-2"><i class="fa-solid fa-eye"></i></a>
 											<a v-else @click="stateProduct(item.id,0)" class="btn btn-sm btn-secondary mr-2"><i class="fa-solid fa-eye-slash"></i></a>
-											<a data-bs-toggle="modal" :data-bs-target="`#edit`+item.id"  class="btn btn-sm btn-primary mr-2"><i class="fa-solid fa-pen-to-square"></i></a> 
+											<a @click="getEditProduct(item.id)" data-bs-toggle="modal" :data-bs-target="`#edit`+item.id"  class="btn btn-sm btn-primary mr-2"><i class="fa-solid fa-pen-to-square"></i></a> 
 											<a data-bs-toggle="modal" :data-bs-target="'#delete'+ item.id" class="btn btn-sm btn-danger"><i class="fa-solid fa-trash"></i></a>
 										</td>
-										<div class="modal delete-new" :id="'delete'+item.id">
-											<div class="modal-dialog">
-												<div class="modal-content">
-													<div class="modal-header">
-														<h4 class="modal-title">Xóa sản phẩm</h4>
-														<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-													</div>
-													<div class="modal-body">
-														Bạn có chắc là xóa không ?
-													</div>
-													<div class="modal-footer">
-														<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Hủy</button>
-														<button @click="clickDeleteProduct(item.id)" class="btn btn-primary">Xác nhận</button>
-													</div>
-												</div>
-											</div>
-										</div>
 									</tr>
 							</template>
 							<template v-else>
@@ -146,33 +129,212 @@
 			</div>
 		</section>
 
-        <Add @add="handleEvent"/>
+		<div class="modal" id="add">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<form @submit.prevent="addProduct(productDto)" enctype="multipart/form-data">
+						<div class="modal-header">
+							<h4 class="modal-title">Thêm sản phẩm</h4>
+							<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+						</div>
+						<div class="modal-body">
+							<div id="logins-part" class="content" role="tabpanel"
+								aria-labelledby="logins-part-trigger">
+								<div class="form-group">
+									<label for="">Tên sản phẩm</label> 
+									<input type="text" v-model="productDto.name" class="form-control" required="required" />
+									
+								</div>
+								<div class="form-group">
+									<label for="">Danh mục</label> 
+									<select v-model="productDto.categoryName" class="form-control form-select" required="required">
+										
+										<option v-for="item in categories" :key="item.id" :value="item.name">{{item.name}}</option>
+									</select>
+									
+								</div>
+								<div class="form-group">
+									<label for="">Thương hiệu</label> 
+									<select v-model="productDto.brandName" class="form-control form-select" required="required">
+									
+										<option v-for="item in brands" :key="item.id" :value="item.name">{{item.name}}</option>
 
-        <div v-for="p in product" :key="p.id">
-			<Edit @edit="handleEvent" :productId="p.id" />
+									</select>
+									
+								</div>
+								<div class="form-group">
+									<label for="">Giá</label> 
+									<input type="text" v-model="productDto.price" class="form-control" required="required" />
+									
+								</div>
+								<div class="form-group">
+									<label for="">Discount</label> 
+									<input type="text" v-model="productDto.discount" class="form-control" required="required" />
+									
+								</div>
+								<div class="form-group">
+									<label for="">Số lượng</label> 
+									<input type="text" v-model="productDto.quantity" class="form-control" required="required" />
+									
+								</div>
+								<div class="form-group">
+									<label for="">Mô tả</label>
+									<textarea v-model="productDto.description" class="form-control" required="required" rows="4"></textarea>
+									<div id="quillEditor"></div>
+									<input type="hidden" name="quillContent" id="quillContent">
+								</div>
+								<div class="form-group">
+									<label for="">Trạng thái</label> 
+									<select v-model="productDto.state" class="form-control form-select" required="required">
+										<option selected value="ACTIVED">Hiển thị</option>
+										<option value="DISABLED">Không hiển thị</option>
+									</select>
+								</div>
+								<div class="form-group">
+									<label for="">Img</label> 
+									<input class="form-control" @change="chooseFile" :value="input" type="file" name="fileImage" />
+								</div>
+								<div class="form-group d-flex justify-content-center">
+									<img id="imageAdd" class="imageAdd" :src="productDto.img" style="height: 200px; width: 200px"/>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
+							<button type="submit" class="btn btn-primary">Xác nhận</button>
+						</div>
+					</form>
+				</div>
+			</div>
 		</div>
-
+		<div v-for="item in product" v-bind:key="item.id" >
+			<div class="modal" :id="`edit`+item.id">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<form 
+							id="formEditProduct" 
+							@submit.prevent="clickEditProduct(productDto)"
+							enctype="multipart/form-data"
+						>
+							<div class="modal-header">
+								<h4 class="modal-title">Chỉnh sửa thông tin sản phẩm</h4>
+								<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+							</div>
+							<div class="modal-body">
+								<div id="logins-part" class="content" role="tabpanel" aria-labelledby="logins-part-trigger">
+									<div class="form-group">
+										<label for="">Id</label> 
+										<input type="text" id="idEdit" v-model="productDto.id" class="form-control" readonly="readonly" />
+										<div class="text-danger"></div>
+									</div>
+									<div class="form-group">
+										<label for="">Tên sản phẩm</label> 
+										<input type="text" id="nameEdit" v-model="productDto.name" class="form-control" required="required" />
+										<div class="text-danger"></div>
+									</div>
+									<div class="form-group">
+										<label for="">Danh mục</label> 
+										<select v-model="productDto.categoryName" class="form-control form-select" id="categoryEdit" required="required">
+											
+												<option v-for="item in categories" :key="item.id" :value="item.name">{{item.name}}</option>
+										
+										</select>
+										<div class="text-danger"></div>
+									</div>
+									<div class="form-group">
+										<label for="">Thương hiệu</label> 
+										<select v-model="productDto.brandName" class="form-control form-select" id="brandEdit" required="required">
+											
+												<option v-for="item in brands" :key="item.id" :value="item.name">{{item.name}}</option>
+											
+										</select>
+										<div class="text-danger"></div>
+									</div>
+									<div class="form-group">
+										<label for="">Giá</label> 
+										<input type="text" v-model="productDto.price" class="form-control" id="priceEdit" required="required" />
+										<div class="text-danger"></div>
+									</div>
+									<div class="form-group">
+										<label for="">Discount</label> 
+										<input type="text" v-model="productDto.discount" class="form-control" id="discountEdit" required="required" />
+										<div class="text-danger"></div>
+									</div>
+									<div class="form-group">
+										<label for="">Số lượng</label> 
+										<input type="text" v-model="productDto.quantity" class="form-control" id="quantityEdit" required="required" />
+										<div class="text-danger"></div>
+									</div>
+									<div class="form-group">
+										<label for="">Mô tả</label>
+										<textarea v-model="productDto.description" class="form-control" required="required" id="descriptionEdit" rows="4"></textarea>
+										<div class="text-danger"></div>
+									</div>
+									<div class="form-group">
+										<label for="">Trạng thái</label>
+										<select v-model="productDto.state" class="form-control form-select" required="required">
+											<option selected value="ACTIVED">Hiển thị</option>
+											<option value="DISABLED">Không hiển thị</option>
+										</select>
+									</div>
+									<div class="form-group">
+										<label for="">Img</label> 
+										<input hidden="" type="text" id="thumbnailEdit" v-model="productDto.img"> 
+										<input class="form-control" @change="chooseFile" type="file" name="fileImage" />
+									</div>
+									<div class="form-group d-flex justify-content-center">
+										<img v-if="productDto.urlImg" id="imageAdd" class="imageAdd" :src="productDto.img" style="height: 200px; width: 200px"/>
+										<img v-else id="imageAdd" class="imageAdd" :src="`/src/images/product/`+productDto.img" style="height: 200px; width: 200px"/>
+									</div>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
+								<button type="submit" class="btn btn-primary">Xác nhận</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+			<div class="modal delete-new" :id="'delete'+item.id">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h4 class="modal-title">Xóa sản phẩm</h4>
+							<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+						</div>
+						<div class="modal-body">
+							Bạn có chắc là xóa không ?
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Hủy</button>
+							<button @click="clickDeleteProduct(item.id)" class="btn btn-primary">Xác nhận</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
   </div>
 
 </template>
 
 <script>
-import Add from './add-modal.vue'
-import Edit from './edit-modal.vue'
 import { showSuccessToast, showErrorToast } from "../../../assets/web/js/main";
 import productApi from "../../../service/Product";
+import brandsApi from "../../../service/Brands";
+import categoriesApi from "../../../service/Categories";
 export default {
-    components: {
-        Add,
-        Edit
-    },
     data(){
         return {
 			product: [],
+			productDto:[],
 			currentPage:'',
 			totalPage:'',
 			formSearchProduct: [],
-			paginationButtons:[]
+			paginationButtons:[],
+			brands:[],
+			categories:[],
+			input: ''
         }
     },
     methods: {
@@ -183,13 +345,93 @@ export default {
 			});
 			return formatter.format(value);
 		},
+
+		async addProduct(productDto){
+			try{
+				const formData = new FormData();
+				if(this.imgDto != "" || this.imgDto != null)
+					productDto.img = this.imgDto
+				formData.append('fileImage', productDto.img);
+				formData.append('name', productDto.name);
+				formData.append('categoryName', productDto.categoryName);
+				formData.append('brandName', productDto.brandName);
+				formData.append('price', productDto.price);
+				formData.append('discount', productDto.discount);
+				formData.append('quantity', productDto.quantity);
+				formData.append('description', productDto.description);
+				formData.append('state', productDto.state);
+				
+				const res = await productApi.addProduct(formData)
+				if(res.success){
+					let mess = "Thêm thành công"
+					this.showToastr(true,mess)
+					this.productDto=[]
+					this.imgDto=''
+				}
+				if(res.error){
+					let mess='Có lỗi xảy ra'
+					this.showToastr(false,mess)
+				}
+				await this.getListProduct(this.currentPage, this.formSearchProduct)
+				bootstrap.Modal.getInstance(document.getElementById("add")).hide()
+			
+			}
+			catch(error){
+				console.log("err: "+error)
+			};
+		},
+
+		async getEditProduct(id){
+			try{
+				const res = await productApi.getEditProduct(id)
+				this.productDto = res
+				this.productDto.urlImg = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- ./?%&=]*)?/.test(this.productDto.img);
+			}
+			catch(err){
+				console.log("Err: "+err)
+			}
+		},
+
+		async clickEditProduct(productDto){
+			try{
+				const formData = new FormData();
+				if(this.imgDto != "" && this.imgDto != null)
+					productDto.img = this.imgDto
+				formData.append('fileImage', productDto.img);
+				formData.append('id', productDto.id);
+				formData.append('name', productDto.name);
+				formData.append('categoryName', productDto.categoryName);
+				formData.append('brandName', productDto.brandName);
+				formData.append('price', productDto.price);
+				formData.append('discount', productDto.discount);
+				formData.append('quantity', productDto.quantity);
+				formData.append('description', productDto.description);
+				formData.append('state', productDto.state);
+				
+				const res = await productApi.postEditProduct(formData)
+				if(res.success){
+					let mess = "Sửa thành công"
+					this.showToastr(true,mess)
+					await this.getListProduct(this.currentPage, this.formSearchProduct)
+				}
+				if(res.error){
+					let mess='Có lỗi xảy ra'
+					this.showToastr(false,mess)
+				}
+				bootstrap.Modal.getInstance(document.getElementById("edit"+productDto.id)).hide()
+			
+			}
+			catch(error){
+				console.log("err: "+error)
+			};
+		},
+
         async clickDeleteProduct(id){
 			try{
 				bootstrap.Modal.getInstance(document.getElementById('delete' + id)).hide()
 				const res = await productApi.deleteProduct(id)
-				// this.getListProduct(this.currentPage,this.searchdata)
 				if(res.success){
-					await this.getListProduct(this.currentPage,this.searchdata)
+					await this.getListProduct(this.currentPage,this.formSearchProduct)
 					let mess='Xóa thành công'
 					this.showToastr(true,mess)
 				}
@@ -232,15 +474,47 @@ export default {
 					let mess='Mở thành công'
 					this.showToastr(1,mess)
 				}
-				await this.getListProduct(this.currentPage, this.searchdata)
+				await this.getListProduct(this.currentPage, this.formSearchProduct)
 			}
 			catch(err){
-				console.log("Err: "+err)
+				console.error("Lỗi: ", err);
+				let errorMessage = 'Đã xảy ra lỗi khi thay đổi trạng thái sản phẩm. Vui lòng thử lại sau.';
+				this.showToastr(0, errorMessage);
 			}
 		},
 
-		async handleEvent(){
-				await this.getListProduct(this.currentPage, this.searchdata = {})
+		chooseFile(e){
+			console.log("event: "+e)
+			const file = e.target.files[0];
+			console.log("file: "+file)
+			if (file) {
+				this.imgDto = file;
+				this.productDto.img = URL.createObjectURL(file)
+				this.productDto.urlImg = true
+				this.input = ''
+				console.log("file: ", this.imgDto);
+				console.log("url: ", this.productDto.img);
+			}
+		},
+
+		async getBrands(){
+			try {
+				const res = await brandsApi.getAllBrands()
+				this.brands = res.data.brands
+			}
+			catch(err){
+				console.log(err)
+			}
+		},
+
+		async getCategories(){
+			try {
+				const res = await categoriesApi.getAllCategories()
+				this.categories = res.data.categories
+			}
+			catch(err){
+				console.log(err)
+			}
 		},
 
 		showToastr(condition,message) {
@@ -271,7 +545,7 @@ export default {
 		},
 		async loadProduct(page) {
 			try{
-				const res = await productApi.getListProduct(page,this.searchdata)
+				const res = await productApi.getListProduct(page,this.formSearchProduct)
 				this.product = res.data.listProduct.content
 				this.currentPage = res.data.currentPage
 				this.totalPage = res.data.listProduct.totalPages
@@ -280,6 +554,11 @@ export default {
 				console.log(err)
 			}
     	},
+		init(){
+			this.getBrands()
+			this.getCategories()
+			this.getListProduct(this.currentPage,this.formSearchProduct)
+		}
     },
 	mounted(){
 		if(!sessionStorage.getItem("login") && sessionStorage.getItem("role")!="ROLE_ADMIN")
@@ -289,7 +568,7 @@ export default {
 			sessionStorage.setItem("auth",true)
 		}
 		else
-			this.getListProduct(this.currentPage,this.formSearchProduct)
+			this.init()
 	}
 }
 </script>

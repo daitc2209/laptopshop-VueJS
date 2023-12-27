@@ -1,4 +1,4 @@
-import axios from "./auth";
+import axios from "axios";
 
 const revenueApi = {
     getRevenueCategories: async () => {

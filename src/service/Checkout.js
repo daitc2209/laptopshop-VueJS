@@ -1,4 +1,4 @@
-import axios from "./auth";
+import axios from "axios";
 
 class CheckOut{
     getBill(id){

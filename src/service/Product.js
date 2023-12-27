@@ -1,4 +1,4 @@
-import axios from "./auth"
+import axios from "axios"
 
 const productApi = {
     getFilterProduct: async (sort, category, brand, minPrice, maxPrice ,page) => {

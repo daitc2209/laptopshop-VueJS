@@ -1,5 +1,5 @@
 
-import axios from "./auth"
+import axios from "axios"
 
 class Users{
 

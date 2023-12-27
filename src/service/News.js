@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "./auth";
 
 class News{
     getNews(page){
@@ -32,10 +32,6 @@ class News{
     deleteNewsAdmin(id){
         return axios.post("admin/news/delete?id="+id)
     }
-
-    // search(keyword,page){
-    //     return axios.get(`admin/news/search`,{params:{keyword:keyword,page:page}})
-    // }
 }
 
 export default new News

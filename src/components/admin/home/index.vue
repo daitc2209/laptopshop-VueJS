@@ -21,8 +21,8 @@
 										<i class="card-icon fa-solid fa-calendar"></i>
 									</div>
 									<div class="card-content">
-										<h4 class="card-label">DOANH THU (THÁNG)</h4>
-										<p class="mb-2 pb-1">{{ formatCurrency(card.revenue_month) }}</p>
+										<h4 class="card-label">TỔNG ĐƠN</h4>
+										<p class="mb-2 pb-1">{{ card.totalOrder }}</p>
 									</div>
 								</div>
 							</div>
@@ -34,8 +34,8 @@
 										<i class="card-icon fa-solid fa-hand-holding-dollar"></i>
 									</div>
 									<div class="card-content">
-										<h4 class="card-label">DOANH THU (NĂM)</h4>
-										<p class="mb-2 pb-1">{{ formatCurrency(card.revenue_year) }}</p>
+										<h4 class="card-label">TỔNG SẢN PHẨM</h4>
+										<p class="mb-2 pb-1">{{ card.totalProduct }}</p>
 									</div>
 								</div>
 							</div>
@@ -76,7 +76,7 @@
 							<ul v-if="this.select == 1">
 								<label style="padding-top: 10px;">Thống kê doanh thu theo năm</label>
 								<li @click="update(year)" style="cursor: pointer; width: 300px;" v-for="year in years"
-									:key="year" :value="year">Năm {{ year }}: {{ this.revenueWithYear[year] }}</li>
+									:key="year" :value="year">Năm {{ year }}: {{ formatCurrency(this.revenueWithYear[year]) }}</li>
 
 							</ul>
 							<ul v-if="this.select == 2">
@@ -120,12 +120,10 @@ export default {
 			startDate: null,
 			endDate: null,
 			card:{
-				month: new Date().getMonth() + 1,
-				year: new Date().getFullYear(),
-				revenue_month:null,
-				revenue_year:null,
 				numUser:null,
-				numOrder:null
+				numOrder:null,
+				totalOrder:null,
+				totalProduct:null
 			}
 		}
 	},
@@ -154,8 +152,6 @@ export default {
 						this.revenueWithYear[year] = totalMoney;
 					}
 				});
-				if(this.revenueWithYear.hasOwnProperty(this.card.year))
-					this.card.revenue_year = this.revenueWithYear[this.card.year]
 				this.updateChart(this.revenue, this.years[this.years.length - 1])
 
 			}
@@ -169,6 +165,8 @@ export default {
 
 				this.card.numUser = res.data.numUser
 				this.card.numOrder = res.data.numOrder
+				this.card.totalOrder = res.data.totalOrder
+				this.card.totalProduct = res.data.totalProduct
 			}
 			catch (err) {
 				console.log("err: " + err)
@@ -221,7 +219,6 @@ export default {
 				}
 			}
 		
-				this.card.revenue_month = revenueData[this.card.month-1]
 			// Tạo một mảng màu sắc tương ứng với số lượng label
 			const colors = this.generateColors(this.myChart.data.labels.length);
 

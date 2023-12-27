@@ -65,6 +65,13 @@
 								<div class="text-danger"></div>
 							</div>
 							<div class="form-group">
+								<label for="">Trạng thái</label>
+								<select v-model="productDto.state" class="form-control form-select" required="required">
+									<option selected value="ACTIVED">Hiển thị</option>
+									<option value="DISABLED">Không hiển thị</option>
+								</select>
+							</div>
+							<div class="form-group">
 								<label for="">Img</label> 
 								<input hidden="" type="text" id="thumbnailEdit" v-model="productDto.img"> 
 								<input class="form-control" @change="chooseFile" type="file" name="fileImage" />
@@ -131,6 +138,7 @@ export default {
 				formData.append('discount', productDto.discount);
 				formData.append('quantity', productDto.quantity);
 				formData.append('description', productDto.description);
+				formData.append('state', productDto.state);
 				
 				const res = await productApi.postEditProduct(formData)
 				if(res.success){

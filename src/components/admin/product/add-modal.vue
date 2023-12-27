@@ -16,7 +16,7 @@
 							<div class="form-group">
 								<label for="">Tên sản phẩm</label> 
 								<input type="text" v-model="productDto.name" class="form-control" required="required" />
-								<div class="text-danger"></div>
+								
 							</div>
 							<div class="form-group">
 								<label for="">Danh mục</label> 
@@ -24,7 +24,7 @@
 									
 									<option v-for="item in categories" :key="item.id" :value="item.name">{{item.name}}</option>
 								</select>
-								<div class="text-danger"></div>
+								
 							</div>
 							<div class="form-group">
 								<label for="">Thương hiệu</label> 
@@ -33,29 +33,35 @@
 									<option v-for="item in brands" :key="item.id" :value="item.name">{{item.name}}</option>
 
 								</select>
-								<div class="text-danger"></div>
+								
 							</div>
 							<div class="form-group">
 								<label for="">Giá</label> 
 								<input type="text" v-model="productDto.price" class="form-control" required="required" />
-								<div class="text-danger"></div>
+								
 							</div>
 							<div class="form-group">
 								<label for="">Discount</label> 
 								<input type="text" v-model="productDto.discount" class="form-control" required="required" />
-								<div class="text-danger"></div>
+								
 							</div>
 							<div class="form-group">
 								<label for="">Số lượng</label> 
 								<input type="text" v-model="productDto.quantity" class="form-control" required="required" />
-								<div class="text-danger"></div>
+								
 							</div>
 							<div class="form-group">
 								<label for="">Mô tả</label>
 								<textarea v-model="productDto.description" class="form-control" required="required" rows="4"></textarea>
-	<!--							<div class="text-danger"></div>-->
 								<div id="quillEditor"></div>
 								<input type="hidden" name="quillContent" id="quillContent">
+							</div>
+							<div class="form-group">
+								<label for="">Trạng thái</label> 
+								<select v-model="productDto.state" class="form-control form-select" required="required">
+									<option selected value="ACTIVED">Hiển thị</option>
+									<option value="DISABLED">Không hiển thị</option>
+								</select>
 							</div>
 							<div class="form-group">
 								<label for="">Img</label> 
@@ -106,6 +112,7 @@ export default {
 				formData.append('discount', productDto.discount);
 				formData.append('quantity', productDto.quantity);
 				formData.append('description', productDto.description);
+				formData.append('state', productDto.state);
 				
 				const res = await productApi.addProduct(formData)
 				if(res.success){

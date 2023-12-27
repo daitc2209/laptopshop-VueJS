@@ -1,4 +1,4 @@
-import axios from "axios"
+import axios from "./auth"
 
 const productApi = {
     getFilterProduct: async (sort, category, brand, minPrice, maxPrice ,page) => {
@@ -43,6 +43,11 @@ const productApi = {
 
     postEditProduct: async (data) => {
         const res = await axios.post(`admin/product/edit`,data)
+        return res.data
+    },
+
+    stateProduct: async (id,state) => {
+        const res = await axios.post(`admin/product/lock_unlock?id=${id}&state=${state}`)
         return res.data
     }
 }

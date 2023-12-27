@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "./auth";
 
 const revenueApi = {
     getRevenueCategories: async () => {
@@ -10,6 +10,11 @@ const revenueApi = {
         const res = await axios.get(`/admin/revenue`)
         return res.data
     },
+
+    // getStastOrder: async () =>{
+    //     const res = await axios.get(`/admin/revenue/order-by-month`)
+    //     return res.data
+    // },
 
     getRevenueYear: async (year) => {
         const res = await axios.get(`/admin/revenue/`+year)

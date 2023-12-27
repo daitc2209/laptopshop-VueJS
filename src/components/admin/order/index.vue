@@ -137,7 +137,7 @@
 										<td class="td3"><h6>{{formatDate(item.created_at)}}</h6></td>
 										<td class="td4"><h6>{{formatCurrency(item.total_money)}}</h6></td>
 										<td class="td5"><h6>{{item.payment}}</h6></td>
-										<td class="td6"><h6>{{item.stateCheckout}}</h6></td>
+										<td class="td6"><h6>{{item.stateCheckout}}</h6></td> 
 										<td class="td7"><h6>{{item.stateOrder}}</h6></td>
 										<td class="td8">
 											<a data-bs-toggle="modal" :data-bs-target="'#see'+item.id" class="btn btn-sm btn-primary mr-2"><i class="fa-solid fa-eye"></i></a> 

@@ -1,4 +1,4 @@
-import axios from "axios"
+import axios from "./auth"
 
 class Cart{
     addToCart(cart){

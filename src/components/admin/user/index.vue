@@ -69,7 +69,7 @@
 							</div>
 						</div>
 						<div class="d-flex justify-content-center pr-4 mb-3">
-							<button class="btn btn-primary px-4" type="submit">Search</button>
+							<button class="btn btn-primary px-4" type="submit">Tìm kiếm</button>
 						</div>
 					</div>
 				</form>
@@ -81,9 +81,9 @@
 			<!-- Default box -->
 			<div class="card">
 				<div class="card-header">
-					<h3 class="card-title">List of user</h3>
+					<h3 class="card-title">Danh sách người dùng</h3>
 					<div class="card-tools">
-						<a data-bs-toggle="modal" data-bs-target="#add" class="btn btn-primary">Add new</a>
+						<a data-bs-toggle="modal" data-bs-target="#add" class="btn btn-primary"><span style="font-size: 18px;">+</span> Thêm mới</a>
 					</div>
 				</div>
 				<div class="card-body">
@@ -118,9 +118,9 @@
 										<td class="td8"><h6>{{item.stateUser}}</h6></td>
 										<td class="td9"><h6>{{item.authType}}</h6></td>
 										<td class="td11">
-											<a data-bs-toggle="modal" @click="getEditUser(item.id)" :data-bs-target="`#edit`+item.id" class="btn btn-sm btn-primary mr-2"><i class="fa-solid fa-pen-to-square"></i></a> 
-											<a v-if="item.lock==true" data-bs-toggle="modal" :data-bs-target="'#lock'+ item.id" class="btn btn-sm btn-confirmed mr-2"><i class="fa-solid fa-lock-open"></i></a>
+											<a v-if="item.stateUser == `ACTIVED`" data-bs-toggle="modal" :data-bs-target="'#lock'+ item.id" class="btn btn-sm btn-confirmed mr-2"><i class="fa-solid fa-lock-open"></i></a>
 											<a v-else data-bs-toggle="modal" :data-bs-target="'#unlock'+ item.id" class="btn btn-sm btn-secondary mr-2"><i class="fa-solid fa-lock"></i></a>
+											<a data-bs-toggle="modal" @click="getEditUser(item.id)" :data-bs-target="`#edit`+item.id" class="btn btn-sm btn-primary mr-2"><i class="fa-solid fa-pen-to-square"></i></a> 
 											<a data-bs-toggle="modal" :data-bs-target="'#delete'+ item.id" class="btn btn-sm btn-danger"><i class="fa-solid fa-trash"></i></a>
 										</td>
 										<div class="modal delete-new" :id="'delete'+item.id">
@@ -330,13 +330,9 @@ export default {
 				this.formSearchUser.authType)
 				.then(res => {
 					if(res.data.data.listUser != null){
-						this.user = res.data.data.listUser.content.map(user => {return {...user,urlImg: false,lock:false}})
+						this.user = res.data.data.listUser.content.map(user => {return {...user,urlImg: false}})
 						this.totalPage = res.data.data.listUser.totalPages
 						this.currentPage = res.data.data.currentPage
-						this.user.forEach(user => {
-							if(user.stateUser == "ACTIVED")
-								user.lock = true
-						});
 						this.setupPagination(this.totalPage)
 						
 						this.user.forEach(user => {
@@ -527,11 +523,6 @@ export default {
 					this.user = res.data.data.listUser.content
 					this.totalPage = res.data.data.listUser.totalPages
 					this.currentPage = res.data.data.currentPage
-					this.user.forEach(user => {
-							if(user.stateUser == "ACTIVED")
-								user.lock = true
-							console.log("lock: "+user.lock)
-						});
 					this.user.forEach(user => {
 						user.urlImg = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- ./?%&=]*)?/.test(user.img);
 						console.log("urlImg: "+user.urlImg)

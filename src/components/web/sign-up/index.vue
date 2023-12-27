@@ -1,11 +1,12 @@
 <template>
-	<div v-if="showPreload" class="preload-screen">
-		<div class="d-flex justify-content-center">
-			<div class="spinner-border" role="status"></div>
-				<span class="visually" style="margin-left: 20px; line-height: 30px;">Loading...</span>
+	<div>
+		<div v-if="showPreload" class="preload-screen">
+			<div class="d-flex justify-content-center">
+				<div class="spinner-border" role="status"></div>
+					<span class="visually" style="margin-left: 20px; line-height: 30px;">Loading...</span>
+			</div>
 		</div>
-	</div>
-  <section class="container login">
+		<section class="container login">
 			<div class="row">
 				<div class="col-md-4 col-12 p-0" id="side1">
 					<div>
@@ -39,6 +40,7 @@
 				</div>
 			</div>
 		</section>
+	</div>
 </template>
 
 <script>

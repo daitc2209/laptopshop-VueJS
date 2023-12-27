@@ -206,8 +206,6 @@
         </div>
       </div>
     </section>
-
-
   </div>
 </template>
   
@@ -232,112 +230,112 @@ export default {
 			endDate: null,
 		};
 	},
-  methods: {
-    formatDate(date) {
-		const formattedDate = new Date(date);
-			const hours = ('0' + formattedDate.getHours()).slice(-2);
-			const minutes = ('0' + formattedDate.getMinutes()).slice(-2);
-			const day = ('0' + formattedDate.getDate()).slice(-2);
-			const month = ('0' + (formattedDate.getMonth() + 1)).slice(-2);
-			const year = formattedDate.getFullYear();
-			return `${hours}:${minutes} ${day}/${month}/${year}`;
-    },
-    formatCurrency(value) {
-		const formatter = new Intl.NumberFormat("vi-VN", {
-        style: "currency",
-        currency: "VND",
-      });
-      return formatter.format(value);
-    },
+  	methods: {
+		formatDate(date) {
+			const formattedDate = new Date(date);
+				const hours = ('0' + formattedDate.getHours()).slice(-2);
+				const minutes = ('0' + formattedDate.getMinutes()).slice(-2);
+				const day = ('0' + formattedDate.getDate()).slice(-2);
+				const month = ('0' + (formattedDate.getMonth() + 1)).slice(-2);
+				const year = formattedDate.getFullYear();
+				return `${hours}:${minutes} ${day}/${month}/${year}`;
+		},
+		formatCurrency(value) {
+			const formatter = new Intl.NumberFormat("vi-VN", {
+			style: "currency",
+			currency: "VND",
+		});
+		return formatter.format(value);
+		},
 
-	getOrderByStatus(data){
-		var buttons = document.getElementsByClassName('order-status__item');
-		for (var i = 0; i < buttons.length; i++) {
-			buttons[i].classList.remove('active');
-		} 
-		var selectedButton = document.getElementById('btn-' + data);
-    		selectedButton.classList.add('active');
+		getOrderByStatus(data){
+			var buttons = document.getElementsByClassName('order-status__item');
+			for (var i = 0; i < buttons.length; i++) {
+				buttons[i].classList.remove('active');
+			} 
+			var selectedButton = document.getElementById('btn-' + data);
+				selectedButton.classList.add('active');
 
-		//Cập nhật lại trạng thái đơn hàng
-		this.status = data
-		
-		//Nếu không chọn ngày thì sẽ lọc bình thường
-		if(this.startDate !== null || this.endDate !== null){
-			this.search()
-		}
-		else{
-			User.getPurchaseHistory(data)
+			//Cập nhật lại trạng thái đơn hàng
+			this.status = data
+			
+			//Nếu không chọn ngày thì sẽ lọc bình thường
+			if(this.startDate !== null || this.endDate !== null){
+				this.search()
+			}
+			else{
+				User.getPurchaseHistory(data)
+					.then((res)=>{
+						this.order = res.data.data.order.reverse()
+					})
+					.catch((err)=>{console.log("loi purchase history !!!" + err)})
+			}
+			
+		},
+		search(){
+			let start = null
+			let end = null
+			if(this.startDate !== null || this.endDate !== null)
+			{
+				start = this.formatDate(this.startDate)
+				end = this.formatDate(this.endDate)
+			}
+			let status = this.status
+			let data = {start,end,status}
+			if (start > end) {
+				let error = 'Ngày bắt đầu không được lớn hơn ngày kết thúc.';
+				showErrorToastMess(error)
+			} else {
+				User.findByRangeDay(data)
+					.then(res=>{
+						this.order = res.data.data.orderDay
+					})
+					.catch(err=>{
+						showErrorToastMess("loi r")
+						console.log("err: "+err)
+					})
+			}
+		},
+
+		clickCancelOrder(id,status){
+			User.postPurchaseHistory(id,status)
 				.then((res)=>{
-					this.order = res.data.data.order
+					if(res.data){
+						let message = 'Hủy đơn hàng thành công'
+						this.order = res.data.data.order
+						showSuccessToast(message)
+						bootstrap.Modal.getInstance(document.getElementById("Modal"+id)).hide()
+					}else{
+						showErrorToast()
+					}
 				})
 				.catch((err)=>{console.log("loi purchase history !!!" + err)})
-		}
-		
-	},
-	search(){
-		let start = null
-		let end = null
-		if(this.startDate !== null || this.endDate !== null)
-		{
-			start = this.formatDate(this.startDate)
-			end = this.formatDate(this.endDate)
-		}
-		let status = this.status
-		let data = {start,end,status}
-		if (start > end) {
-			let error = 'Ngày bắt đầu không được lớn hơn ngày kết thúc.';
-			showErrorToastMess(error)
-		} else {
-			User.findByRangeDay(data)
+		},
+
+		getTotalOrderReceived(){
+			User.getTotalOrderReceived()
 				.then(res=>{
-					this.order = res.data.data.orderDay
+					this.total_order = res.data.data.total_order
+					this.total_money = res.data.data.total_money
 				})
 				.catch(err=>{
-					showErrorToastMess("loi r")
-					console.log("err: "+err)
+					console.log("loi lấy tổng đơn hàng đã nhận và tiền đã tiêu !!!" + err)
 				})
+		},
+
+		init(){
+			this.getTotalOrderReceived();
+			this.getOrderByStatus("all")
 		}
 	},
-
-	clickCancelOrder(id,status){
-		User.postPurchaseHistory(id,status)
-			.then((res)=>{
-				if(res.data){
-					let message = 'Hủy đơn hàng thành công'
-					this.order = res.data.data.order
-					showSuccessToast(message)
-					bootstrap.Modal.getInstance(document.getElementById("Modal"+id)).hide()
-				}else{
-					showErrorToast()
-				}
-			})
-			.catch((err)=>{console.log("loi purchase history !!!" + err)})
-	},
-
-	getTotalOrderReceived(){
-		User.getTotalOrderReceived()
-			.then(res=>{
-				this.total_order = res.data.data.total_order
-				this.total_money = res.data.data.total_money
-			})
-			.catch(err=>{
-				console.log("loi lấy tổng đơn hàng đã nhận và tiền đã tiêu !!!" + err)
-			})
-	},
-
-	init(){
-		this.getTotalOrderReceived();
-		this.getOrderByStatus("all")
-	}
-  },
-  mounted(){
-	if(sessionStorage.getItem("login"))
-		this.init()
-	else
-	{
-		window.location.href = "/auth/sign-in"
-		sessionStorage.setItem("err",true)
-	}
+	mounted(){
+		if(sessionStorage.getItem("login"))
+			this.init()
+		else
+		{
+			window.location.href = "/auth/sign-in"
+			sessionStorage.setItem("err",true)
+		}
 	
   }
 };

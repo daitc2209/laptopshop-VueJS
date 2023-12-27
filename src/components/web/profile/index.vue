@@ -15,7 +15,6 @@
 		<section class="profile mb-4">
 			<div class="col-3"><menuShared/></div>
 			<div class="col-9">
-				
 				<div class="row">
 					<div class="profile-container col-md-8 col-12 p-0" >
 						<div class="profile-container__img">
@@ -119,7 +118,6 @@
 											:maxFileSize="1000000"
 										/>
 									</div>
-									
 								</div>
 								<div id="login">
 									<button type="submit">Cập nhật</button>
@@ -130,12 +128,10 @@
 				</section>
 		      </div>
 			  
-		
 		      <!-- Modal footer -->
 		      <div class="modal-footer">
 		        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
 		      </div>
-		
 		    </div>
 		  </div>
 		</div>
@@ -178,19 +174,14 @@
 					</div>
 				</section>
 		      </div>
-			  
-		
 		      <!-- Modal footer -->
 		      <div class="modal-footer">
 		        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
 		      </div>
-		
 		    </div>
 		  </div>
 		</div>
   </div>
-
-  
 </template>
 
 <script>

@@ -31,15 +31,13 @@
 					</div>
 				</div>
 				<div>
-						<!-- <ul class="pagination mt-4" id="pagination"></ul>
-						<input hidden=""  id="page"  name="page" :value="currentPage"/> -->
-						<div class="pagination" id="pagination" v-if="paginationButtons.length >= 2">
-							<button v-for="page in paginationButtons" :key="page" 
-							:class="{ active: currentPage === page }" 
-							@click="PaginationButton(page).handleClick()">
-								{{ page }}
-							</button>
-						</div>
+					<div class="pagination" id="pagination" v-if="paginationButtons.length >= 2">
+						<button v-for="page in paginationButtons" :key="page" 
+						:class="{ active: currentPage === page }" 
+						@click="PaginationButton(page).handleClick()">
+							{{ page }}
+						</button>
+					</div>
 				</div>
 			</div>
 		</section>

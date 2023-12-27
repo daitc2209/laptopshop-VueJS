@@ -21,8 +21,7 @@ const productApi = {
 
     getListProduct: async (page,search) =>{
         const res = await axios.get(`admin/product`, 
-            {params: {page:page, name:search.name, price:search.price,
-                 discount:search.discount, categoryName:search.categoryName, brandName: search.brandName}})
+            {params: {page:page,search_text:search.search_text, categoryId:search.categoryId,brandId:search.brandId}})
         return res.data
     },
 

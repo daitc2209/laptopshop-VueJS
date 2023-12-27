@@ -1,13 +1,10 @@
 <template>
   <div>
-
     <head>
       <title>Cửa hàng</title>
     </head>
-
     <div id="toast">
     </div>
-
     <section class="store">
       <div class="container">
         <div class="row">
@@ -66,7 +63,6 @@
                 <div class="row col-12">
                   <template v-if="listProduct.length > 0">
                     <div class="product-item col-lg-3 col-md-6 col-sm-6 col-12 " v-for="item in listProduct"  :key="item.id">
-                      <!-- <div class="col-lg-3 col-md-6 col-sm-6 col-12 "> -->
                         <div class="product-item" >
                             <div class="pi-pic " >
                               <img :src="'src/images/product/' + item.img" alt="">
@@ -128,7 +124,6 @@ export default {
         sort: 'low-high',
         cateogryName: 'all',
         brandName: 'all',
-        // price: 'all',
         minPrice: 0,
         maxPrice: 30000000
       },

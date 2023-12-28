@@ -20,23 +20,28 @@
 				<div class="col-md-8 col-12 p-0" id="side2">
 					<div class="form-login">
 						<h3>Đặt lại mật khẩu</h3>
-						<div v-if="error">
-							<div class="alert alert-danger">{{error}}</div>
-						</div>
 						<div v-if="success">
 							<div class="alert alert-success">{{success}}</div>
 						</div>
-						<form v-if="(err === '' && success === '')"  class="form-login" @submit.prevent="resetPW()">
-							<div class="inp">
-								<input id="password" v-model="newPW" type="password" placeholder="Enter your new password" name="newPassword" required autofocus pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])([0-9a-zA-Z]{8,})$" title="Ít nhất 8 ký tự trở lên. Có ít nhất một chữ số. Có ít nhất một chữ cái viết thường. Có ít nhất một chữ cái viết hoa.">
+						<div v-else>
+							<div v-if="error">
+								<div class="alert alert-danger">{{error}}</div>
 							</div>
-							<div class="inp">
-								<input @input="checkPasswordMatch(this);" type="password" placeholder="Confirm your new password" required pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])([0-9a-zA-Z]{8,})$" title="Ít nhất 8 ký tự trở lên. Có ít nhất một chữ số. Có ít nhất một chữ cái viết thường. Có ít nhất một chữ cái viết hoa.">
+							<div v-if="tokenError">
+								<div class="alert alert-danger">{{tokenError}}</div>
 							</div>
-							<div id="login">
-								<button type="submit">Xác nhận</button>
-							</div>
-						</form>
+							<form v-if="!success && !tokenError" class="form-login" @submit.prevent="resetPW()">
+								<div class="inp">
+									<input id="password" v-model="newPW" @input="clearPasswordMismatchError()" type="password" placeholder="Enter your new password" name="newPassword" required autofocus pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])([0-9a-zA-Z]{8,})$" title="Ít nhất 8 ký tự trở lên. Có ít nhất một chữ số. Có ít nhất một chữ cái viết thường. Có ít nhất một chữ cái viết hoa.">
+								</div>
+								<div class="inp">
+									<input v-model="confirmPW" @input="clearPasswordMismatchError()" type="password" placeholder="Confirm your new password" required pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])([0-9a-zA-Z]{8,})$" title="Ít nhất 8 ký tự trở lên. Có ít nhất một chữ số. Có ít nhất một chữ cái viết thường. Có ít nhất một chữ cái viết hoa.">
+								</div>
+								<div id="login">
+									<button type="submit">Xác nhận</button>
+								</div>
+							</form>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -51,8 +56,10 @@ export default {
         return {
             success: "",
             error: "",
+			tokenError:"",
 			token:"",
-			newPW:""
+			newPW:"",
+			confirmPW:""
         }
     },
     methods: {
@@ -77,7 +84,9 @@ export default {
 						if (res.data.success)
 							this.success = res.data.success
 						if (res.data.error)
-							this.error = res.data.error
+						{
+							this.tokenError = res.data.error
+						}
 					})
 					.catch(err => {
 							console.log("err: "+err)
@@ -86,12 +95,20 @@ export default {
 			}
 		},
 		resetPW(){
+			if (this.newPW !== this.confirmPW) {
+				this.error = 'Mật khẩu không trùng nhau';
+				return; 
+			}
 			ForgotPW.resetPW(this.token, this.newPW)
 				.then(res => {
 					if (res.data.success)
+					{
 						this.success = res.data.success
+						this.newPW=""
+						this.confirmPW=""
+					}
 					if (res.data.error)
-						this.error = res.data.error
+						this.tokenError = res.data.error
 				})
 				.catch(err => {
 						console.log("err: "+err)

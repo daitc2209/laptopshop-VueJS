@@ -509,7 +509,6 @@ export default {
 			
 			if(condition == false)
 				showErrorToast(message)
-			
         },
         PaginationButton (page) {
 			return {

@@ -26,11 +26,11 @@
 					<div class="purchase-history__order-container">
 						<div class="content-item">
 							<p class="item-content title">{{ this.total_order }}</p>
-							<p class="item-content text">Đơn hàng đã mua</p>
+							<p class="item-content text">Đơn hàng</p>
 						</div>
 						<div class="content-item">
-							<p class="item-content title">{{ formatCurrency(this.total_money) }}</p>
-							<p class="item-content text">Tổng tiền tích lũy</p>
+							<p class="item-content title">{{ this.total_order_received }}</p>
+							<p class="item-content text">Tổng đơn đã giao thành công</p>
 						</div>
 					</div>
 				</div>
@@ -72,7 +72,7 @@
 					</tr>
 					</thead>
 					<tbody>
-					<template v-if="order">
+					<template v-if="order != null && order != ''">
 						<tr v-for="(item, index) in order" :key="item.id" :id="'trow_' + item.id">
 						<td class="td1">{{ index + 1 }}</td>
 						<td class="td2">
@@ -224,7 +224,7 @@ export default {
 		return {
 			order: [],
 			total_order: 0,
-			total_money:0,
+			total_order_received:0,
 			status:"",
 			startDate: null,
 			endDate: null,
@@ -266,7 +266,10 @@ export default {
 			else{
 				User.getPurchaseHistory(data)
 					.then((res)=>{
-						this.order = res.data.data.order.reverse()
+						if(res.data.data.order != null)
+							this.order = res.data.data.order.reverse()
+						else
+							this.order = null
 					})
 					.catch((err)=>{console.log("loi purchase history !!!" + err)})
 			}
@@ -288,7 +291,10 @@ export default {
 			} else {
 				User.findByRangeDay(data)
 					.then(res=>{
-						this.order = res.data.data.orderDay
+						if(res.data.data.orderDay != null)
+							this.order = res.data.data.orderDay.reverse()
+						else
+							this.order = null
 					})
 					.catch(err=>{
 						showErrorToastMess("loi r")
@@ -303,6 +309,7 @@ export default {
 					if(res.data){
 						let message = 'Hủy đơn hàng thành công'
 						this.order = res.data.data.order
+						this.getTotalOrderReceived()
 						showSuccessToast(message)
 						bootstrap.Modal.getInstance(document.getElementById("Modal"+id)).hide()
 					}else{
@@ -316,7 +323,7 @@ export default {
 			User.getTotalOrderReceived()
 				.then(res=>{
 					this.total_order = res.data.data.total_order
-					this.total_money = res.data.data.total_money
+					this.total_order_received = res.data.data.total_order_received
 				})
 				.catch(err=>{
 					console.log("loi lấy tổng đơn hàng đã nhận và tiền đã tiêu !!!" + err)
@@ -342,93 +349,5 @@ export default {
 </script>
   
 <style>
-.order-container{
-	display: flex;
-}
-.purchase-history__order{
-	box-shadow: unset;
-    border-radius: 8px;
-}
-.purchase-history__order-container{
-	display: flex;
-	justify-content: space-around;
-	padding-bottom: 15px;
-	background-color: #F4F6F8;
-}
-.content-item{
-	margin-top: 15px;
-    justify-content: flex-start;
-    width: 100%;
-	text-align: center;
-}
-.content-item:first-of-type{
-	border-right: 1px solid #111;
-}
-.item-content{
-	padding-top: 10px;
-}
-.item-content.title{
-	font-size: 28px;
-    font-weight: 700;
-    margin-bottom: 5px;
-}	
-.item-content.title p{
-	color: #111;
-    line-height: 17px;
-}
 
-/* Order Status */
-.order-container__status{
-    width: 100%;
-    overflow: auto;
-    padding: 10px 0 ;
-    position: -webkit-sticky;
-    position: sticky;
-    top: 64px;
-    background-color: #f4f6f8;
-	margin-bottom: 10px;
-    /* z-index: 10; */
-}
-.order-status{
-	display: flex;
-	grid-gap: 10px;
-    gap: 10px;
-	width: fit-content;
-    padding: 5px 10px;
-    margin: auto;
-}
-.order-status__item{
-	font-size: 18px;
-	padding: 7px 15px;
-    border: 1px solid #eaedef;
-    border-radius: 5px;
-    white-space: nowrap;
-    background-color: #fff;
-    cursor: pointer;
-}
-.order-status__item.active{
-	background-color: #1c1c50;
-	color: #fff;
-}
-
-.order-range{
-	display: flex;
-	justify-content: end;
-	margin: 10px 0 !important;
-}
-.order-date{
-	display: inline-flex;
-	align-items: center;
-	margin-right: 20px;
-}
-.order-date:first-of-type{
-	justify-content: start;
-}
-.order-range__from{
-    font-weight: 700;
-	margin-right: 10px;
-}
-.date-picker{
-	width: calc(100%-30%);
-}
 </style>

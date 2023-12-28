@@ -56,25 +56,8 @@
 										<label>Hình thức thanh toán <span>*</span></label> 
 										<select class="form-control form-select" @change="typePAY()" name="typePayment" id="drTypePayment" required="required">
 											<option value="COD">Thanh toán khi nhận hàng (COD)</option>
-											<option value="TRANSFER">Chuyển khoản</option>
+											<option value="TRANSFER">Cổng thanh toán VNPAY</option>
 										</select>
-										<div class="form-group payment mt-2" id="load-payment" @change="typeBankcode()">
-											<p>Chọn phương thức thanh toán</p>
-											
-											<p>Cách 1: Chuyển hướng sang Cổng VNPAY chọn phương thức thanh toán</p>
-											<input type="radio" Checked="checked" id="bankCode" name="bankCode" value="NCB"> 
-											<label for="bankCode">Cổng thanh toán VNPAYQR</label><br>
-
-											<p>Cách 2: Tách phương thức tại site của đơn vị kết nối</p>
-											<input type="radio" id="bankCode1" name="bankCode" value="VNPAYQR"> 
-											<label for="bankCode1">Thanh toán bằng ứng dụng hỗ trợ VNPAYQR</label>
-											<br> 
-											<input type="radio" id="bankCode2" name="bankCode" value="VNBANK">
-											<label for="bankCode2">Thanh toán qua thẻ ATM/Tài khoản nội địa</label>
-											<br> 
-											<input type="radio" id="bankCode3" name="bankCode" value="INTCARD"> 
-											<label for="bankCode3">Thanh toán qua thẻ quốc tế</label><br>
-										</div>
 									</div>
 								</div>
 							</div>
@@ -152,19 +135,14 @@ export default {
 		typePAY(){
 			let type = document.getElementById('drTypePayment').value;
 			this.OrderRequest.typePayment = type;
-			console.log("type: " + this.OrderRequest.typePayment);
-
+			
 			// Hiển thị hoặc ẩn phần tử "#load-payment" dựa trên giá trị của "type"
 			if (type === "TRANSFER") {
-				$("#load-payment").show();
-			} else {
-				$("#load-payment").hide();
+				this.OrderRequest.bankCode = "NCB"
 			}
-		},
-		typeBankcode(){
-			let bank = document.querySelector("input[name='bankCode']:checked").value
-			this.OrderRequest.bankCode = bank;
-			return this.OrderRequest.bankCode;
+			else
+				this.OrderRequest.bankCode = ""
+
 		},
 		getOrder(){
 			Order.getOrder()
@@ -183,12 +161,6 @@ export default {
 				})
 		},
 		Order(){
-			if (this.OrderRequest.typePayment == "TRANSFER")
-				this.OrderRequest.bankCode = this.typeBankcode();
-			console.log("bank: "+this.OrderRequest.bankCode);
-			console.log("type: "+this.OrderRequest.typePayment);
-
-
 			Order.postOrder(this.OrderRequest)
 				.then((res)=>{
 					console.log("gui order thanh cong: "+res)

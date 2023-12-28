@@ -79,9 +79,10 @@ export default {
 						sessionStorage.setItem("role", res.data.data.role)
 						sessionStorage.setItem("img", res.data.data.img);
 						sessionStorage.setItem("name", res.data.data.name)
-						// this.emitter.emit("login-success");
-						window.location.href = "/home"
-						// window.location.reload();
+						if(res.data.data.role === "ROLE_USER")
+							window.location.href = "/home"
+						if(res.data.data.role === "ROLE_ADMIN")
+							window.location.href = "/admin/home"
 					}
 				})
 				.catch((err) => {

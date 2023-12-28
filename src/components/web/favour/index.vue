@@ -30,7 +30,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <template v-if="listFavour != []">
+                                    <template v-if="listFavour != [] && listFavour !=''">
                                         <tr v-for="item in listFavour" :key="item.id">
                                             <td class="cart-pic first-row"> <img :src="item.product.img" alt="Product Image" /></td>
                                             <td class="cart-title first-row">
@@ -87,7 +87,6 @@ export default {
     methods: {
         addToCard(id) {
             this.cart.productId=id
-            console.log("id: "+id)
             Cart.addToCart(this.cart).then(()=>{
                 let message = 'Đã thêm sản phẩm vào giỏ hàng ! '
                 showSuccessToast(message)
@@ -105,7 +104,7 @@ export default {
         },
         deleteItem(id) {
             Favour.deleteItemFavour(id)
-                .then((res) => {
+                .then(() => {
                     let message = 'Xóa thành công sản phẩm khỏi yêu thích ! '
                     showSuccessToast(message)
                     this.getItemInFavour()

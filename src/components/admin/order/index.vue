@@ -137,8 +137,8 @@
 										<td class="td3"><h6>{{formatDate(item.created_at)}}</h6></td>
 										<td class="td4"><h6>{{formatCurrency(item.total_money)}}</h6></td>
 										<td class="td5"><h6>{{item.payment}}</h6></td>
-										<td class="td6"><h6>{{item.stateCheckout}}</h6></td> 
-										<td class="td7"><h6>{{item.stateOrder}}</h6></td>
+										<td class="td6"><h6>{{getStateCheckoutDisplay(item.stateCheckout)}}</h6></td> 
+										<td class="td7"><h6>{{getStateOrderDisplay(item.stateOrder)}}</h6></td>
 										<td class="td8">
 											<a data-bs-toggle="modal" :data-bs-target="'#see'+item.id" class="btn btn-sm btn-primary mr-2"><i class="fa-solid fa-eye"></i></a> 
 											<a v-if="item.stateOrder == 'CANCELLED' || item.stateOrder == 'RECEIVED'" class="btn btn-sm btn-secondary">Status</a>
@@ -210,7 +210,7 @@
 																								<span><img :src="items.product.img" width="50px" height="50px" />{{items.product.name}}</span> 
 																								<span>{{items.num}}</span>
 																								<span>{{ formatCurrency(items.product.price) }}</span>
-																								<span>{{ items.product.discount }}%</span>
+																								<span>{{ items.product.discount }}%</span> 
 																								<span>{{formatCurrency(items.totalPrice)}}</span></li>
 																							</span>
 																							<li class="total-price">Tổng số lượng <p>{{item.num}}</p></li>
@@ -360,7 +360,7 @@ export default {
 				.then(res => {
 						this.orderDto = res.data.data.orders
 				})
-				.catch(err => {
+				.catch(() => {
 					mess='Có lỗi xảy ra'
 					this.showToastr(0,mess)
 				})
@@ -484,6 +484,23 @@ export default {
 				.catch(err => {console.log("err: "+err)})
 			}
     	},
+		getStateCheckoutDisplay(stateCheckout) {
+			const stateMap = {
+				UNPAID: "Chưa thanh toán",
+				PAID: "Đã thanh toán"
+			};
+			return stateMap[stateCheckout] || "";
+		},
+		getStateOrderDisplay(stateOrder) {
+			const stateMap = {
+				PENDING: "Đang xử lý",
+				DELIVERING: "Đang giao hàng",
+				CONFIRMED: "Đã xác nhận",
+				RECEIVED: "Đã nhận",
+				CANCELLED: "Đã huỷ"
+			};
+			return stateMap[stateOrder] || "";
+		},
 		init(){
 			this.getAllOrderByStatus();
 			this.getOrderByStatus(this.status)

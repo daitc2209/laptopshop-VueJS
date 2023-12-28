@@ -40,11 +40,11 @@
                         </li>
 				</ul>
 				<div class="header__navbar-item header__navbar-user">
-					<router-link to="/favour"><i class="header__navbar-item-link fa-solid fa-heart"></i></router-link>
+					<router-link to="/favour"><i class="header__navbar-item-link fa-solid fa-heart"></i> <span style="color:#000; font-weight: 600; margin-left:4px; cursor: pointer;">YÊU THÍCH</span></router-link>
 				</div>
 			</template >
 			<div class="header__navbar-item header__navbar-user">
-				<div @click="click()"><i class="header__navbar-item-link fa-solid fa-cart-shopping"></i></div>
+				<div @click="click()"><i class="header__navbar-item-link fa-solid fa-cart-shopping"></i> <span style="font-weight: 600; margin-left:4px; cursor: pointer;">GIỎ HÀNG</span></div>
 			</div>
 		</div>
 	</div>
@@ -100,101 +100,5 @@ export default {
 </script>
 
 <style>
-.shop-name{
-	color: #1c1c50;
-	font-weight: 700;
-	margin-right: 20px;
-	
-}
 
-.header__navbar-list{
-    list-style-type: none;
-    padding-left: 0;
-    margin: 4px 0 0 0;
-    display: flex;
-}
-.header__navbar-item{
-    margin: 0 8px;
-    position: relative;
-    min-height: 26px;
-	display: inline-flex;
-}
-/* User */
-.header__navbar-user{
-    display: flex;
-    justify-items: center;
-    position: relative;
-}
-
-.header__navbar-user:hover
-.header__navbar-user-menu{
-    display: block;
-}
-
-.header__navabar-user-img{
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.header__navbar-user-name{
-    margin-left: 4px;
-    font-size: 18px;
-    font-weight: 400;
-}
-
-.header__navbar-user-menu{
-    z-index: 1;
-    position: absolute;
-    width: 190px;
-    padding-left: 0;
-    top: calc(100% + 6px);
-    right: 0;
-    border-radius: 2px;
-    background-color: #fff;
-    list-style: none;
-    box-shadow: 0 1px 2px #e0e0e0;
-    display: none;
-}
-
-.header__navbar-user-menu::before{
-    content: "";
-    position: absolute;
-    border-width: 18px 26px;
-    border-style: solid;
-    /* transparent: trong suốt 3 cạnh và 1 cạnh màu trắng */
-    /* top right bottom left */
-    border-color: transparent transparent #fff transparent;
-    right: 4px;
-    top: -29px;
-}
-.header__navbar-user-menu::after{
-    content: "";
-    position: absolute;
-    display: block;
-    top: -8px;
-    right: 0;
-    width: 56%;
-    height: 8px;
-}
-
-.header__navbar-user-item--separate{
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-.header__navbar-user-item a{
-    font-size: 18px;
-    text-decoration: none;
-    color: #000;
-    padding: 8px 16px;
-    /* để cho nó có thể dùng được padding margin .... */
-    display: block;
-}
-
-.header__navbar-item,
-.header__navbar-item-link{
-    display: inline-flex;
-    align-items: center;
-}
 </style>

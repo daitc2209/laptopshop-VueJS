@@ -21,7 +21,7 @@
                   <div class="p-3 m-1">
                     <p>Sắp xếp: </p>
                     <div class="select-option col-11">
-                      <select class="sort" v-model="formFilterProduct.sort" @change="getFilterProduct()">
+                      <select class="sort" v-model="formFilterProduct.sort" @change="getFilterProduct(1)">
                         <option value="low-high">Giá thấp đến cao</option>
                         <option value="high-low">Giá cao đến thấp</option>
                         <option value="a-z">Tên: A - Z</option>
@@ -32,7 +32,7 @@
                   <div class="p-3 m-1">
                     <p>Danh mục: </p>
                     <div class="select-option col-11">
-                      <select class="category" v-model="formFilterProduct.cateogryName" @change="getFilterProduct()">
+                      <select class="category" v-model="formFilterProduct.cateogryName" @change="getFilterProduct(1)">
                         <option value="all">Tất cả</option>
                         <option v-for="item in category" :value="item.name" :key="item.name">{{ item.name }}</option>
                       </select>
@@ -41,7 +41,7 @@
                   <div class="p-3 m-1">
                     <p>Thương hiệu: </p>
                     <div class="select-option col-11">
-                      <select class="brand" v-model="formFilterProduct.brandName" @change="getFilterProduct()">
+                      <select class="brand" v-model="formFilterProduct.brandName" @change="getFilterProduct(1)">
                         <option value="all" selected>Tất cả</option>
                         <option v-for="item in brand" :value="item.name" :key="item.name">{{ item.name }}</option>
                       </select>
@@ -148,14 +148,14 @@ export default {
 			});
 			return formatter.format(price);
     },
-    async getFilterProduct(){
+    async getFilterProduct(page){
       try{
         const res = await productApi.getFilterProduct(
           this.formFilterProduct.sort,
           this.formFilterProduct.cateogryName,
           this.formFilterProduct.brandName,
           this.formFilterProduct.minPrice,
-          this.formFilterProduct.maxPrice,this.currentPage)
+          this.formFilterProduct.maxPrice,page)
         this.listProduct = res.data.listProduct;
         this.brand = res.data.brand;
         this.category = res.data.category;
@@ -244,14 +244,14 @@ export default {
           clearTimeout(timeout); // Xóa timeout hiện tại (nếu có)
           timeout = setTimeout(() => {
             this.currentPage=1
-            this.getFilterProduct();
+            this.getFilterProduct(1);
           }, delay);
         }
       });
     },
   },
    mounted() {
-     this.getFilterProduct();
+     this.getFilterProduct(1);
      this.initPrice();
      if (sessionStorage.getItem("cart-empty")==1)
      {

@@ -39,7 +39,7 @@
 										<input type="text" v-model="OrderRequest.address" name="address" required="required" />
 									</div>
 									<div class="col-lg-12  pb-4">
-										<label>Ghi chú <span>*</span></label> 
+										<label>Ghi chú </label> 
 										<textarea name="note" v-model="OrderRequest.note"  id="floatingTextarea2" class="form-control" style="height: 70px;"></textarea>
 									</div>
 									<div class="mt-sm-1 ">

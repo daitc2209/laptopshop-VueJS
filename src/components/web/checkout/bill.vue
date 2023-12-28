@@ -2,42 +2,8 @@
   <div>
     <head><title>Hóa đơn</title></head>
     <section class="order p-0">
-			<div class="container">
+			<div v-if="this.check" class="container">
 				<form class="order-form">
-					<div v-if="checkout" class="row">
-			        	<div class="header clearfix col-12">
-			            </div>
-			            <div class="table-responsive col-12">
-			                <div class="form-group">
-			                    <label >Mã giao dịch người bán:</label>
-			                    <label>{{vnp_TxnRef}}</label>
-			                </div>    
-			                <div class="form-group">
-			                    <label >Số tiền:</label>
-			                    <label>{{formatCurrency(vnp_Amount)}}</label>
-			                </div>  
-			                <div class="form-group">
-			                    <label >Nội dung:</label>
-			                    <label>{{vnp_OrderInfo}}</label>
-			                </div> 
-			                <div class="form-group">
-			                    <label >VNPAY Response Code:</label>
-			                    <label>{{vnp_ResponseCode}}</label>
-			                </div> 
-			                <div class="form-group">
-			                    <label >VNPAY Transaction Code:</label>
-			                    <label>{{vnp_TransactionNo}}</label>
-			                </div> 
-			                <div class="form-group">
-			                    <label >Tên ngân hàng:</label>
-			                    <label>{{vnp_BankCode}}</label>
-			                </div> 
-			                <div class="form-group">
-			                    <label >Ngày thanh toán:</label>
-			                    <label>{{vnp_PayDate}}</label>
-			                </div> 
-			            </div>
-			        </div>
 					<div class="row">
 						<div class="col-12 pt-4">
 			                <h3 class="text-center">Đặt hàng thành công</h3>
@@ -46,7 +12,7 @@
 							<div class="information-detail py-4">
 								<div class="col-12 mb-2 border info-user p-3">
 									<div class="col-lg-12 d-flex align-items-center">
-										<label>Mã hóa đơn :</label>  <label>#{{order.codeOrder}}</label>
+										<label>Mã hóa đơn :</label> <label>#{{order.codeOrder}}</label>
 									</div>
 									<div class="col-lg-12 d-flex align-items-center">
 										<label>Họ và tên :</label>  <label>{{order.name}}</label>
@@ -102,6 +68,26 @@
 						</div>
 					</div>
 				</form>
+				<div class="col-12 pt-2 text-center mb-4">
+					<button id="btn-login" style="width: 300px;">
+						<router-link to="/home" class="text-center">Trở về trang chủ trang chủ</router-link>
+					</button>
+				</div>
+			</div>
+			<div v-else class="container"> 
+				<div class="row">
+					<div class="col-12 pt-4">
+						<h3 class="text-center">Đặt hàng thất bại</h3>
+					</div>
+					<div class="col-12 pt-4">
+						<h3 class="text-center">Đơn hàng của bạn đặt không thành công, hãy quay trở về trang chủ để chọn lại sản phẩm</h3>
+					</div>
+					<div class="col-12 pt-4 text-center mb-4">
+						<button id="btn-login" style="width: 200px;">
+							<router-link to="/store" class="text-center">Quay về trang chủ</router-link>
+						</button>
+					</div>
+			    </div>
 			</div>
 		</section>
   </div>
@@ -124,13 +110,22 @@ export default {
                 payment:"",
 				note:''
             },
-			orderdetail:{}
-
+			orderdetail:{},
+			check: 0
         }
     },
 	mounted(){
 		if (sessionStorage.getItem("login"))
 		{
+			// console.log("check: "+this.check)
+			// var url = window.location.href
+
+			// var urlParam = new URL(url)
+			// if(urlParam.searchParams.get("vnp_ResponseCode") === "00")
+			// {
+			// 	this.check = true
+			// 	console.log("check: "+this.check)
+			// }
 			this.getBill();
 		}
 		else
@@ -166,6 +161,7 @@ export default {
 		getBill(){
 			if(sessionStorage.getItem("typePayment")=="COD")
 			{
+				this.check = true;
 				CheckOut.getBill(sessionStorage.getItem("orderId"))
 					.then((res)=>{
 						this.order = res.data.data.order
@@ -188,15 +184,29 @@ export default {
 				var vnp_PayDate = urlParam.searchParams.get("vnp_PayDate");
 				var vnp_ResponseCode = urlParam.searchParams.get("vnp_ResponseCode");
 				var vnp_TxnRef = urlParam.searchParams.get("vnp_TxnRef");
+				var vnp_TransactionStatus = urlParam.searchParams.get("vnp_TransactionStatus");
 
+				if(vnp_ResponseCode === "00" && vnp_TransactionStatus == "00"){
+					this.check = true
+				}
+				else{
+					this.check = false
+				}
 				CheckOut.getBillVNPAY(vnp_Amount,vnp_BankCode,vnp_CardType,
 						vnp_OrderInfo,vnp_PayDate,vnp_ResponseCode,vnp_TxnRef)
 						.then((res)=>{
-							this.order = res.data.data.order
-							this.orderdetail = res.data.data.orderdetail
-							this.sendOrderConfirm(vnp_TxnRef)
+							if(res.data.data.success)
+							{
+								this.order = res.data.data.order
+								this.orderdetail = res.data.data.orderdetail
+								this.sendOrderConfirm(vnp_TxnRef)
+							}
+							else{
+								console.log("giao dich that bai !!!")
+							}
 						})
 						.catch((err)=>{console.log("err bill VNPAY: "+err)})
+				
 			}
 		}
     }

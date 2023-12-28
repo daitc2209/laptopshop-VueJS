@@ -88,10 +88,10 @@
 							<h6>{{ item.payment }}</h6>
 						</td>
 						<td class="td6">
-							<h6>{{ item.stateCheckout }}</h6>
+							<h6>{{ getStateCheckoutDisplay(item.stateCheckout) }}</h6>
 						</td>
 						<td class="td7">
-							<h6>{{ item.stateOrder }}</h6>
+							<h6>{{ getStateOrderDisplay(item.stateOrder) }}</h6>
 						</td>
 						<td class="td8 text-primary">
 							<h6 data-bs-toggle="modal" :data-bs-target="'#Modal' + item.id">See details</h6>
@@ -245,7 +245,25 @@ export default {
 			style: "currency",
 			currency: "VND",
 		});
-		return formatter.format(value);
+			return formatter.format(value);
+		},
+
+		getStateCheckoutDisplay(stateCheckout) {
+			const stateMap = {
+				UNPAID: "Chưa thanh toán",
+				PAID: "Đã thanh toán"
+			};
+			return stateMap[stateCheckout] || "";
+		},
+		getStateOrderDisplay(stateOrder) {
+			const stateMap = {
+				PENDING: "Đang xử lý",
+				DELIVERING: "Đang giao hàng",
+				CONFIRMED: "Đã xác nhận",
+				RECEIVED: "Đã nhận",
+				CANCELLED: "Đã huỷ"
+			};
+			return stateMap[stateOrder] || "";
 		},
 
 		getOrderByStatus(data){

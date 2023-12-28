@@ -34,7 +34,7 @@
 								<!-- <h3>Profile</h3> -->
 								<div class="profile-form__feild"><label class="profile-form__name" for="">Họ và tên</label> <input class="profile-form__feild-item" type="text" v-model="profile.fullname" disabled="disabled" title="Tên"></div>
 								<div class="profile-form__feild"><label class="profile-form__name" for="">Email</label> <input class="profile-form__feild-item" type="email" v-model="profile.email" disabled="disabled" title="Email"></div>
-								<div class="profile-form__feild"><label class="profile-form__name" for="">Giới Tính</label> <input class="profile-form__feild-item" type="text" v-model="profile.sex" disabled="disabled" title="Giới tính"></div>
+								<div class="profile-form__feild"><label class="profile-form__name" for="">Giới Tính</label> <input class="profile-form__feild-item" type="text"  disabled="disabled" title="Giới tính" :value="getGenderDisplay(profile.sex)"></div>
 								<div class="profile-form__feild"><label class="profile-form__name" for="">Ngày sinh</label> <input class="profile-form__feild-item" type="text" v-model="profile.birthday" disabled="disabled" title="Ngày sinh"> </div>
 								<div class="profile-form__feild"><label class="profile-form__name" for="">Địa chỉ</label> <input class="profile-form__feild-item" type="text" v-model="profile.address" disabled="disabled" title="Địa chỉ"></div>
 								<div class="profile-form__feild"><label class="profile-form__name" for="">SĐT</label> <input class="profile-form__feild-item" type="text" v-model="profile.phone" disabled="disabled" title="SDT"></div>
@@ -273,7 +273,15 @@ export default {
 					console.error("err: "+error);
 				});
 		},
-
+		getGenderDisplay(gender) {
+			if (gender === "MALE") {
+				return "Nam";
+			} else if (gender === "FEMALE") {
+				return "Nữ";
+			} else {
+				return ""; // Xử lý trường hợp giới tính không xác định
+			}
+		},
 		onDragover(e){
 			e.preventDefault();
 			this.isDragging = true;

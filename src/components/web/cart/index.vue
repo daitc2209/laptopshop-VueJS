@@ -28,7 +28,7 @@
 								<tbody>
 									<template v-if="listCart">
 										<tr v-for="item in listCart" :key="item.id">
-											<td class="cart-pic first-row"><img :src="'/src/images/product/' + item.img" alt=""></td>
+											<td class="cart-pic first-row"><img :src="item.img" alt=""></td>
 											<td class="cart-title first-row"><h5>{{item.name}}</h5></td>
 											<td class="p-price first-row"><h5>{{ formatCurrency(item.price) }}</h5></td>
 											<td class="qua-col first-row">

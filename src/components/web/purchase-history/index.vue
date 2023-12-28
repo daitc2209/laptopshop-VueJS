@@ -163,7 +163,7 @@
 																<ul class="order-table p-0">
 																	<li><span>Sản phẩm</span><span>Số lượng</span><span>Giá</span><span>Discount</span><span>Tổng</span></li>
 																	<li class="fw-normal" v-for="(orderdetail, index) in item.orderdetail" :key="index">
-																			<span><img :src="`/src/images/product/`+orderdetail.product.img" style="height: 50px; width: 50px;" alt="Product Image" /></span>
+																			<span><img :src="orderdetail.product.img" style="width:50px; height:50px" alt="Product Image" /></span>
 																			<span>{{orderdetail.num}}</span>
 																			<span>{{ formatCurrency(orderdetail.product.price) }}</span>
 																			<span>{{ orderdetail.product.discount }}%</span>

@@ -313,3 +313,19 @@
 .user-table  tr:hover  {
 	background: #c0c0c0;
 }
+
+.preload-screen {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: #fff;
+	color: #000;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 999999;
+	font-weight: 700;
+	opacity: .7;
+  }

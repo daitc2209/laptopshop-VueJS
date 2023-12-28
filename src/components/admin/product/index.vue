@@ -1,24 +1,31 @@
 <template>
   <div>
     <head><title>Quản lý sản phẩm</title></head>
-
+	<div v-if="showPreload" class="preload-screen">
+		<div class="preloader-wrapper d-flex">
+			<div class="spinner-border text-primary">
+				<span class="visually-hidden">Loading...</span>
+			</div>
+			<span style="margin-left: 20px; line-height: 30px;">Hệ thống đang xử lý</span>
+		</div>
+	</div>
     <section class="content-header">
-			<div class="container-fluid">
-				<div class="row mb-2">
-					<div class="col-sm-6">
-						<h1>Quản lý sản phẩm</h1>
-					</div>
-					<div class="col-sm-6">
-						<ol class="breadcrumb float-sm-right">
-							<li class="breadcrumb-item"><a href='/admin/home'>Quản lý</a></li>
-							<li class="breadcrumb-item active">Sản phẩm</li>
-						</ol>
-					</div>
+		<div class="container-fluid">
+			<div class="row mb-2">
+				<div class="col-sm-6">
+					<h1>Quản lý sản phẩm</h1>
+				</div>
+				<div class="col-sm-6">
+					<ol class="breadcrumb float-sm-right">
+						<li class="breadcrumb-item"><a href='/admin/home'>Quản lý</a></li>
+						<li class="breadcrumb-item active">Sản phẩm</li>
+					</ol>
 				</div>
 			</div>
-		</section>
+		</div>
+	</section>
 
-        <section class="search">
+    <section class="search">
 		<div class="container">
 			<form @submit.prevent="search(1,formSearchProduct)">
 				<div class="row">
@@ -83,7 +90,7 @@
 							<template v-if="product">
 									<tr :id="'trow_'+item.id" v-for="(item,index) in product" :key="item.id">
 										<td class="td1" :text="index + ((currentPage - 1) * 5)">{{ index+1 }}</td>
-										<td class="td2"><img :src='`/src/images/product/${item.img}`' alt=""></td>
+										<td class="td2"><img :src='item.img' alt=""></td>
 										<td class="td3"><h6>{{item.name}}</h6></td>
 										<td class="td4"><h6>{{item.categoryName}}</h6></td>
 										<td class="td5"><h6>{{item.brandName}}</h6></td>
@@ -120,7 +127,7 @@
 		<div class="modal" id="add">
 			<div class="modal-dialog">
 				<div class="modal-content">
-					<form @submit.prevent="addProduct(productDto)" enctype="multipart/form-data">
+					<form @submit.prevent="addProduct(productDtoAdd)" enctype="multipart/form-data">
 						<div class="modal-header">
 							<h4 class="modal-title">Thêm sản phẩm</h4>
 							<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -130,60 +137,56 @@
 								aria-labelledby="logins-part-trigger">
 								<div class="form-group">
 									<label for="">Tên sản phẩm</label> 
-									<input type="text" v-model="productDto.name" class="form-control" required="required" />
+									<input type="text" v-model="productDtoAdd.name" class="form-control" required="required" />
 									
 								</div>
 								<div class="form-group">
 									<label for="">Danh mục</label> 
-									<select v-model="productDto.categoryName" class="form-control form-select" required="required">
-										
+									<select v-model="productDtoAdd.categoryName" class="form-control form-select" required="required">										
 										<option v-for="item in categories" :key="item.id" :value="item.name">{{item.name}}</option>
-									</select>
-									
+									</select>									
 								</div>
 								<div class="form-group">
 									<label for="">Thương hiệu</label> 
-									<select v-model="productDto.brandName" class="form-control form-select" required="required">
-									
+									<select v-model="productDtoAdd.brandName" class="form-control form-select" required="required">				
 										<option v-for="item in brands" :key="item.id" :value="item.name">{{item.name}}</option>
-
 									</select>
 									
 								</div>
 								<div class="form-group">
 									<label for="">Giá</label> 
-									<input type="text" v-model="productDto.price" class="form-control" required="required" />
+									<input type="text" v-model="productDtoAdd.price" class="form-control" required="required" />
 									
 								</div>
 								<div class="form-group">
 									<label for="">Discount</label> 
-									<input type="text" v-model="productDto.discount" class="form-control" required="required" />
+									<input type="text" v-model="productDtoAdd.discount" class="form-control" required="required" />
 									
 								</div>
 								<div class="form-group">
 									<label for="">Số lượng</label> 
-									<input type="text" v-model="productDto.quantity" class="form-control" required="required" />
+									<input type="text" v-model="productDtoAdd.quantity" class="form-control" required="required" />
 									
 								</div>
 								<div class="form-group">
 									<label for="">Mô tả</label>
-									<textarea v-model="productDto.description" class="form-control" required="required" rows="4"></textarea>
+									<textarea v-model="productDtoAdd.description" class="form-control" required="required" rows="4"></textarea>
 									<div id="quillEditor"></div>
 									<input type="hidden" name="quillContent" id="quillContent">
 								</div>
 								<div class="form-group">
 									<label for="">Trạng thái</label> 
-									<select v-model="productDto.state" class="form-control form-select" required="required">
+									<select v-model="productDtoAdd.state" class="form-control form-select" required="required">
 										<option selected value="ACTIVED">Hiển thị</option>
 										<option value="DISABLED">Không hiển thị</option>
 									</select>
 								</div>
 								<div class="form-group">
 									<label for="">Img</label> 
-									<input class="form-control" @change="chooseFile" :value="input" type="file" name="fileImage" />
+									<input class="form-control" @change="chooseFile($event,0)" :value="input" type="file" name="fileImage" />
 								</div>
 								<div class="form-group d-flex justify-content-center">
-									<img id="imageAdd" class="imageAdd" :src="productDto.img" style="height: 200px; width: 200px"/>
+									<img id="imageAdd" class="imageAdd" :src="productDtoAdd.img" style="height: 200px; width: 200px"/>
 								</div>
 							</div>
 						</div>
@@ -268,11 +271,10 @@
 									<div class="form-group">
 										<label for="">Img</label> 
 										<input hidden="" type="text" id="thumbnailEdit" v-model="productDto.img"> 
-										<input class="form-control" @change="chooseFile" type="file" name="fileImage" />
+										<input class="form-control" @change="chooseFile($event,1)" type="file" name="fileImage" />
 									</div>
 									<div class="form-group d-flex justify-content-center">
-										<img v-if="productDto.urlImg" id="imageAdd" class="imageAdd" :src="productDto.img" style="height: 200px; width: 200px"/>
-										<img v-else id="imageAdd" class="imageAdd" :src="`/src/images/product/`+productDto.img" style="height: 200px; width: 200px"/>
+										<img id="imageAdd" class="imageAdd" :src="productDto.img" style="height: 200px; width: 200px"/>
 									</div>
 								</div>
 							</div>
@@ -316,13 +318,15 @@ export default {
         return {
 			product: [],
 			productDto:[],
+			productDtoAdd:[],
 			currentPage:'',
 			totalPage:'',
 			formSearchProduct: [],
 			paginationButtons:[],
 			brands:[],
 			categories:[],
-			input: ''
+			input: '',
+			showPreload: false
         }
     },
     methods: {
@@ -334,37 +338,41 @@ export default {
 			return formatter.format(value);
 		},
 
-		async addProduct(productDto){
+		async addProduct(productDtoAdd){
 			try{
+				this.showPreload = true
 				const formData = new FormData();
 				if(this.imgDto != "" || this.imgDto != null)
-					productDto.img = this.imgDto
-				formData.append('fileImage', productDto.img);
-				formData.append('name', productDto.name);
-				formData.append('categoryName', productDto.categoryName);
-				formData.append('brandName', productDto.brandName);
-				formData.append('price', productDto.price);
-				formData.append('discount', productDto.discount);
-				formData.append('quantity', productDto.quantity);
-				formData.append('description', productDto.description);
-				formData.append('state', productDto.state);
+				productDtoAdd.img = this.imgDto
+			console.log("this.imgDTO: "+ this.imgDto)
+				formData.append('fileImage', productDtoAdd.img);
+				formData.append('name', productDtoAdd.name);
+				formData.append('categoryName', productDtoAdd.categoryName);
+				formData.append('brandName', productDtoAdd.brandName);
+				formData.append('price', productDtoAdd.price);
+				formData.append('discount', productDtoAdd.discount);
+				formData.append('quantity', productDtoAdd.quantity);
+				formData.append('description', productDtoAdd.description);
+				formData.append('state', productDtoAdd.state);
 				
 				const res = await productApi.addProduct(formData)
 				if(res.success){
 					let mess = "Thêm thành công"
 					this.showToastr(true,mess)
-					this.productDto=[]
+					this.productDtoAdd=[]
 					this.imgDto=''
 				}
 				if(res.error){
 					let mess='Có lỗi xảy ra'
 					this.showToastr(false,mess)
 				}
+				this.showPreload = false
 				await this.getListProduct(this.currentPage, this.formSearchProduct)
 				bootstrap.Modal.getInstance(document.getElementById("add")).hide()
 			
 			}
 			catch(error){
+				this.showPreload = false
 				console.log("err: "+error)
 			};
 		},
@@ -372,9 +380,7 @@ export default {
 		async getEditProduct(id){
 			try{
 				const res = await productApi.getEditProduct(id)
-				this.productDto = res
-				this.productDto.urlImg = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- ./?%&=]*)?/.test(this.productDto.img);
-			}
+				this.productDto = res}
 			catch(err){
 				console.log("Err: "+err)
 			}
@@ -382,6 +388,7 @@ export default {
 
 		async clickEditProduct(productDto){
 			try{
+				this.showPreload = true
 				const formData = new FormData();
 				if(this.imgDto != "" && this.imgDto != null)
 					productDto.img = this.imgDto
@@ -406,10 +413,12 @@ export default {
 					let mess='Có lỗi xảy ra'
 					this.showToastr(false,mess)
 				}
+				this.showPreload = false
 				bootstrap.Modal.getInstance(document.getElementById("edit"+productDto.id)).hide()
 			
 			}
 			catch(error){
+				this.showPreload = false
 				console.log("err: "+error)
 			};
 		},
@@ -471,17 +480,14 @@ export default {
 			}
 		},
 
-		chooseFile(e){
-			console.log("event: "+e)
+		chooseFile(e,data){
 			const file = e.target.files[0];
-			console.log("file: "+file)
 			if (file) {
 				this.imgDto = file;
-				this.productDto.img = URL.createObjectURL(file)
-				this.productDto.urlImg = true
-				this.input = ''
-				console.log("file: ", this.imgDto);
-				console.log("url: ", this.productDto.img);
+				if(data == 0)
+					this.productDtoAdd.img = URL.createObjectURL(file)
+				if(data == 1)
+					this.productDto.img = URL.createObjectURL(file)
 			}
 		},
 

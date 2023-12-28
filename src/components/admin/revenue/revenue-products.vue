@@ -46,7 +46,7 @@
                         <tbody>
                             <template v-if="revenue">
                                 <tr :id="'trow_' + item.id" v-for="item in revenue" :key="item.id">
-                                    <td class="td1"><img :src="`/src/images/product/${item.thumbnail}`" alt=""></td>
+                                    <td class="td1"><img :src="item.thumbnail" alt=""></td>
                                     <td class="td2">
                                         <h6>{{ item.id }}</h6>
                                     </td>
@@ -92,7 +92,6 @@
 
 <script>
 import revenueApi from '../../../service/revenue';
-import { showSuccessToast, showErrorToast } from "../../../assets/web/js/main";
 import Chart from 'chart.js/auto'
 export default {
     data() {

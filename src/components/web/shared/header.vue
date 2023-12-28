@@ -19,9 +19,7 @@
 			<template  v-if="(checklogin)">
 				<ul class="header__navbar-list">
 					<li class="header__navbar-item header__navbar-user">
-							<img v-if="this.checkImg" :src="`${this.img}`"
-                                alt="" class="header__navabar-user-img">
-                            <img v-else :src="`/src/images/user/${this.img}`"
+							<img :src="`${this.img}`"
                                 alt="" class="header__navabar-user-img">
                             <span class="header__navbar-user-name">{{ this.name }}</span>
 
@@ -64,7 +62,6 @@ export default {
 			checklogin: "",
 			name: sessionStorage.getItem("name"),
 			img: sessionStorage.getItem("img"),
-			checkImg:""
 		};
   	},
 	methods: {
@@ -79,8 +76,6 @@ export default {
 					if(res.data.responseCode == "0")
 					{
 						window.location.href = "/auth/sign-in"
-						// this.$router.push("/auth/sign-in")
-						// this.checklogin = false
 						sessionStorage.removeItem("login"),
 						sessionStorage.removeItem("jwtToken"),
 						sessionStorage.removeItem("refreshToken"),
@@ -99,7 +94,6 @@ export default {
 	mounted() {
 		if(sessionStorage.getItem("login")){
 			this.checklogin = sessionStorage.getItem("login");
-			this.checkImg = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- ./?%&=]*)?/.test(this.img);
 		}
   },
 }

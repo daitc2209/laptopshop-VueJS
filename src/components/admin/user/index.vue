@@ -3,6 +3,14 @@
     <head>
         <title>Quản lý người dùng</title>
     </head>
+	<div v-if="showPreload" class="preload-screen">
+		<div class="preloader-wrapper d-flex">
+			<div class="spinner-border text-primary">
+				<span class="visually-hidden">Loading...</span>
+			</div>
+			<span style="margin-left: 20px; line-height: 30px;">Hệ thống đang xử lý</span>
+		</div>
+	</div>
     <section class="content-header">
 			<div class="container-fluid">
 				<div class="row mb-2">
@@ -317,6 +325,7 @@ export default {
             formEditUser: {},
 			paginationButtons:[],
 			imgDto:'',
+			showPreload: false
         }
     },
     methods: {
@@ -347,6 +356,7 @@ export default {
 				})
 		},
 		addUser(formAddUser){
+			this.showPreload = true
 			Users.addUser(formAddUser)
 				.then(res=>{
 					let mess=''
@@ -361,9 +371,11 @@ export default {
 					}
 					this.formAddUser={}
 					this.getListUserAdmin();
+					this.showPreload = false
 					bootstrap.Modal.getInstance(document.getElementById("add")).hide()
 				})
 				.catch(err=>{
+					this.showPreload = false
 					console.log("err: "+err)
 				})
 		},
@@ -378,6 +390,7 @@ export default {
 				})
 		},
 		editUser(formEditUser){
+			this.showPreload = true
 			const formData = new FormData();
 			if(this.imgDto != "" && this.imgDto != null)
 				formEditUser.img = this.imgDto
@@ -404,10 +417,12 @@ export default {
 						mess='Có lỗi xảy ra'
 						this.showToastr(0,mess)
 					}
+					this.showPreload = false
 					bootstrap.Modal.getInstance(document.getElementById("edit"+formEditUser.id)).hide()
 				})
 				.catch(error => {
 					// Xử lý lỗi
+					this.showPreload = false
 					console.error("err: "+error);
 				});
 		},
@@ -480,14 +495,11 @@ export default {
 		},
 
 		chooseFile(e){
-			console.log("event: "+e)
 			const file = e.target.files[0];
-			console.log("file: "+file)
 			if (file) {
 				this.imgDto = file;
 				this.formEditUser.img = URL.createObjectURL(file)
 				this.formEditUser.urlImg = true
-				console.log("url: ", this.formEditUser.img);
 			}
 		},
 

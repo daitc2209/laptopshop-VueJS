@@ -1,41 +1,40 @@
 <template>
   <div>
-    <head><title>Reset Your Password Page</title></head>
+    <head><title>Đặt lại mật khẩu</title></head>
     <section class="container login">
 			<div class="row">
 				<div class="breadcrumbs d-flex flex-row align-items-center col-12">
 					<ul>
-						<li><a href="/home">Home</a></li>
+						<li><a href="/home">Trang chủ</a></li>
 						<li class="active"><a href="#">
-						<i class="fa fa-angle-right" aria-hidden="true"></i>Reset Your Password</a></li>
+						<i class="fa fa-angle-right" aria-hidden="true"></i>Đặt lại mật khẩu</a></li>
 					</ul>
 				</div>
 				<div class="col-md-4 col-12 p-0" id="side1">
 					<div>
-						<h3>Welcome Back!!</h3>
-						<p>Login Account</p>
-						<a href="/auth/sign-in"><button id="btn">Sign in</button></a>
+						<h3>Chào mừng trở lại !!!</h3>
+						<p>Bạn đã có tài khoản?</p>
+						<a href="/auth/sign-in"><button id="btn">Đăng nhập</button></a>
 					</div>
 				</div>
 				<div class="col-md-8 col-12 p-0" id="side2">
 					<div class="form-login">
-						<h3>Reset Password</h3>
+						<h3>Đặt lại mật khẩu</h3>
 						<div v-if="error">
 							<div class="alert alert-danger">{{error}}</div>
 						</div>
 						<div v-if="success">
 							<div class="alert alert-success">{{success}}</div>
 						</div>
-						<form v-if="(success==null && error==null)"  class="form-login" action="/auth/reset-password" method="post">
-							<input type="hidden" name="token" :value="token" />
+						<form v-if="(err === '' && success === '')"  class="form-login" @submit.prevent="resetPW()">
 							<div class="inp">
-								<input id="password" type="password" placeholder="Enter your new password" name="newPassword" required autofocus>
+								<input id="password" v-model="newPW" type="password" placeholder="Enter your new password" name="newPassword" required autofocus pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])([0-9a-zA-Z]{8,})$" title="Ít nhất 8 ký tự trở lên. Có ít nhất một chữ số. Có ít nhất một chữ cái viết thường. Có ít nhất một chữ cái viết hoa.">
 							</div>
 							<div class="inp">
-								<input @input="checkPasswordMatch(this);" type="password" placeholder="Confirm your new password" required>
+								<input @input="checkPasswordMatch(this);" type="password" placeholder="Confirm your new password" required pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])([0-9a-zA-Z]{8,})$" title="Ít nhất 8 ký tự trở lên. Có ít nhất một chữ số. Có ít nhất một chữ cái viết thường. Có ít nhất một chữ cái viết hoa.">
 							</div>
 							<div id="login">
-								<button type="submit">Reset</button>
+								<button type="submit">Xác nhận</button>
 							</div>
 						</form>
 					</div>
@@ -46,23 +45,63 @@
 </template>
 
 <script>
+import ForgotPW from '../../../service/ForgotPW'
 export default {
     data(){
         return {
-            success: null,
-            error: null
+            success: "",
+            error: "",
+			token:"",
+			newPW:""
         }
     },
     methods: {
-        checkPasswordMatch(fieldConfirmPassword){
+		checkPasswordMatch(fieldConfirmPassword){
             if (fieldConfirmPassword.value != $("#password").val()) {
 					fieldConfirmPassword
 							.setCustomValidity("Passwords do not match!");
 				} else {
 					fieldConfirmPassword.setCustomValidity("");
 				}
-        }
-    }
+        },
+        checkTokenPW(){
+			var url = window.location.href
+
+			var urlParam = new URL(url)
+
+			if(urlParam.searchParams.has("token"))
+			{
+				this.token = urlParam.searchParams.get("token");
+                ForgotPW.checkTokenPW(this.token)
+					.then(res => {
+						if (res.data.success)
+							this.success = res.data.success
+						if (res.data.error)
+							this.error = res.data.error
+					})
+					.catch(err => {
+							console.log("err: "+err)
+						}
+					)
+			}
+		},
+		resetPW(){
+			ForgotPW.resetPW(this.token, this.newPW)
+				.then(res => {
+					if (res.data.success)
+						this.success = res.data.success
+					if (res.data.error)
+						this.error = res.data.error
+				})
+				.catch(err => {
+						console.log("err: "+err)
+					}
+				)
+		}
+    },
+	mounted(){
+		this.checkTokenPW()
+	}
 }
 </script>
 

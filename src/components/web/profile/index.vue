@@ -3,8 +3,15 @@
     <head>
         <title>Thông tin tài khoản</title>
     </head>
+	<div v-if="showPreload" class="preload-screen">
+		<div class="preloader-wrapper d-flex">
+			<div class="spinner-border text-primary">
+				<span class="visually-hidden">Loading...</span>
+			</div>
+			<span style="margin-left: 20px; line-height: 30px;">Hệ thống đang xử lý</span>
+		</div>
+	</div>
     <div class="breadcrumbs d-flex flex-row align-items-center col-12 container mt-3">
-		
 		<div id="toast">
     	</div>
 			<ul>
@@ -19,14 +26,7 @@
 					<div class="profile-container col-md-8 col-12 p-0" >
 						<div class="profile-container__img">
 							<div class="profile-img">
-								<span v-if="this.urlImg">
-									<img class="profile-img__link" :src="this.profile.img" />
-								</span>
-								<span v-else>
-									<img class="profile-img__link" alt="logo"
-										:src="`/src/images/user/`+this.profile.img" />
-								</span>
-								
+								<img class="profile-img__link" :src="this.profile.img" />
 							</div>
 						</div>
 						<div class="profile-form" >
@@ -67,7 +67,7 @@
 							<!-- <img id="image" alt="" :src="'/images/user/' + profile.img" /> -->
 							<template v-if="!isDragging">
 								<span v-if="this.url==null || this.url == ''">
-									<img id="image" alt="" :src="`/src/images/user/`+this.profile.img" />
+									<img id="image" alt="" :src="this.profile.img" />
 								</span>
 								<span v-else>
 									<img id="image" alt="" :src="this.url" />
@@ -156,14 +156,21 @@
 								@submit.prevent="ChangePassword()" 
 							>
 								<h3>Đổi mật khẩu</h3>
+								<div v-if="error">
+									<div class="alert alert-danger">{{ error }}</div>
+								</div>
 								<div class="inp">
 									<div class="profile-form__feild">
-										<label class="profile-form__name" for="">Mật khẩu hiện tại: <span style="color: red;">*</span></label>
+										<label class="profile-form__name" for="">Mật khẩu hiện tại <span style="color: red;">*</span></label>
 										<input class="profile-form__feild-item" title="Old Password" required type="text" v-model="oldPw">
 									</div>
 									<div class="profile-form__feild">
-										<label class="profile-form__name" for="">Mật khẩu mới: <span style="color: red;">*</span></label>
-										<input class="profile-form__feild-item" title="New Password" required type="text" v-model="newPw">
+										<label class="profile-form__name" for="">Mật khẩu mới<span style="color: red;">*</span></label>
+										<input @input="clearPasswordMismatchError()" class="profile-form__feild-item" title="New Password" required type="text" v-model="newPw">
+									</div>
+									<div class="profile-form__feild">
+										<label class="profile-form__name" for="">Nhập lại mật khẩu <span style="color: red;">*</span></label>
+										<input @input="clearPasswordMismatchError()" class="profile-form__feild-item" title="New Password" required type="text" v-model="confirm_newPw">
 									</div>
 								</div>
 								<div id="login">
@@ -204,30 +211,29 @@ export default {
 				img:'',
 				phone:''
             },
-			urlImg:'',
 			oldPw:'',
 			newPw:'',
+			confirm_newPw:'',
 			url:'',
-			imgDto:''
+			imgDto:'',
+			showPreload: false,
+			error:""
         }
     },
 	methods:{
 		chooseFile(e){
-			console.log("event: "+e)
 			const file = e.target.files[0];
-			console.log("file: "+file)
 			if (file) {
 				this.url = URL.createObjectURL(file);
 				this.imgDto = file
-				console.log("url: ", this.imgDto);
 			}
 		},
 		editProfile() {
+			this.showPreload = true
 			const formData = new FormData();
 			console.log("this.profile.img: ", this.profile.img);
 			if (this.imgDto !== null && this.imgDto !== "")
 				this.profile.img = this.imgDto
-			console.log("this.profile.img dto: ", this.profile.img);
 
 			formData.append('fileImage', this.profile.img);
 			formData.append('id', this.profile.id);
@@ -244,10 +250,12 @@ export default {
 				// Xử lý phản hồi thành công
 				let message = "Sửa thông tin thành công"
 				showSuccessToast(message)
+				this.showPreload = false
 				bootstrap.Modal.getInstance(document.getElementById("myModal")).hide()
 			})
 			.catch(error => {
 				// Xử lý lỗi
+				this.showPreload = false
 				console.error("err: "+error);
 			});
 		},
@@ -258,8 +266,6 @@ export default {
 					// Xử lý phản hồi thành công
 						this.profile = res.data.data.profile
 						sessionStorage.setItem("img",this.profile.img)
-						this.urlImg = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- ./?%&=]*)?/.test(this.profile.img);
-						console.log("urlImg: "+this.urlImg)
 					
 				})
 				.catch(error => {
@@ -286,10 +292,16 @@ export default {
 				this.url = URL.createObjectURL(file);
 				this.imgDto = file
 				console.log("url: ", this.imgDto);
-				sessionStorage
 			}
 		},
+		clearPasswordMismatchError() {
+			this.error = '';
+		},
 		ChangePassword(){
+			if (this.newPw !== this.confirm_newPw) {
+					this.error = 'Mật khẩu mới không trùng nhau';
+					return; 
+				}
 			User.postChangePW(this.oldPw,this.newPw)
 				.then(res => {
 					// Xử lý phản hồi thành công
@@ -361,7 +373,7 @@ export default {
 	display: flex;
 }
 .profile-form__name{
-	width: 20%;
+	width: 30%;
 	margin-top: 20px;
 	margin-left: 20px;
     height: 40px;

@@ -1,9 +1,11 @@
 <template>
 	<div>
 		<div v-if="showPreload" class="preload-screen">
-			<div class="d-flex justify-content-center">
-				<div class="spinner-border" role="status"></div>
-					<span class="visually" style="margin-left: 20px; line-height: 30px;">Loading...</span>
+			<div class="preloader-wrapper d-flex">
+				<div class="spinner-border text-primary">
+					<span class="visually-hidden">Loading...</span>
+				</div>
+				<span style="margin-left: 20px; line-height: 30px;">Hệ thống đang xử lý</span>
 			</div>
 		</div>
 		<section class="container login">
@@ -19,7 +21,7 @@
 					<div class="form-login">
 						<h3>Đăng ký tài khoản</h3>
 						<div v-if="error">
-			                <div class="alert alert-danger">{{error}}</div>
+			                <div class="alert alert-danger">{{ error }}</div>
 			            </div>
 						<div v-if="success">
 			                <div class="alert alert-success">{{success}}</div>
@@ -30,7 +32,8 @@
                                 <input v-model="user.address" type="text" required placeholder="Nhập địa chỉ" title="VD: Đa Hội Châu Khê">
                                 <input v-model="user.email" type="email" placeholder="Nhập Email" required pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" title="VD: admin@gmail.com">
                                 <input v-model="user.username" type="text" required placeholder="Nhập tên tài khoản" title="VD: trandai">
-                                <input v-model="password" autocomplete="" type="password" placeholder="Nhập mật khẩu" required pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])([0-9a-zA-Z]{8,})$" title="VD: 123">
+                                <input @input="clearPasswordMismatchError()" v-model="user.password" autocomplete="" type="password" placeholder="Nhập mật khẩu" required pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])([0-9a-zA-Z]{8,})$" title="Ít nhất 8 ký tự trở lên. Có ít nhất một chữ số. Có ít nhất một chữ cái viết thường. Có ít nhất một chữ cái viết hoa.">
+                                <input @input="clearPasswordMismatchError()" v-model="user.confirm_password" autocomplete="" type="password" placeholder="Nhập lại mật khẩu" required pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])([0-9a-zA-Z]{8,})$" title="Ít nhất 8 ký tự trở lên. Có ít nhất một chữ số. Có ít nhất một chữ cái viết thường. Có ít nhất một chữ cái viết hoa.">
                             </div>
                             <div id="login">
                                 <button type="submit">Đăng ký</button>
@@ -55,6 +58,7 @@ export default {
 				username: '',
 				password: '',
 				address:'',
+				confirm_password: ""
 			},
 			error: '',
 			success: ''
@@ -64,9 +68,16 @@ export default {
 		click(){
 			this.$router.push("/auth/sign-in")
 		},
+		clearPasswordMismatchError() {
+			this.error = '';
+		},
 		signUp(){
 			if(this.user.fullname != "" || this.user.username != "" || this.user.email !="" || this.user.password != "" || this.user.address != "")
 			{
+				if (this.user.password !== this.user.confirm_password) {
+					this.error = 'Mật khâu không trùng nhau';
+					return; 
+				}
 				this.showPreload = true
 				Users.signUp(this.user)
 					.then(res => {
@@ -104,7 +115,8 @@ export default {
 						}
 					)
 			}
-		}
+		},
+		
     },
 	mounted(){
 		if(sessionStorage.getItem("login"))
@@ -119,19 +131,5 @@ export default {
 </script>
 
 <style>
-.preload-screen {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: #fff;
-  color: #000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-  font-weight: 700;
-  opacity: .7;
-}
+
 </style>

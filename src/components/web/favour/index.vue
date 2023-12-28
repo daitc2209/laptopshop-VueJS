@@ -32,8 +32,7 @@
                                 <tbody>
                                     <template v-if="listFavour != []">
                                         <tr v-for="item in listFavour" :key="item.id">
-                                            <td class="cart-pic first-row"><img :src="'/src/images/product/' + item.product.img"
-                                                    alt=""></td>
+                                            <td class="cart-pic first-row"> <img :src="item.product.img" alt="Product Image" /></td>
                                             <td class="cart-title first-row">
                                                 <router-link :to="`/store/`+item.product.id"><h5 style="color: blue;">{{ item.product.name }}</h5></router-link>
                                             </td>

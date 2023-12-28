@@ -13,7 +13,7 @@
           </ul>
         </div>
         <div class="col-md-5 order-2 order-md-1">
-          <img :src="'/src/images/product/' + product.img" alt="">
+          <img :src="product.img" alt="">
         </div>
         <div class="col-md-7 order-1 order-md-2">
           <h1>{{ product.name }}</h1>

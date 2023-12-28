@@ -11,7 +11,7 @@
           <div class="home-product-item__favourite">
               <span>Giảm {{ item.discount }}%</span>
           </div>
-          <img :src="'/src/images/product/' + item.img" alt="">
+          <img :src="item.img" alt="">
           <div class="card-body">
             <h3 class="item-name">{{ item.name }}</h3>
             <p class="item-description">{{ item.description }}</p>
@@ -46,7 +46,7 @@
         <div class="home-product-item__favourite">
             <span>Giảm {{ item.discount }}%</span>
         </div>
-        <img :src="'/src/images/product/'+item.img" alt="">
+        <img :src="item.img" alt="">
         <div class="card-body">
           <h3>{{ item.name }}</h3>
           <p class="item-description">{{ item.description }}</p>
@@ -79,7 +79,7 @@
         <div class="home-product-item__favourite">
             <span>Giảm {{ item.discount }}%</span>
         </div>
-        <img :src="'/src/images/product/' + item.img" alt="">
+        <img :src="item.img" alt="">
         <div class="card-body">
           <h3>{{ item.name }}</h3>
           <p class="item-description">{{ item.description }}</p>

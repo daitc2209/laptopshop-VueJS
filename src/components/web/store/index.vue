@@ -65,7 +65,7 @@
                     <div class="product-item col-lg-3 col-md-6 col-sm-6 col-12 " v-for="item in listProduct"  :key="item.id">
                         <div class="product-item" >
                             <div class="pi-pic " >
-                              <img :src="'src/images/product/' + item.img" alt="">
+                              <img :src="item.img" alt="">
                               <ul>
                                 <li class="w-icon active">
                                   <a @click="addToCart(item.id)"><i class="fa-solid fa-cart-shopping"></i></a>
@@ -87,7 +87,6 @@
                                 <span>Giảm {{ item.discount }}%</span>
                             </div>
                         </div>
-                      <!-- </div> -->
                     </div>
                   </template>
                   <div v-else>

@@ -310,6 +310,7 @@
 
 <script>
 import { showSuccessToast, showErrorToast } from "../../../assets/web/js/main";
+import { formatCurrency } from "../../../assets/admin/js/format-admin";
 import productApi from "../../../service/Product";
 import brandsApi from "../../../service/Brands";
 import categoriesApi from "../../../service/Categories";
@@ -330,21 +331,14 @@ export default {
         }
     },
     methods: {
-        formatCurrency(value) {
-			const formatter = new Intl.NumberFormat("vi-VN", {
-			style: "currency",
-			currency: "VND",
-			});
-			return formatter.format(value);
-		},
+        formatCurrency,
 
 		async addProduct(productDtoAdd){
 			try{
 				this.showPreload = true
 				const formData = new FormData();
 				if(this.imgDto != "" || this.imgDto != null)
-				productDtoAdd.img = this.imgDto
-			console.log("this.imgDTO: "+ this.imgDto)
+					productDtoAdd.img = this.imgDto
 				formData.append('fileImage', productDtoAdd.img);
 				formData.append('name', productDtoAdd.name);
 				formData.append('categoryName', productDtoAdd.categoryName);
@@ -380,7 +374,7 @@ export default {
 		async getEditProduct(id){
 			try{
 				const res = await productApi.getEditProduct(id)
-				this.productDto = res}
+				this.productDto = res }
 			catch(err){
 				console.log("Err: "+err)
 			}
@@ -524,7 +518,6 @@ export default {
 				page,
 				isActive: this.currentPage === page,
 				handleClick: async () => {
-					console.log("page: "+page)
 					await this.loadProduct(page);
 				},
 			};

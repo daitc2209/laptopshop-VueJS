@@ -95,6 +95,7 @@
 
 <script>
 import Order from '../../../service/Order'
+import { formatDate, formatCurrency } from "../../../assets/admin/js/format-admin";
 export default {
 	data(){
 		return {
@@ -116,22 +117,8 @@ export default {
 		}
 	},
 	methods: {
-		formatDate(date) {
-			const formattedDate = new Date(date);
-			const hours = ('0' + formattedDate.getHours()).slice(-2);
-			const minutes = ('0' + formattedDate.getMinutes()).slice(-2);
-			const day = ('0' + formattedDate.getDate()).slice(-2);
-			const month = ('0' + (formattedDate.getMonth() + 1)).slice(-2);
-			const year = formattedDate.getFullYear();
-			return `${hours}:${minutes} ${day}/${month}/${year}`;
-		},
-		formatCurrency(value) {
-			const formatter = new Intl.NumberFormat("vi-VN", {
-			style: "currency",
-			currency: "VND",
-			});
-			return formatter.format(value);
-		},
+		formatDate,
+		formatCurrency,
 		typePAY(){
 			let type = document.getElementById('drTypePayment').value;
 			this.OrderRequest.typePayment = type;

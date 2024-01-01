@@ -30,7 +30,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <template v-if="listFavour != [] && listFavour !=''">
+                                    <template v-if="listFavour != null && listFavour !=''">
                                         <tr v-for="item in listFavour" :key="item.id">
                                             <td class="cart-pic first-row"> <img :src="item.product.img" alt="Product Image" /></td>
                                             <td class="cart-title first-row">
@@ -68,7 +68,7 @@
 </template>
   
 <script>
-import { showSuccessToast, showErrorToast } from "../../../assets/web/js/main";
+import { showSuccessToast, showErrorToastMess } from "../../../assets/web/js/main";
 import Favour from "../../../service/favour";
 import Cart from "../../../service/Cart";
 export default {
@@ -88,10 +88,10 @@ export default {
         addToCard(id) {
             this.cart.productId=id
             Cart.addToCart(this.cart).then(()=>{
-                let message = 'Đã thêm sản phẩm vào giỏ hàng ! '
+                let message = 'Đã thêm sản phẩm vào giỏ hàng !! '
                 showSuccessToast(message)
             }).catch((err)=>{
-                showErrorToast()
+                showErrorToastMess("Sản phẩm đã hết hàng !!")
                 console.log("err o trang favour khi them gio hang: "+err)
             })
         },

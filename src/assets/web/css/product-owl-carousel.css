@@ -46,6 +46,8 @@
 }
 
 .product-cards h3 {
+	height: 52px;
+	font-size: 16px;
 	letter-spacing: 3px;
 	color: #1c1c50;
 	text-shadow: 0px 1px 1px black;

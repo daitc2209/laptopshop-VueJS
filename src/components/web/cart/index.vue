@@ -26,7 +26,7 @@
 									</tr>
 								</thead>
 								<tbody>
-									<template v-if="listCart">
+									<template v-if="listCart && listCart != '' && listCart != null">
 										<tr v-for="item in listCart" :key="item.id">
 											<td class="cart-pic first-row"><img :src="item.img" alt=""></td>
 											<td class="cart-title first-row"><h5>{{item.name}}</h5></td>
@@ -36,7 +36,7 @@
 													<div class="pro-qty">
 														<a @click=" item.numProduct > 1 ? decreaseQty(item) : null" ><span class="dec qtybtn" :class="{ disabled: item.numProduct <= 1 }">-</span> </a>
 														<input class="id-1" type="text" :value="item.numProduct" readonly="readonly"> 
-														<a @click="increaseQty(item)"><span  class="inc qtybtn">+</span></a>
+														<a @click="item.numProduct < item.quantity_in_stock ? increaseQty(item) : null"><span  class="inc qtybtn">+</span></a>
 													</div>
 												</div>
 											</td>
@@ -74,17 +74,17 @@
 </template>
 
 <script>
-import { decFunction, incFunction, showSuccessToast, showErrorToast } from "../../../assets/web/js/main";
+import { formatCurrency, showWarnToast } from "../../../assets/web/js/main";
 import Cart from "../../../service/Cart";
 export default {
     data() {
         return {
-        param: {
-            err: ""
-        },
-        listCart: [],
-        totalQuantity: '',
-        totalMoney: ''
+			param: {
+				err: ""
+			},
+			listCart: [],
+			totalQuantity: '',
+			totalMoney: ''
         };
     },
     methods: {
@@ -98,13 +98,7 @@ export default {
 			}
 			
 		},
-		formatCurrency(value) {
-			const formatter = new Intl.NumberFormat("vi-VN", {
-				style: "currency",
-				currency: "VND",
-			});
-			return formatter.format(value);
-		},
+		formatCurrency,
 		decreaseQty(item) {
 			if (item.numProduct > 0) {  //Call API 
 				item.numProduct--; 
@@ -120,16 +114,24 @@ export default {
 			}
 		},
 		increaseQty(item) {
-			item.numProduct++;
-			this.totalMoney -= item.totalPrice
-			item.totalPrice = item.price*item.numProduct - (item.price * item.numProduct * item.discount/100);
-
-			this.totalQuantity = this.totalQuantity+1
-			this.totalMoney += item.totalPrice
-
-			Cart.editItemCart(item.productId,1)
-				.then((res)=>{console.log("tang thanh cong")})
-				.catch((err)=>{console.log("loi tang ")})
+			if(item.quantity_in_stock >= item.numProduct)
+			{
+				item.numProduct++;
+				this.totalMoney -= item.totalPrice
+				item.totalPrice = item.price*item.numProduct - (item.price * item.numProduct * item.discount/100);
+	
+				this.totalQuantity = this.totalQuantity+1
+				this.totalMoney += item.totalPrice
+	
+				Cart.editItemCart(item.productId, 1)
+				.then((res) => {
+					console.log("Tăng số lượng sản phẩm thành công");
+				})
+				.catch((err) => {
+					showWarnToast("Sản phẩm đã hết hàng, vui lòng chọn sản phẩm khác !!");
+					console.log("Lỗi: sản phẩm đã hết hàng");
+				});
+			}
 		},
 		deleteItem(id) {
 			console.log("id: "+id)
@@ -155,7 +157,7 @@ export default {
 			this.listCart = res.data.data.listCartItems
 			this.totalQuantity = res.data.data.totalQuantity
 			this.totalMoney = res.data.data.totalMoney
-		}).catch((err)=>{console.log("loi trang cart !!! err: "+ err)})
+			}).catch((err)=>{console.log("loi trang cart !!! err: "+ err)})
 		}
   	},
 	mounted(){

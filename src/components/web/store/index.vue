@@ -19,7 +19,7 @@
               <div class="product-show-option col-4">
                 <div class="row">
                   <div class="p-3 m-1">
-                    <p>Sắp xếp: </p>
+                    <p class="filter-text">Sắp xếp: </p>
                     <div class="select-option col-11">
                       <select class="sort" v-model="formFilterProduct.sort" @change="getFilterProduct(1)">
                         <option value="low-high">Giá thấp đến cao</option>
@@ -30,7 +30,7 @@
                     </div>
                   </div>
                   <div class="p-3 m-1">
-                    <p>Danh mục: </p>
+                    <p class="filter-text">Danh mục: </p>
                     <div class="select-option col-11">
                       <select class="category" v-model="formFilterProduct.cateogryName" @change="getFilterProduct(1)">
                         <option value="all">Tất cả</option>
@@ -39,7 +39,7 @@
                     </div>
                   </div>
                   <div class="p-3 m-1">
-                    <p>Thương hiệu: </p>
+                    <p class="filter-text">Thương hiệu: </p>
                     <div class="select-option col-11">
                       <select class="brand" v-model="formFilterProduct.brandName" @change="getFilterProduct(1)">
                         <option value="all" selected>Tất cả</option>
@@ -48,8 +48,8 @@
                     </div>
                   </div>
                   <div class="p-3 m-1">
+                      <p class="filter-text" for="price-range-slider">Khoảng giá:</p>
                     <div id="price-range-container">
-                      <label for="price-range-slider">Khoảng giá:</label>
                       <div id="price-range-slider"></div>
                       <div id="price-values">
                         <span class="price-values__min">{{ formatPrice(formFilterProduct.minPrice) }}</span>
@@ -112,7 +112,7 @@
 </template>
   
 <script>
-import { showSuccessToast, showErrorToast, showErrorToastMess } from "../../../assets/web/js/main";
+import { showSuccessToast, showErrorToast, showWarnToast, showErrorToastMess } from "../../../assets/web/js/main";
 import productApi from '../../../service/Product';
 import Cart from '../../../service/Cart';
 import Favour from '../../../service/favour';
@@ -176,15 +176,23 @@ export default {
         let message = 'Thêm vào giỏ hàng thành công'
         showSuccessToast(message)
       }).catch((err)=>{
-        showErrorToast()
+        showErrorToastMess("Sản phẩm đã hết hàng !! Vui lòng chọn sản phẩm khác")
       })
     },
     async addToFavour(id){
       if(sessionStorage.getItem("login"))
       {
-        Favour.addToFavour(id).then(()=>{
-          let message = 'Đã thêm sản phẩm vào yêu thích'
-          showSuccessToast(message)
+        Favour.addToFavour(id).then((res)=>{
+          if(res.data.responseCode == 1)
+          {
+            let message = 'Đã thêm sản phẩm vào yêu thích !!'
+            showSuccessToast(message)
+          }
+          if(res.data.responseCode == 2)
+          {
+            let message = 'Sản phẩm đã có trong yêu thích !!'
+            showWarnToast(message)
+          }
         }).catch(()=>{
           showErrorToast()
         })
@@ -264,34 +272,5 @@ export default {
 </script>
   
 <style>
-.pi-pic {
-  position: relative;
-  overflow: hidden;
-}
-
-.pi-pic img {
-  transition: transform 0.3s ease;
-}
-
-.pi-pic:hover img {
-  transform: scale(1.2);
-}
-
-#price-range-container {
-  width: 80%;
-  /* margin: 50px auto; */
-  margin-left: 20px;
-}
-
-#price-range-slider {
-  width: 100%;
-  padding-bottom: 5px;
-}
-
-#price-values {
-  margin-top: 20px;
-  display: flex;
-  justify-content: space-between;
-}
 
 </style>

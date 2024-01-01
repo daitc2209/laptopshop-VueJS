@@ -13,7 +13,7 @@ import Footer from './shared/footer.vue';
 import Menu from './shared/menu.vue';
 import Backtotop from './shared/back-to-top.vue';
 import '../../assets/admin/js/jquery.min.js'
-import '../../assets/admin/js/adminlte.min.js'
+// import '../../assets/admin/js/adminlte.min.js'
 import '../../assets/admin/js/back-to-top.js'
 
 export default{

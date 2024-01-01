@@ -2,7 +2,6 @@ import axios from "axios"
 
 class Cart{
     addToCart(cart){
-        console.log("id: "+cart.productId+"\n num: "+cart.num)
         return axios.post(`cart/add-to-cart?productId=`+cart.productId+`&num=`+cart.num);
     }
 

@@ -12,7 +12,23 @@
 				<div class="card"><a href="#mouse"><img src="../../../images/banner/MOUSE-LOGITECH-5.png" alt=""></a></div>
 			</div>
 		</div>
+		<h1 class="m-4 text-center" style="margin-top: 30px; color: #1c1c50; text-shadow: 1px 1px 1px black;">THƯƠNG HIỆU</h1>
+		<div class="row mb-4">
+			<div class="col-md-3 col-sm-3 col-3 py-3 py-md-0">
+				<div class="card brands"><img src="../../../images/banner/asus.png" alt=""></div>
+			</div>
+			<div class="col-md-3 col-sm-3 col-3 py-3 py-md-0">
+				<div class="card brands"><img src="../../../images/banner/dell.png" alt=""></div>
+			</div>
+			<div class="col-md-3 col-sm-3 col-3 py-3 py-md-0">
+				<div class="card brands"><img src="../../../images/banner/hp.png" alt=""></div>
+			</div>
+			<div class="col-md-3 col-sm-3 col-3 py-3 py-md-0">
+				<div class="card brands"><img src="../../../images/banner/logictech.png" alt=""></div>
+			</div>
+		</div>
 	</section>
+	
 </template>
 
 <script>

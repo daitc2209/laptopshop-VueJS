@@ -17,6 +17,13 @@
 	object-position: center;
 }
 
+.banner-brand .card.brands img {
+	height: 30vh;
+	width: 100%;
+	object-fit: contain;
+	object-position: center;
+}
+
 .banner-brand h5 {
 	color: #1c1c50;
 	font-weight: bold;

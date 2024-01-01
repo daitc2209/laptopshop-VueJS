@@ -47,7 +47,7 @@
 						<ul class="search__product-list-item">
 							<li class="search__product-item" v-for="product in searchResults" :key="product.id">
 								<a class="search__product-item-link" :href="`/store/${product.id}`">
-										<img :src="`/src/images/product/${product.img}`" alt="" class="search__product-img">
+										<img :src="product.img" alt="" class="search__product-img">
 										<div class="search__product-item-info">
 											<div class="search__product-item-head">
 												<h3 class="search__product-item-name">{{ product.name }}</h3>

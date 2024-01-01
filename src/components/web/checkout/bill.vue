@@ -8,6 +8,10 @@
 						<div class="col-12 pt-4">
 			                <h3 class="text-center">Đặt hàng thành công</h3>
 			            </div>
+					<button id="btn-login" style="width: 300px;">
+						<router-link to="/home" class="text-center">Trở về trang chủ trang chủ</router-link>
+					</button>
+				
 						<div class="col-lg-6">
 							<div class="information-detail py-4">
 								<div class="col-12 mb-2 border info-user p-3">
@@ -68,11 +72,6 @@
 						</div>
 					</div>
 				</form>
-				<div class="col-12 pt-2 text-center mb-4">
-					<button id="btn-login" style="width: 300px;">
-						<router-link to="/home" class="text-center">Trở về trang chủ trang chủ</router-link>
-					</button>
-				</div>
 			</div>
 			<div v-else class="container"> 
 				<div class="row">
@@ -95,6 +94,7 @@
 
 <script>
 import CheckOut from '../../../service/CheckOut'
+import { formatDate, formatCurrency } from "../../../assets/web/js/main";
 export default {
     data(){
         return{
@@ -117,15 +117,6 @@ export default {
 	mounted(){
 		if (sessionStorage.getItem("login"))
 		{
-			// console.log("check: "+this.check)
-			// var url = window.location.href
-
-			// var urlParam = new URL(url)
-			// if(urlParam.searchParams.get("vnp_ResponseCode") === "00")
-			// {
-			// 	this.check = true
-			// 	console.log("check: "+this.check)
-			// }
 			this.getBill();
 		}
 		else
@@ -135,22 +126,8 @@ export default {
 		}
 	},
     methods: {
-        formatDate(date) {
-			const formattedDate = new Date(date);
-			const hours = ('0' + formattedDate.getHours()).slice(-2);
-			const minutes = ('0' + formattedDate.getMinutes()).slice(-2);
-			const day = ('0' + formattedDate.getDate()).slice(-2);
-			const month = ('0' + (formattedDate.getMonth() + 1)).slice(-2);
-			const year = formattedDate.getFullYear();
-			return `${hours}:${minutes} ${day}/${month}/${year}`;
-		},
-		formatCurrency(value) {
-			const formatter = new Intl.NumberFormat("vi-VN", {
-			style: "currency",
-			currency: "VND",
-			});
-			return formatter.format(value);
-		},
+        formatDate,
+		formatCurrency,
 
 		sendOrderConfirm(orderCode){
 			CheckOut.sendEmail(orderCode)

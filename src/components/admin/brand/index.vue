@@ -1,6 +1,14 @@
 <template>
   <div>
     <head><title>Quản lý thương hiệu</title></head>
+	<div v-if="showPreload" class="preload-screen">
+		<div class="preloader-wrapper d-flex">
+			<div class="spinner-border text-primary">
+				<span class="visually-hidden">Loading...</span>
+			</div>
+			<span style="margin-left: 20px; line-height: 30px;">Hệ thống đang xử lý</span>
+		</div>
+	</div>
     <section class="content-header">
 			<div class="container-fluid">
 				<div class="row mb-2">
@@ -21,13 +29,12 @@
 			<div id="toast">
     		</div>
 			<div class="container">
-				<form @submit.prevent="search(name)">
-					<h5 class="px-3 mb-4">Form tìm kiếm thương hiệu</h5>
+				<form @submit.prevent="search(search_text)">
 					<div class="row">
 						<div class="col-6 left pl-4">
 							<div class="form-group d-flex justify-content-between">
 								<label for="inputPassword6" class="col-form-label">Tên thương hiệu:</label>
-								<input type="text" name="name" v-model="name" class="form-control">
+								<input type="text" name="name" v-model="search_text" class="form-control">
 							</div>
 						</div>
 						<div class="col-6 right pl-4">
@@ -53,6 +60,7 @@
 							<tr>
 								<th>STT</th>
 								<th>Tên thương hiệu</th>
+								<th>Ảnh</th>
 								<th>Thao tác</th>
 							</tr>
 						</thead>
@@ -61,6 +69,7 @@
 									<tr v-for="(item,index) in brand" :key="item.id">
 										<td class="td1" :text="index + ((currentPage - 1) * 3)">{{ index + 1 }}</td>
 										<td class="td2">{{item.name}}</td>
+										<td class="td2" style="width: 60px; height: 60px;"><img style="width: 100%; height: 100%;" :src="item.img" alt=""></td>
 										<td class="td3">
 											<a @click="getEditBrand(item.id)" data-bs-toggle="modal" :data-bs-target="'#edit'+item.id" class="btn btn-sm btn-primary mr-2"><i class="fa-solid fa-pen-to-square"></i></a> 
 											<a data-bs-toggle="modal" :data-bs-target="'#delete'+ item.id" class="btn btn-sm btn-danger"><i class="fa-solid fa-trash"></i></a>
@@ -85,7 +94,7 @@
 										<div class="modal" :id="'edit'+ item.id">
 											<div class="modal-dialog">
 												<div class="modal-content">
-													<form @submit.prevent="clickEditBrand(brandDto)">
+													<form @submit.prevent="clickEditBrand(brandDto)" enctype="multipart/form-data">
 														<div class="modal-header">
 															<h4 class="modal-title">Chỉnh sửa thương hiệu</h4>
 															<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -95,12 +104,17 @@
 																<div class="form-group">
 																	<label for="">Id</label> 
 																	<input type="text" name="id" v-model="brandDto.id" class="form-control" readonly="readonly" />
-																	<div class="text-danger"></div>
 																</div>
 																<div class="form-group">
 																	<label for="">Tên</label> 
 																	<input type="text" name="name" v-model="brandDto.name" class="form-control" required="required" />
-																	<div class="text-danger"></div>
+																</div>
+																<div class="form-group">
+																	<label for="">Ảnh</label> 
+																	<input class="form-control" @change="chooseFile($event,1)" type="file" name="fileImage" />
+																</div>
+																<div class="form-group d-flex justify-content-center">
+																	<img id="imageEdit" class="imageEdit" :src="brandDto.img" style="height: 200px; width: 200px"/>
 																</div>
 															</div>
 														</div>
@@ -135,7 +149,7 @@
 		<div class="modal" id="add">
 			<div class="modal-dialog">
 				<div class="modal-content">
-					<form @submit.prevent="addBrand(brandDto)">
+					<form @submit.prevent="addBrand(brandDtoAdd)" enctype="multipart/form-data">
 						<div class="modal-header">
 							<h4 class="modal-title">Thêm thương hiệu</h4>
 							<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -144,8 +158,11 @@
 							<div id="logins-part" class="content" role="tabpanel" aria-labelledby="logins-part-trigger">
 								<div class="form-group">
 									<label for="">Tên thương hiệu</label> 
-									<input type="text" v-model="brandDto.name" name="name" class="form-control" placeholder="dell, hp,..." required="required" />
-									<div class="text-danger"></div>
+									<input type="text" v-model="brandDtoAdd.name" name="name" class="form-control" placeholder="" required="required" />
+								</div>
+								<div class="form-group">
+									<label for="">Link ảnh</label> 
+									<input class="form-control" @change="chooseFile($event,0)" type="file" name="fileImage" />
 								</div>
 							</div>
 						</div>
@@ -167,16 +184,19 @@ export default {
     data(){
         return {
             brand: [],
+			brandDtoAdd:{},
 			brandDto:{},
 			currentPage:'',
             totalPage: '',
             paginationButtons:[],
+			search_text:"",
+			showPreload: false
         }
     },
     methods: {
 		async getListBrand(currentPage, search){
             try{
-                const res = await brandsApi.getListBrands(this.currentPage,this.name)
+                const res = await brandsApi.getListBrands(currentPage,search)
                 this.brand = res.data.listBrands.content
                 this.currentPage = res.data.currentPage
                 this.totalPage = res.data.listBrands.totalPages
@@ -190,12 +210,19 @@ export default {
             console.log("name: "+name)
             await this.getListBrand(this.currentPage, name)
         },
-        async addBrand(brandDto){
+        async addBrand(brandDtoAdd){
             try{
-                const res = await brandsApi.postAddBrands(brandDto)
+				this.showPreload = true
+				const formData = new FormData();
+				brandDtoAdd.img = this.imgDto
+				formData.append('name', brandDtoAdd.name);
+				formData.append('fileImage', brandDtoAdd.img);
+				console.log(formData.get('fileImage')); 
+                const res = await brandsApi.postAddBrands(formData)
                     if(res.success){
                         await this.getListBrand(this.currentPage,"")
-						this.brandDto = {}
+						this.brandDtoAdd = {}
+						this.imgDto=''
                         let mess='Thêm thành công'
 				        this.showToastr(1,mess)
                         bootstrap.Modal.getInstance(document.getElementById("add")).hide()
@@ -204,8 +231,10 @@ export default {
                         let mess='Thêm thất bại'
 				        this.showToastr(0,mess)
                     }
+					this.showPreload = false
             }
             catch(err){
+				this.showPreload = false
                 console.log("err: "+err)
             }
         },
@@ -220,7 +249,14 @@ export default {
         },
         async clickEditBrand(brandDto){
             try{
-                const res = await brandsApi.postEditBrands(brandDto)
+				this.showPreload = true
+				const formData = new FormData();
+				if(this.imgDto != "" && this.imgDto != null)
+					brandDto.img = this.imgDto
+				console.log("brandDto.name: "+brandDto.name)
+				formData.append('fileImage', brandDto.img);
+				formData.append('name', brandDto.name);
+                const res = await brandsApi.postEditBrands(formData)
                     if(res.success){
                         await this.getListBrand(this.currentPage,"")
                         let mess='Sửa thành công'
@@ -231,8 +267,10 @@ export default {
                         let mess='Sửa thất bại'
 				        this.showToastr(0,mess)
                     }
+					this.showPreload = false
             }
             catch(err){
+				this.showPreload = false
                 console.log("err: "+err)
             }
         },
@@ -251,9 +289,19 @@ export default {
                     }
             }
             catch(err){
-                console.log("err: "+err)
+                this.showToastr(0,mess)
             }
         },
+		chooseFile(e,data){
+			const file = e.target.files[0];
+			if (file) {
+				this.imgDto = file;
+				if(data == 0)
+					this.brandDtoAdd.img = URL.createObjectURL(file)
+				if(data == 1)
+					this.brandDto.img = URL.createObjectURL(file)
+			}
+		},
         showToastr(condition,message) {
             if(condition)
 				showSuccessToast(message)
@@ -282,7 +330,7 @@ export default {
 		},
 		async loadbrand(page) {
             try{
-                const res = await brandsApi.getListBrands(page,this.name)
+                const res = await brandsApi.getListBrands(page,this.search_text)
                 this.brand = res.data.listBrands.content
                 this.currentPage = res.data.currentPage
                 this.totalPage = res.data.listBrands.totalPages
@@ -300,7 +348,7 @@ export default {
 			sessionStorage.setItem("auth",true)
 		}
 		else
-			this.getListBrand()
+			this.getListBrand(this.currentPage,this.search_text)
  	},
 }
 </script>

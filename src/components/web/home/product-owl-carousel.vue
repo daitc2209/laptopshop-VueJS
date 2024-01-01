@@ -109,7 +109,7 @@
 </template>
 
 <script>
-import { showSuccessToast, showErrorToast } from "../../../assets/web/js/main";
+import { showSuccessToast, showErrorToast, showWarnToast } from "../../../assets/web/js/main";
 // import Products from '../../../service/Product'
 import productApi from '../../../service/Product';
 import Cart from '../../../service/Cart';
@@ -137,13 +137,6 @@ export default {
     },
     async getAllProduct(){
       const res = await productApi.getAllProduct();
-      // .then((res) => {
-      //   console.log(res)
-      //   this.laptopCategory = res.data.data.laptop;
-      //   this.mouseCategory = res.data.data.mouse;
-      //   this.keyboardCategory = res.data.data.keyboard;
-      // })
-      // .catch(err => console.log(err))
       this.laptopCategory = res.data.laptop;
       this.mouseCategory = res.data.mouse;
       this.keyboardCategory = res.data.keyboard;
@@ -161,9 +154,19 @@ export default {
     async addToFavour(id){
       if(sessionStorage.getItem("login"))
       {
-        Favour.addToFavour(id).then(()=>{
-          let message = 'Đã thêm sản phẩm vào yêu thích'
-          showSuccessToast(message)
+        Favour.addToFavour(id).then((res)=>{
+          if(res.data.responseCode == 1)
+          {
+            console.log("res.data.data.responseCode: "+res.data.data.responseCode)
+            let message = 'Đã thêm sản phẩm vào yêu thích !!'
+            showSuccessToast(message)
+          }
+          if(res.data.responseCode == 2)
+          {
+            console.log("res.data.data.responseCode: "+res.data.data.responseCode)
+            let message = 'Sản phẩm đã có trong yêu thích !!'
+            showWarnToast(message)
+          }
         }).catch((err)=>{
           showErrorToast()
         })

@@ -85,6 +85,7 @@
 <script>
 import revenueApi from '../../../service/revenue';
 import { showSuccessToast, showErrorToast } from "../../../assets/web/js/main";
+import { formatCurrency } from "../../../assets/admin/js/format-admin";
 import Chart from 'chart.js/auto'
 export default {
     data() {
@@ -111,22 +112,8 @@ export default {
             return data.slice().sort((a, b) => b.total_sell - a.total_sell);
         },
 
-        formatCurrency(value) {
-            const formatter = new Intl.NumberFormat("vi-VN", {
-                style: "currency",
-                currency: "VND",
-            });
-            return formatter.format(value);
-        },
-
-        showToastr(condition, message) {
-            if (condition)
-                showSuccessToast(message)
-
-            if (condition == false)
-                showErrorToast(message)
-
-        },
+        formatCurrency,
+        
         PaginationButton(page) {
             return {
                 page,

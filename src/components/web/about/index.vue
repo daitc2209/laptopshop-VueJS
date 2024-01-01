@@ -16,9 +16,6 @@
 					<div class="card">
 						<img src="../../../images/introduce.png" alt="">
 					</div>
-					<div class="card">
-						<img src="../../../images/introduce.png" alt="">
-					</div>
 				</div>
 				<div class="col-md-6 py-3 py-md-0">
 					<div style="font-size: 22px;  font-weight: 600">Chào mừng đến với TCD Shop - Ngôi nhà của đam mê công nghệ!</div><br>

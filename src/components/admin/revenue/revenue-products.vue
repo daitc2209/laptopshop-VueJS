@@ -82,7 +82,7 @@
                 </div>
             </div>
             <div class="col-1"></div>
-            <div class="col-4" style="width: 400px; height: 400px;">
+            <div class="col-4" style="width: 500px; height: 500px;">
                 <canvas id="myChart"></canvas>
             </div>
         </section>

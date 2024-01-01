@@ -172,3 +172,37 @@
 	margin-left: 20px;
   }
 }
+
+
+.pi-pic {
+	position: relative;
+	overflow: hidden;
+  }
+
+.pi-pic img {
+	transition: transform 0.3s ease;
+}
+
+.pi-pic:hover img {
+	transform: scale(1.2);
+}
+
+#price-range-container {
+	width: 85%;
+	margin-left: 10px;
+}
+
+#price-range-slider {
+	width: 100%;
+	padding-bottom: 5px;
+}
+
+#price-values {
+	margin-top: 20px;
+	display: flex;
+	justify-content: space-between;
+}
+.filter-text{
+	font-size: 20px;
+	font-weight: 600;
+}

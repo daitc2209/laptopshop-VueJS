@@ -27,13 +27,15 @@
           <div v-for="item in product.description.split(',')" :key="item">
             <p>{{ item }}</p>
           </div>
-          <h3>
-            {{ formatPrice(product.price - (product.price * product.discount / 100)) }}
-            <del v-if="product.discount > 0">{{ formatPrice(product.price) }}</del>
-          </h3>
           <h5>
-            Discount: {{ product.discount }}%
+            Giảm giá: {{ product.discount }}%
           </h5>
+          <h3>
+            Giá: {{ formatCurrency(product.price - (product.price * product.discount / 100)) }}
+            <del v-if="product.discount > 0">{{ formatCurrency(product.price) }}</del>
+          </h3>
+          
+          <label for="" >Tình trạng: <span v-if="product.quantity > 0"><strong>Còn hàng</strong></span> <span v-else><strong>Hết hàng</strong></span></label>
           <form @submit.prevent="addToCart()">
             <input name="productId" :value="product.id" hidden>
             <div class="quantity">
@@ -41,10 +43,10 @@
                 <span @click="decFunction(1)" class="dec qtybtn">-</span>
                 <input v-if="!cart.num" class="id-1" id="quanty" type="text" value="1" name="numProduct">
                 <input v-else class="id-1" id="quanty" type="text" :value="cart.num" name="numProduct">
-                <span @click="incFunction(1)" class="inc qtybtn">+</span>
+                <span @click="cart.num < product.quantity ? incFunction(1) : null" class="inc qtybtn">+</span>
               </div>
               <a><button class="primary-btn pd-cart" type="submit">Thêm vào giỏ hàng</button></a>
-              <a class="favour-container"><button class="favour-btn" @click="addToFavour(item.id)"><i class="fa-solid fa-heart"></i></button></a>
+              <a class="favour-container"><button class="favour-btn" @click="addToFavour($event,product.id)"><i class="fa-solid fa-heart"></i></button></a>
             </div>
           </form>
         </div>
@@ -54,7 +56,7 @@
 </template>
 
 <script>
-import { decFunction, incFunction, showSuccessToast, showErrorToast } from "../../../assets/web/js/main";
+import { decFunction, incFunction, showSuccessToast, showErrorToast, showWarnToast, formatCurrency } from "../../../assets/web/js/main";
 import productApi from "../../../service/Product";
 import Cart from "../../../service/Cart";
 import Favour from "../../../service/favour";
@@ -78,13 +80,7 @@ export default {
     };
   },
   methods: {
-    formatPrice(price) {
-      const formatter = new Intl.NumberFormat("vi-VN", {
-        style: "currency",
-        currency: "VND",
-			});
-			return formatter.format(price);
-    },
+    formatCurrency,
 
     decFunction(num) {
       this.cart.num = decFunction(num);
@@ -103,12 +99,22 @@ export default {
         showErrorToast()
       })
     },
-    async addToFavour(id){
+    async addToFavour(event,id){
+      event.preventDefault();
+      console.log("vao duoc favour id: "+id)
       if(sessionStorage.getItem("login"))
       {
-        Favour.addToFavour(id).then(()=>{
-          let message = 'Đã thêm sản phẩm vào yêu thích'
-          showSuccessToast(message)
+        Favour.addToFavour(id).then((res)=>{
+          if(res.data.responseCode == 1)
+          {
+            let message = 'Đã thêm sản phẩm vào yêu thích !!'
+            showSuccessToast(message)
+          }
+          if(res.data.responseCode == 2)
+          {
+            let message = 'Sản phẩm đã có trong yêu thích !!'
+            showWarnToast(message)
+          }
         }).catch((err)=>{
           showErrorToast()
         })

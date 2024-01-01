@@ -213,7 +213,7 @@
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
 import User from '../../../service/User';
-import {showSuccessToast,showErrorToast, showErrorToastMess } from "../../../assets/web/js/main";
+import {showSuccessToast,showErrorToast, showErrorToastMess, formatDate, formatCurrency } from "../../../assets/web/js/main";
 import menuShared from "../profile/menu-shared.vue";
 export default {
 	components: {
@@ -231,22 +231,8 @@ export default {
 		};
 	},
   	methods: {
-		formatDate(date) {
-			const formattedDate = new Date(date);
-				const hours = ('0' + formattedDate.getHours()).slice(-2);
-				const minutes = ('0' + formattedDate.getMinutes()).slice(-2);
-				const day = ('0' + formattedDate.getDate()).slice(-2);
-				const month = ('0' + (formattedDate.getMonth() + 1)).slice(-2);
-				const year = formattedDate.getFullYear();
-				return `${hours}:${minutes} ${day}/${month}/${year}`;
-		},
-		formatCurrency(value) {
-			const formatter = new Intl.NumberFormat("vi-VN", {
-			style: "currency",
-			currency: "VND",
-		});
-			return formatter.format(value);
-		},
+		formatDate,
+		formatCurrency,
 
 		getStateCheckoutDisplay(stateCheckout) {
 			const stateMap = {

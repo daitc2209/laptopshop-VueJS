@@ -46,7 +46,7 @@
 
 <script>
 
-import News from '../../../service/News';
+import newsApi from '../../../service/News';
 export default {
     data(){
         return {
@@ -57,24 +57,26 @@ export default {
         }
     },
     methods: {
-		getNews(){
-			News.getNews(this.currentPage)
-				.then(res => {
-					this.news = res.data.data.listNews
-					this.totalPage = res.data.data.totalPage
-					this.currentPage = res.data.data.currentPage
+		async getNews(){
+			try{
+				const res = await newsApi.getNews(this.currentPage)
+				if(res)
+				{
+					this.news = res.data.listNews
+					this.totalPage = res.data.totalPage
+					this.currentPage = res.data.currentPage
 					this.SetupPagination(this.totalPage)
-				})
-				.catch(err => {
-					console.log("err news: "+err)
-				})
+				}
+			}catch(err){
+				console.log("err news: "+err)
+			}
 		},
 		PaginationButton (page) {
 			return {
 				page,
 				isActive: this.currentPage === page,
-				handleClick: () => {
-					this.loadNews(page);
+				handleClick: async () => {
+					await this.loadNews(page);
 				},
 			};
 		},
@@ -86,16 +88,18 @@ export default {
 				this.paginationButtons.push(i);
 			}
 		},
-		loadNews(page) {
-			News.getNews(page)
-				.then(res => {
-					this.news = res.data.data.listNews;
-					this.totalPage = res.data.data.totalPage;
-					this.currentPage = res.data.data.currentPage;
-				})
-				.catch(err => {
-					console.log("err news: " + err);
-				});
+		async loadNews(page) {
+			try{
+				const res = await newsApi.getNews(page)
+				if(res)
+				{
+					this.news = res.data.listNews
+					this.totalPage = res.data.totalPage
+					this.currentPage = res.data.currentPage
+				}
+			}catch(err){
+				console.log("err news: "+err)
+			}
 		}
     },
 	mounted(){

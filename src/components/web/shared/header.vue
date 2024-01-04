@@ -40,11 +40,11 @@
                         </li>
 				</ul>
 				<div class="header__navbar-item header__navbar-user">
-					<router-link to="/favour"><i class="header__navbar-item-link fa-solid fa-heart"></i> <span style="color:#000; font-weight: 600; margin-left:4px; cursor: pointer;">YÊU THÍCH</span></router-link>
+					<router-link to="/favour"><i class="header__navbar-item-link fa-solid fa-heart"></i> <span style="color:#000; font-weight: 600; padding-left:4px; cursor: pointer;">YÊU THÍCH</span></router-link>
 				</div>
 			</template >
 			<div class="header__navbar-item header__navbar-user">
-				<div @click="click()"><i class="header__navbar-item-link fa-solid fa-cart-shopping"></i> <span style="font-weight: 600; margin-left:4px; cursor: pointer;">GIỎ HÀNG</span></div>
+				<div @click="click()"><i class="header__navbar-item-link fa-solid fa-cart-shopping"></i> <span style="font-weight: 600; padding-left:4px; cursor: pointer;">GIỎ HÀNG</span></div>
 			</div>
 		</div>
 	</div>
@@ -53,7 +53,7 @@
 </template>
 
 <script>
-import Users from '../../../service/User'
+import userApi from '../../../service/User'
 import axios from 'axios';
 export default {
 	data() {
@@ -68,27 +68,26 @@ export default {
 		click(){
 			this.$router.push("/cart")
 		},
-		logout(){
-			axios.defaults.headers.Authorization = `Bearer ${sessionStorage.getItem("jwtToken")}`;
-			Users.logout(sessionStorage.getItem("jwtToken"))
-				.then(res => {
-					console.log(res)
-					if(res.data.responseCode == "0")
-					{
-						window.location.href = "/auth/sign-in"
-						sessionStorage.removeItem("login"),
-						sessionStorage.removeItem("jwtToken"),
-						sessionStorage.removeItem("refreshToken"),
-						sessionStorage.removeItem("role"),
-						sessionStorage.removeItem("img"),
-						sessionStorage.removeItem("name"),
-						sessionStorage.setItem("logout",true)
-					}
+		async logout(){
+			try{
+				axios.defaults.headers.Authorization = `Bearer ${sessionStorage.getItem("jwtToken")}`;
+				const res = await userApi.logout(sessionStorage.getItem("jwtToken"))
 					
-				})
-				.catch(err => {
-					console.log("err: "+err)
-				})
+				if(res.responseCode == "0")
+				{
+					window.location.href = "/auth/sign-in"
+					sessionStorage.removeItem("login"),
+					sessionStorage.removeItem("jwtToken"),
+					sessionStorage.removeItem("refreshToken"),
+					sessionStorage.removeItem("role"),
+					sessionStorage.removeItem("img"),
+					sessionStorage.removeItem("name"),
+					sessionStorage.setItem("logout",true)
+				}
+			}
+			catch(err){
+				console.log("err: "+err)
+			}
 		},
 	},
 	mounted() {

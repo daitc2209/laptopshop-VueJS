@@ -253,7 +253,6 @@ export default {
 				const formData = new FormData();
 				if(this.imgDto != "" && this.imgDto != null)
 					brandDto.img = this.imgDto
-				console.log("brandDto.name: "+brandDto.name)
 				formData.append('fileImage', brandDto.img);
 				formData.append('name', brandDto.name);
                 const res = await brandsApi.postEditBrands(formData)

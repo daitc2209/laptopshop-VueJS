@@ -295,8 +295,8 @@
 <script>
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
-import Order from '../../../service/Order';
-import { showSuccessToast, showErrorToast } from "../../../assets/web/js/main";
+import orderApi from '../../../service/Order';
+import { showSuccessToast, showErrorToastMess, getStateCheckoutDisplay, getStateOrderDisplay } from "../../../assets/web/js/main";
 import { formatDate, formatCurrency } from "../../../assets/admin/js/format-admin";
 export default {
 	components: {
@@ -319,17 +319,19 @@ export default {
     methods: {
 		formatDate,
 		formatCurrency,
-		getAllOrderByStatus(){
-			Order.getAllOrderByStatus()
-				.then(res=>{
-					this.orderStatus = res.data.data
-				})
-				.catch(err=>{
-					console.log("loi khi lay tat ca don hang cua cac trang thai: "+err)
-				})
+		getStateCheckoutDisplay,
+		getStateOrderDisplay,
+		async getAllOrderByStatus(){
+			try{
+				const res = await orderApi.getAllOrderByStatus()
+				this.orderStatus = res.data;
+			}catch(err){
+				console.log("err: "+err)
+				showErrorToastMess("Lỗi lấy đơn hàng theo trạng thái")
+			}
 		},
 
-		getOrderByStatus(data){
+		async getOrderByStatus(data){
 			var buttons = document.getElementsByClassName('order-status__item');
 			for (var i = 0; i < buttons.length; i++) {
 				buttons[i].classList.remove('active');
@@ -342,87 +344,72 @@ export default {
 			this.status = data
 
 			if(this.startDate !== null || this.endDate !== null)
-				this.search()
+				await this.search()
 			
 			else{
-				Order.getListOrderByStatus(this.currentPage,this.search_text,this.status)
-					.then(res => {
-							this.order = res.data.data.listOrders
-							this.totalPage = res.data.data.totalPage
-							this.currentPage = res.data.data.currentPage
-							this.setupPagination(this.totalPage)
-					})
-					.catch(err => {
-						this.order = false
-					})
+				try{
+					const res = await orderApi.getListOrderByStatus(this.currentPage,this.search_text,this.status)
+						this.order = res.data.listOrders
+						this.totalPage = res.data.totalPage
+						this.currentPage = res.data.currentPage
+						this.setupPagination(this.totalPage)
+				}catch(err){
+					this.order = false
+				}
 			}
-			this.getAllOrderByStatus()
+			await this.getAllOrderByStatus()
 		},
-		getOrder(id){
-			Order.getOrderById(id)
-				.then(res => {
-						this.orderDto = res.data.data.orders
-				})
-				.catch(() => {
-					mess='Có lỗi xảy ra'
-					this.showToastr(0,mess)
-				})
+		async getOrder(id){
+			try{
+				const res = await orderApi.getOrderById(id)
+				if(res) this.orderDto = res.data.orders;
+			}catch(err){
+				showErrorToastMess("Lấy đơn hàng thất bại")
+			}
 		},
-        clickVerifyOrder(item){
-			Order.verify(item.id,item.stateOrder)
-				.then(res => {
-					let mess=''
-					if(res.data.message)
+        async clickVerifyOrder(item){
+			try{
+				const res = await orderApi.verify(item.id,item.stateOrder)
+				if(res.message)
+				{
+					showSuccessToast("Đổi trạng thái thành công")
+					this.getOrderByStatus(this.status)
+				}
+				if(res.error)
+					showErrorToastMess("Đổi trạng thái thất bại")
+				bootstrap.Modal.getInstance(document.getElementById("vertify"+item.id)).hide()
+			}catch(err){
+				console.log("err: "+err)
+			}
+		},
+		async search(){
+			try{
+				let start = null
+				let end = null
+				if(this.startDate !== null || this.endDate !== null)
+				{
+					start = this.formatDate(this.startDate)
+					end = this.formatDate(this.endDate)
+				}
+				let status = this.status
+				let search_text = this.search_text
+				let data = {search_text,start,end,status}
+				if (start > end) {
+					let error = 'Ngày bắt đầu không được lớn hơn ngày kết thúc.';
+					showErrorToastMess(error)
+				} else {
+					const res = await orderApi.findByRangeDay(1,data)
+					if(res)
 					{
-						mess='Sửa thành công'
-						this.showToastr(1,mess)
-						this.getOrderByStatus(this.status)
+						this.order = res.data.listOrders
+						this.totalPage = res.data.totalPage
+						this.currentPage = res.data.currentPage
+						this.setupPagination(this.totalPage)
 					}
-					if(res.data.error){
-						mess='Có lỗi xảy ra'
-						this.showToastr(0,mess)
-					}
-					bootstrap.Modal.getInstance(document.getElementById("vertify"+item.id)).hide()
-				})
-				.catch(err => {
-					console.log("err: "+err)
-				})
-		},
-		search(){
-			let start = null
-			let end = null
-			if(this.startDate !== null || this.endDate !== null)
-			{
-				start = this.formatDate(this.startDate)
-				end = this.formatDate(this.endDate)
+				}
 			}
-			let status = this.status
-			let search_text = this.search_text
-			let data = {search_text,start,end,status}
-			if (start > end) {
-				let error = 'Ngày bắt đầu không được lớn hơn ngày kết thúc.';
-				showErrorToastMess(error)
-			} else {
-				Order.findByRangeDay(1,data)
-					.then(res=>{
-							this.order = res.data.data.listOrders
-							this.totalPage = res.data.data.totalPage
-							this.currentPage = res.data.data.currentPage
-							this.setupPagination(this.totalPage)
-					})
-					.catch(err=>{
-						console.log("err: "+err)
-					})
-			}
+			catch(err){console.log("err: "+err)}
 		},
-
-        showToastr(condition,message) {
-            if(condition)
-				showSuccessToast(message)
-			
-			if(condition == false)
-				showErrorToast(message)
-        },
         PaginationButton (page) {
 			return {
 				page,
@@ -449,52 +436,38 @@ export default {
 					let error = 'Ngày bắt đầu không được lớn hơn ngày kết thúc.';
 					showErrorToastMess(error)
 				} else {
-					Order.findByRangeDay(page,data)
-						.then(res=>{
-								this.order = res.data.data.listOrders
-								this.totalPage = res.data.data.totalPage
-								this.currentPage = res.data.data.currentPage
-						})
-						.catch(err=>{
-							console.log("err: "+err)
-						})
+					try{
+						const res = await orderApi.findByRangeDay(page,data)
+						if(res)
+						{
+							this.order = res.data.listOrders
+							this.totalPage = res.data.totalPage
+							this.currentPage = res.data.currentPage
+						}
+					}catch(err){
+						console.log("err: "+err)
+					}
 				}
 			}
 			else{
-				Order.getListOrderByStatus(page,search_text,status)
-				.then(res => {
-					this.order = res.data.data.listOrders
-					this.totalPage = res.data.data.totalPage
-					this.currentPage = res.data.data.currentPage
-				})
-				.catch(err => {console.log("err: "+err)})
+				try{
+					const res = await orderApi.getListOrderByStatus(page,search_text,status)
+						this.order = res.data.listOrders
+						this.totalPage = res.data.totalPage
+						this.currentPage = res.data.currentPage
+				}catch(err){
+					this.order = false
+				}
 			}
     	},
-		getStateCheckoutDisplay(stateCheckout) {
-			const stateMap = {
-				UNPAID: "Chưa thanh toán",
-				PAID: "Đã thanh toán"
-			};
-			return stateMap[stateCheckout] || "";
-		},
-		getStateOrderDisplay(stateOrder) {
-			const stateMap = {
-				PENDING: "Đang xử lý",
-				DELIVERING: "Đang giao hàng",
-				CONFIRMED: "Đã xác nhận",
-				RECEIVED: "Đã nhận",
-				CANCELLED: "Đã huỷ"
-			};
-			return stateMap[stateOrder] || "";
-		},
 		init(){
 			this.getAllOrderByStatus();
 			this.getOrderByStatus(this.status)
 		}
     },
 	watch: {
-		search_text () {
-			this.getOrderByStatus(this.status);
+		async search_text () {
+			await this.getOrderByStatus(this.status);
 		}
 	},
 	mounted(){

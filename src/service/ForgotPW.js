@@ -1,17 +1,20 @@
 import axios from "axios"
 
-class ForgotPW{
-    handleRequestForgorPW(email){
-        return axios.post(`/auth/forgot-password?email=`+email);
-    }
+const ForgotPWApi = {
+    handleRequestForgorPW: async (email)=>{
+        const res = await axios.post(`/auth/forgot-password?email=`+email);
+        return res.data
+    },
 
-    checkTokenPW(token){
-        return axios.get(`/auth/reset-password?token=`+token);
-    }
+    checkTokenPW: async (token)=>{
+        const res = await axios.get(`/auth/reset-password?token=`+token);
+        return res.data
+    },
 
-    resetPW(token,newPW){
-        return axios.post(`/auth/reset-password?token=${token}&newPW=${newPW}`)
+    resetPW: async (token,newPW)=>{
+        const res = await axios.post(`/auth/reset-password?token=${token}&newPW=${newPW}`)
+        return res.data
     }
 }
 
-export default new ForgotPW()
+export default ForgotPWApi

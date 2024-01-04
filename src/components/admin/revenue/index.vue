@@ -36,9 +36,9 @@
                         <thead>
                             <tr>
                                 <th>No.</th>
-                                <th>Tên loại hàng</th>
+                                <th>Tên danh mục</th>
                                 <th>Tổng sản phẩm bán được</th>
-                                <th>Tổng thu nhập</th>
+                                <th>Tổng doanh thu</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -84,7 +84,6 @@
 
 <script>
 import revenueApi from '../../../service/revenue';
-import { showSuccessToast, showErrorToast } from "../../../assets/web/js/main";
 import { formatCurrency } from "../../../assets/admin/js/format-admin";
 import Chart from 'chart.js/auto'
 export default {

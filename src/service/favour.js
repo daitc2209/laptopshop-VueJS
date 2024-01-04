@@ -1,17 +1,20 @@
 import axios from "axios"
 
-class Favour{
-    addToFavour(id){
-        return axios.post(`favour/add-to-favour?productId=`+id);
-    }
+const favourApi = {
+    addToFavour: async (id)=>{
+        const res = await axios.post(`favour/add-to-favour?productId=`+id);
+        return res.data
+    },
 
-    GetItemInFavour(){
-        return axios.get(`favour`);
-    }
+    GetItemInFavour: async ()=>{
+        const res = await axios.get(`favour`);
+        return res.data
+    },
 
-    deleteItemFavour(id){
-        return axios.post(`favour/delete-favour?id=`+id)
+    deleteItemFavour: async (id)=>{
+        const res = await axios.post(`favour/delete-favour?id=`+id)
+        return res.data
     }
 }
 
-export default new Favour()
+export default favourApi

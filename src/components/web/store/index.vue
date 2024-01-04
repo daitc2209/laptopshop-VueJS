@@ -52,8 +52,8 @@
                     <div id="price-range-container">
                       <div id="price-range-slider"></div>
                       <div id="price-values">
-                        <span class="price-values__min">{{ formatPrice(formFilterProduct.minPrice) }}</span>
-                        <span class="price-values__max" style="margin-left: 20px;">{{ formatPrice(formFilterProduct.maxPrice) }}</span>
+                        <span class="price-values__min">{{ formatCurrency(formFilterProduct.minPrice) }}</span>
+                        <span class="price-values__max" style="margin-left: 20px;">{{ formatCurrency(formFilterProduct.maxPrice) }}</span>
                       </div>
                     </div>
                   </div>
@@ -79,8 +79,8 @@
                             <div class="pi-text">
                               <h5>{{ item.name }}</h5>
                               <div class="product-price">
-                                {{ formatPrice(item.price - (item.price * item.discount / 100)) }}
-                                <del v-if="item.discount > 0">{{ formatPrice(item.price) }}</del>
+                                {{ formatCurrency(item.price - (item.price * item.discount / 100)) }}
+                                <del v-if="item.discount > 0">{{ formatCurrency(item.price) }}</del>
                             </div>
                             </div>
                             <div class="home-product-item__favourite">
@@ -112,10 +112,10 @@
 </template>
   
 <script>
-import { showSuccessToast, showErrorToast, showWarnToast, showErrorToastMess } from "../../../assets/web/js/main";
+import { showSuccessToast, showErrorToast, showWarnToast, showErrorToastMess, formatCurrency } from "../../../assets/web/js/main";
 import productApi from '../../../service/Product';
-import Cart from '../../../service/Cart';
-import Favour from '../../../service/favour';
+import cartApi from '../../../service/Cart';
+import favourApi from '../../../service/favour';
 export default {
   data() {
     return {
@@ -141,13 +141,7 @@ export default {
     };
   },
   methods: {
-    formatPrice(price) {
-      const formatter = new Intl.NumberFormat("vi-VN", {
-        style: "currency",
-        currency: "VND",
-			});
-			return formatter.format(price);
-    },
+    formatCurrency,
     async getFilterProduct(page){
       try{
         const res = await productApi.getFilterProduct(
@@ -170,32 +164,23 @@ export default {
       }
     },
     async addToCart(id){
-      this.cart.productId=id
-      console.log("id: "+id)
-      Cart.addToCart(this.cart).then(()=>{
-        let message = 'Thêm vào giỏ hàng thành công'
-        showSuccessToast(message)
-      }).catch((err)=>{
-        showErrorToastMess("Sản phẩm đã hết hàng !! Vui lòng chọn sản phẩm khác")
-      })
+      try{
+        this.cart.productId=id
+        await cartApi.addToCart(this.cart)
+        showSuccessToast('Thêm vào giỏ hàng thành công')
+      }catch(err){
+        showErrorToastMess('Thêm vào giỏ hàng thất bại')
+      }
     },
     async addToFavour(id){
       if(sessionStorage.getItem("login"))
       {
-        Favour.addToFavour(id).then((res)=>{
-          if(res.data.responseCode == 1)
-          {
-            let message = 'Đã thêm sản phẩm vào yêu thích !!'
-            showSuccessToast(message)
-          }
-          if(res.data.responseCode == 2)
-          {
-            let message = 'Sản phẩm đã có trong yêu thích !!'
-            showWarnToast(message)
-          }
-        }).catch(()=>{
-          showErrorToast()
-        })
+        const res = await favourApi.addToFavour(id)
+        if(res.responseCode == 1) 
+          showSuccessToast('Đã thêm sản phẩm vào yêu thích !!')
+        
+        if(res.responseCode == 2)
+          showWarnToast('Sản phẩm đã có trong yêu thích !!')
       }
       else{
         sessionStorage.setItem("err",true)

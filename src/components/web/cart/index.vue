@@ -29,7 +29,7 @@
 									<template v-if="listCart && listCart != '' && listCart != null">
 										<tr v-for="item in listCart" :key="item.id">
 											<td class="cart-pic first-row"><img :src="item.img" alt=""></td>
-											<td class="cart-title first-row"><h5>{{item.name}}</h5></td>
+											<td class="cart-title first-row"><a class="cart-title_name" :href="`/store/${item.productId}`"><h5>{{item.name}}</h5></a></td>
 											<td class="p-price first-row"><h5>{{ formatCurrency(item.price) }}</h5></td>
 											<td class="qua-col first-row">
 												<div class="quantity">
@@ -75,13 +75,10 @@
 
 <script>
 import { formatCurrency, showWarnToast } from "../../../assets/web/js/main";
-import Cart from "../../../service/Cart";
+import cartApi from "../../../service/Cart";
 export default {
     data() {
         return {
-			param: {
-				err: ""
-			},
 			listCart: [],
 			totalQuantity: '',
 			totalMoney: ''
@@ -90,74 +87,79 @@ export default {
     methods: {
 		click(e){
 			e.preventDefault()
-			if(this.listCart)
-				this.$router.push("/order")
+			if(this.listCart) this.$router.push("/order")
 			else{
 				this.$router.push("/store")
 				sessionStorage.setItem("cart-empty",1)
 			}
-			
 		},
 		formatCurrency,
-		decreaseQty(item) {
-			if (item.numProduct > 0) {  //Call API 
-				item.numProduct--; 
-				this.totalMoney -= item.totalPrice	// trừ hẳn tổng tiền cũ của sản phẩm
-				item.totalPrice = item.price*item.numProduct - (item.price * item.numProduct * item.discount/100);
+		async decreaseQty(item) {
+			try{
+				if (item.numProduct > 0) {  //Call API 
+					item.numProduct--; 
+					this.totalMoney -= item.totalPrice	// trừ hẳn tổng tiền cũ của sản phẩm
+					item.totalPrice = item.price*item.numProduct - (item.price * item.numProduct * item.discount/100);
 
-				this.totalQuantity= this.totalQuantity-1
-				this.totalMoney += item.totalPrice	// cộng tổng tiền mới của sản phẩm
+					this.totalQuantity= this.totalQuantity-1
+					this.totalMoney += item.totalPrice	// cộng tổng tiền mới của sản phẩm
 
-				Cart.editItemCart(item.productId,-1)
-					.then((res)=>{console.log("giam thanh cong")})
-					.catch((err)=>{console.log("loi giam ")})
+					await cartApi.editItemCart(item.productId,-1)
+					console.log("giam thanh cong")
+				}
+			}catch(err){
+				console.log("loi giam ")
+				console.log("err: "+err)
 			}
+			
 		},
-		increaseQty(item) {
-			if(item.quantity_in_stock >= item.numProduct)
-			{
-				item.numProduct++;
-				this.totalMoney -= item.totalPrice
-				item.totalPrice = item.price*item.numProduct - (item.price * item.numProduct * item.discount/100);
-	
-				this.totalQuantity = this.totalQuantity+1
-				this.totalMoney += item.totalPrice
-	
-				Cart.editItemCart(item.productId, 1)
-				.then((res) => {
-					console.log("Tăng số lượng sản phẩm thành công");
-				})
-				.catch((err) => {
-					showWarnToast("Sản phẩm đã hết hàng, vui lòng chọn sản phẩm khác !!");
-					console.log("Lỗi: sản phẩm đã hết hàng");
-				});
+		async increaseQty(item) {
+			try{
+				if(item.quantity_in_stock >= item.numProduct)
+				{
+					item.numProduct++;
+					this.totalMoney -= item.totalPrice
+					item.totalPrice = item.price*item.numProduct - (item.price * item.numProduct * item.discount/100);
+		
+					this.totalQuantity = this.totalQuantity+1
+					this.totalMoney += item.totalPrice
+		
+					await cartApi.editItemCart(item.productId, 1)
+						console.log("Tăng số lượng sản phẩm thành công");
+				}
+			}catch(err){
+				showWarnToast("Sản phẩm đã hết hàng, vui lòng chọn sản phẩm khác !!");
+				console.log("Lỗi: sản phẩm đã hết hàng");
+				console.log("err: "+err)
 			}
+			
 		},
 		deleteItem(id) {
-			console.log("id: "+id)
-			Cart.deleteItemCart(id)
+			cartApi.deleteItemCart(id)
 				.then((res) => {
 					console.log("xoa thanh cong")
 					this.getItemIncart()
 				})
-				.catch(err => console.log("xoa khong thanh cong"))
+				.catch(err => console.log("xoa khong thanh cong! : "+err))
 		},
-		clearCart() {
-			Cart.clearCart()
-				.then((res)=>{
-					console.log("clear thanh cong")
-					this.getItemIncart()
-				})
-				.catch((err)=>{
-					console.log("clear that bai")
-				})
+		async clearCart() {
+			try{
+				await cartApi.clearCart()
+				console.log("clear thanh cong")
+				await this.getItemIncart()
+			}catch(err){
+				console.log("clear that bai")
+			}
 		},
-		getItemIncart(){
-			Cart.GetItemInCart().then((res)=>{
-			this.listCart = res.data.data.listCartItems
-			this.totalQuantity = res.data.data.totalQuantity
-			this.totalMoney = res.data.data.totalMoney
-			}).catch((err)=>{console.log("loi trang cart !!! err: "+ err)})
+		async getItemIncart(){
+			try{
+				const res = await cartApi.GetItemInCart()
+				this.listCart = res.data.listCartItems
+				this.totalQuantity = res.data.totalQuantity
+				this.totalMoney = res.data.totalMoney
+			}catch(err){
+				console.log("loi trang cart !!! err: "+ err)
+			}
 		}
   	},
 	mounted(){
@@ -167,5 +169,7 @@ export default {
 </script>
 
 <style>
-
+.cart-title_name:hover{
+	text-decoration: underline;
+}
 </style>

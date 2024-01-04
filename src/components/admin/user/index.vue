@@ -115,12 +115,11 @@
 							<template v-if="user">
 									<tr :id="'trow_'+item.id" v-for="(item,index) in user" v-bind:key="item.id">
 										<td class="td1" :text="index + ((currentPage - 1) * 3)">{{ index + 1 }}</td>
-										<td class="td2" v-if="item.urlImg"><img :src='item.img' alt=""></td>
-										<td class="td2" v-else><img :src='`/src/images/user/`+item.img' alt=""></td>
+										<td class="td2"><img :src='item.img' alt=""></td>
 										<td class="td3"><h6>{{ item.fullname }}</h6></td>
 										<td class="td4"><h6>{{item.email}}</h6></td>
 										<td class="td4"><h6>{{item.phone}}</h6></td>
-										<td class="td5"><h6>{{item.gender}}</h6></td>
+										<td class="td5"><h6>{{getGenderDisplay(item.gender)}}</h6></td>
 										<td class="td6"><h6>{{item.dob}}</h6></td>
 										<td class="td7"><h6>{{item.address}}</h6></td>
 										<td class="td8"><h6>{{item.stateUser}}</h6></td>
@@ -294,8 +293,7 @@
 										:maxFileSize="1000000" />
 									</div>
 									<div class="form-group d-flex justify-content-center">
-										<img v-if="formEditUser.urlImg" id="imageEdit" class="imgEdit" :src="formEditUser.img" style="height: 200px; width: 200px"/>
-										<img v-else id="imageEdit" class="imgEdit" :src="`/src/images/user/`+formEditUser.img" style="height: 200px; width: 200px"/>
+										<img id="imageEdit" class="imgEdit" :src="formEditUser.img" style="height: 200px; width: 200px"/>
 									</div>
 								</div>
 							</div>
@@ -312,8 +310,8 @@
 </template>
 
 <script>
-import { showSuccessToast, showErrorToast } from "../../../assets/web/js/main";
-import Users from '../../../service/User'
+import { showSuccessToast, showErrorToastMess, getGenderDisplay } from "../../../assets/web/js/main";
+import userApi from '../../../service/User'
 export default {
     data(){
         return {
@@ -329,164 +327,119 @@ export default {
         }
     },
     methods: {
-		getListUserAdmin(){
-			Users.getListUserAdmin(this.currentPage,
-			 	this.formSearchUser.fullname,
-				this.formSearchUser.sex,
-				this.formSearchUser.address,
-				this.formSearchUser.email,
-				this.formSearchUser.stateUser,
-				this.formSearchUser.authType)
-				.then(res => {
-					if(res.data.data.listUser != null){
-						this.user = res.data.data.listUser.content.map(user => {return {...user,urlImg: false}})
-						this.totalPage = res.data.data.listUser.totalPages
-						this.currentPage = res.data.data.currentPage
-						this.setupPagination(this.totalPage)
-						
-						this.user.forEach(user => {
-							user.urlImg = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- ./?%&=]*)?/.test(user.img);
-						});
-					}
-					else
-						this.user = false
-				})
-				.catch(err => {
-					console.log("err: "+err)
-				})
+		getGenderDisplay,
+		async getListUserAdmin(){
+			try{
+				const res = await userApi.getListUserAdmin(this.currentPage,
+					this.formSearchUser.fullname,
+					this.formSearchUser.sex,
+					this.formSearchUser.address,
+					this.formSearchUser.email,
+					this.formSearchUser.stateUser,
+					this.formSearchUser.authType)
+					this.user = res.data.listUser.content
+				this.totalPage = res.data.listUser.totalPages
+				this.currentPage = res.data.currentPage
+				this.setupPagination(this.totalPage)
+			}catch(err){
+				console.log("err: "+err)
+			}
 		},
-		addUser(formAddUser){
-			this.showPreload = true
-			Users.addUser(formAddUser)
-				.then(res=>{
-					let mess=''
-					if(res.data.success)
-					{
-						mess='Thêm mới thành công'
-						this.showToastr(1,mess)
-					}
-					if(res.data.error){
-						mess='Có lỗi xảy ra'
-						this.showToastr(0,mess)
-					}
-					this.formAddUser={}
-					this.getListUserAdmin();
-					this.showPreload = false
-					bootstrap.Modal.getInstance(document.getElementById("add")).hide()
-				})
-				.catch(err=>{
-					this.showPreload = false
-					console.log("err: "+err)
-				})
+		async addUser(formAddUser){
+			try{
+				this.showPreload = true
+				const res = await userApi.addUser(formAddUser)
+				if(res.success) showSuccessToast("Thêm mới người dùng thành công")
+				if(res.error) showErrorToastMess("Thêm mới người dùng thất bại")
+				this.formAddUser={role:2}
+				this.getListUserAdmin();
+				this.showPreload = false
+				bootstrap.Modal.getInstance(document.getElementById("add")).hide()
+			}catch(err){
+				this.showPreload = false
+				console.log("err: "+err)
+				showErrorToastMess("Có lỗi rồi !!")
+			}
 		},
-		getEditUser(id){
-			Users.getEditUser(id)
-				.then(res=>{
-					this.formEditUser = res.data
-					this.formEditUser.urlImg = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- ./?%&=]*)?/.test(this.formEditUser.img);
-				})
-				.catch(err=>{
-					console.log("err: "+err)
-				})
+		async getEditUser(id){
+			try{
+				const res = await userApi.getEditUser(id)
+				this.formEditUser = res
+			}catch(err){
+				console.log("err: "+err)
+			}
 		},
-		editUser(formEditUser){
-			this.showPreload = true
-			const formData = new FormData();
-			if(this.imgDto != "" && this.imgDto != null)
-				formEditUser.img = this.imgDto
-			formData.append('fileImage', formEditUser.img);
-			formData.append('id', formEditUser.id);
-			formData.append('fullname', formEditUser.fullname);
-			formData.append('address', formEditUser.address);
-			formData.append('sex', formEditUser.gender);
-			formData.append('birthday', formEditUser.dob);
-			formData.append('stateUser', formEditUser.stateUser);
-			formData.append('phone', formEditUser.phone);
-
-			Users.postEditUser(formData)
-				.then(res => {
+		async editUser(formEditUser){
+			try{
+				this.showPreload = true
+				const formData = new FormData();
+				if(this.imgDto != "" && this.imgDto != null)
+					formEditUser.img = this.imgDto
+				formData.append('fileImage', formEditUser.img);
+				formData.append('id', formEditUser.id);
+				formData.append('fullname', formEditUser.fullname);
+				formData.append('address', formEditUser.address);
+				formData.append('sex', formEditUser.gender);
+				formData.append('birthday', formEditUser.dob);
+				formData.append('stateUser', formEditUser.stateUser);
+				formData.append('phone', formEditUser.phone);
+				const res = await userApi.postEditUser(formData)
+				if(res.success){
 					this.getListUserAdmin()
-					// Xử lý phản hồi thành công
-					let mess=''
-					if(res.data.success)
-					{
-						mess='Sửa thành công'
-						this.showToastr(1,mess)
-					}
-					if(res.data.error){
-						mess='Có lỗi xảy ra'
-						this.showToastr(0,mess)
-					}
-					this.showPreload = false
-					bootstrap.Modal.getInstance(document.getElementById("edit"+formEditUser.id)).hide()
-				})
-				.catch(error => {
-					// Xử lý lỗi
-					this.showPreload = false
-					console.error("err: "+error);
-				});
+					showSuccessToast("Chỉnh sửa người dùng thành công")
+				}
+				if(res.error) showErrorToastMess("Chỉnh sửa người dùng thất bại")
+				this.showPreload = false
+				bootstrap.Modal.getInstance(document.getElementById("edit"+formEditUser.id)).hide()
+			}catch(err){
+				console.log("err: "+err)
+				this.showPreload = false
+				showErrorToastMess("Có lỗi rồi !!")
+			}
 		},
-        clicklockUser(id){
-			Users.lockUser(id)
-				.then(res => {
+        async clicklockUser(id){
+			try{
+				bootstrap.Modal.getInstance(document.getElementById("lock"+id)).hide()
+				const res = await userApi.lockUser(id)
+				if(res.success){
 					this.getListUserAdmin()
-					if(res.data.success)
-					{
-						let mess='Khóa thành công'
-						this.showToastr(1,mess)
-					}
-					if(res.data.error){
-						let mess='Có lỗi xảy ra'
-						this.showToastr(0,mess)
-					}
-					bootstrap.Modal.getInstance(document.getElementById("lock"+id)).hide()
-				})
-				.catch(err => {
-					console.error("err: "+error);
-				})
+					showSuccessToast("Khóa người dùng thành công")
+				}
+				if(res.error) showErrorToastMess("Khóa người dùng thất bại")
+				
+			}catch(err){
+				console.error("err: "+error);
+			}
 		},
-        clickUnlockUser(id){
-			Users.unlockUser(id)
-				.then(res => {
-					if(res.data.success)
-					{
-						let mess='Mở khóa thành công'
-						this.showToastr(1,mess)
-						this.getListUserAdmin()
-					}
-					if(res.data.error){
-						let mess='Có lỗi xảy ra'
-						this.showToastr(0,mess)
-					}
-					bootstrap.Modal.getInstance(document.getElementById("unlock"+id)).hide()
-				})
-				.catch(err => {
-					console.error("err: "+error);
-				})
+        async clickUnlockUser(id){
+			try{
+				bootstrap.Modal.getInstance(document.getElementById("unlock"+id)).hide()
+				const res = await userApi.unlockUser(id)
+				if(res.success){
+					this.getListUserAdmin()
+					showSuccessToast("Mở khóa người dùng thành công")
+				}
+				if(res.error) showErrorToastMess("Mở khóa người dùng thất bại")
+			}catch(err){
+				console.error("err: "+error); showErrorToastMess("Có lỗi xảy ra")
+			}
 		},
-		clickDeleteUser(id){
-			Users.deleteUser(id)
-				.then(res => {
-					if(res.data.success)
-					{
-						let mess='Xoá thành công'
-						this.showToastr(1,mess)
-						this.getListUserAdmin()
-						bootstrap.Modal.getInstance(document.getElementById("delete" + id)).hide()
-					}
-					if(res.data.error){
-						let mess='Có lỗi xảy ra'
-						this.showToastr(0,mess)
-					}
-				})
-				.catch(err => {
-					console.error("err: "+error);
-				})
+		async clickDeleteUser(id){
+			try{
+				bootstrap.Modal.getInstance(document.getElementById("delete" + id)).hide()
+				const res = await userApi.deleteUser(id)
+				if(res.success){
+					this.getListUserAdmin()
+					showSuccessToast("Xóa thành công")
+				}
+				if(res.error) showErrorToastMess("Xóa thất bại")
+			}catch(err){
+				console.error("err: "+error); showErrorToastMess("Có lỗi xảy ra")
+			}
 		},
 
-		search(page,formSearchUser){
-			console.log("formSearchUser: "+formSearchUser.fullname)
-			this.getListUserAdmin(page,formSearchUser.fullname,
+		async search(page,formSearchUser){
+			await this.getListUserAdmin(page,formSearchUser.fullname,
 				formSearchUser.sex,
 				formSearchUser.address,
 				formSearchUser.email,
@@ -529,23 +482,17 @@ export default {
 			}
 		},
 		async loadUsers(page) {
-				Users.getListUserAdmin(page)
-				.then(res => {
-					this.user = res.data.data.listUser.content
-					this.totalPage = res.data.data.listUser.totalPages
-					this.currentPage = res.data.data.currentPage
-					this.user.forEach(user => {
-						user.urlImg = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- ./?%&=]*)?/.test(user.img);
-						console.log("urlImg: "+user.urlImg)
-					});
-				})
-				.catch(err => {console.log("err: "+err)})
+			try{
+				const res = await userApi.getListUserAdmin(page)
+				this.user = res.data.listUser.content
+					this.totalPage = res.data.listUser.totalPages
+					this.currentPage = res.data.currentPage
+			}catch(err){console.log("err: "+err)}
     	},
     },
 	mounted(){
 		if(!sessionStorage.getItem("login") && sessionStorage.getItem("role")!="ROLE_ADMIN")
 		{
-			// window.location.href = "/auth/sign-in"
 			this.$router.push("/auth/sign-in")
 			sessionStorage.setItem("auth",true)
 		}

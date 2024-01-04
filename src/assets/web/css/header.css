@@ -108,6 +108,7 @@
     position: relative;
     min-height: 26px;
 	display: inline-flex;
+	cursor: pointer;
 }
 /* User */
 .header__navbar-user{

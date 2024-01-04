@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import ForgotPW from '../../../service/ForgotPW'
+import ForgotPWApi from '../../../service/ForgotPW'
 export default {
     data(){
         return {
@@ -63,57 +63,42 @@ export default {
         }
     },
     methods: {
-		checkPasswordMatch(fieldConfirmPassword){
-            if (fieldConfirmPassword.value != $("#password").val()) {
-					fieldConfirmPassword
-							.setCustomValidity("Passwords do not match!");
-				} else {
-					fieldConfirmPassword.setCustomValidity("");
+        async checkTokenPW(){
+			try{
+				var url = window.location.href
+
+				var urlParam = new URL(url)
+
+				if(urlParam.searchParams.has("token"))
+				{
+					this.token = urlParam.searchParams.get("token");
+					const res = await ForgotPWApi.checkTokenPW(this.token)
+					if (res.success) this.success = res.success
+					if (res.error) this.tokenError = res.error
 				}
-        },
-        checkTokenPW(){
-			var url = window.location.href
-
-			var urlParam = new URL(url)
-
-			if(urlParam.searchParams.has("token"))
-			{
-				this.token = urlParam.searchParams.get("token");
-                ForgotPW.checkTokenPW(this.token)
-					.then(res => {
-						if (res.data.success)
-							this.success = res.data.success
-						if (res.data.error)
-						{
-							this.tokenError = res.data.error
-						}
-					})
-					.catch(err => {
-							console.log("err: "+err)
-						}
-					)
+			}catch(err){
+				console.log("err: "+err)
 			}
+			
 		},
-		resetPW(){
-			if (this.newPW !== this.confirmPW) {
-				this.error = 'Mật khẩu không trùng nhau';
-				return; 
+		async resetPW(){
+			try{
+				if (this.newPW !== this.confirmPW) {
+					this.error = 'Mật khẩu không trùng nhau';
+					return; 
+				}
+				const res = await ForgotPWApi.resetPW(this.token, this.newPW)
+				if (res.success)
+				{
+					this.success = res.success
+					this.newPW=""
+					this.confirmPW=""
+				}
+				if (res.error) this.tokenError = res.error
 			}
-			ForgotPW.resetPW(this.token, this.newPW)
-				.then(res => {
-					if (res.data.success)
-					{
-						this.success = res.data.success
-						this.newPW=""
-						this.confirmPW=""
-					}
-					if (res.data.error)
-						this.tokenError = res.data.error
-				})
-				.catch(err => {
-						console.log("err: "+err)
-					}
-				)
+			catch(err){
+				console.log("err: "+err)
+			}
 		}
     },
 	mounted(){

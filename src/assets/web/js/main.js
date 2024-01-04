@@ -29,6 +29,30 @@ export function formatCurrency(value) {
     });
     return formatter.format(value);
 };
+export function getGenderDisplay(gender) {
+    const stateMap = {
+        MALE: "NAM",
+        FEMALE: "NỮ"
+    };
+    return stateMap[gender] || "";
+};
+export function getStateCheckoutDisplay(stateCheckout) {
+    const stateMap = {
+        UNPAID: "Chưa thanh toán",
+        PAID: "Đã thanh toán"
+    };
+    return stateMap[stateCheckout] || "";
+};
+export function getStateOrderDisplay(stateOrder) {
+    const stateMap = {
+        PENDING: "Đang xử lý",
+        DELIVERING: "Đang giao hàng",
+        CONFIRMED: "Đã xác nhận",
+        RECEIVED: "Đã nhận",
+        CANCELLED: "Đã huỷ"
+    };
+    return stateMap[stateOrder] || "";
+};
 
 export function toast({ title = '',
             message = '',

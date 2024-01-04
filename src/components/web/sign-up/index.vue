@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import Users from '../../../service/User';
+import userApi from '../../../service/User';
 export default {
     data() {
 		return {
@@ -71,50 +71,50 @@ export default {
 		clearPasswordMismatchError() {
 			this.error = '';
 		},
-		signUp(){
-			if(this.user.fullname != "" || this.user.username != "" || this.user.email !="" || this.user.password != "" || this.user.address != "")
-			{
-				if (this.user.password !== this.user.confirm_password) {
-					this.error = 'Mật khâu không trùng nhau';
-					return; 
+		async signUp(){
+			try{
+				if(this.user.fullname != "" || this.user.username != "" || this.user.email !="" || this.user.password != "" || this.user.address != "")
+				{
+					if (this.user.password !== this.user.confirm_password) {
+						this.error = 'Mật khâu không trùng nhau';
+						return; 
+					}
+					this.showPreload = true
+					const res = await userApi.signUp(this.user)
+					if (res.success)
+						this.success = res.success
+					if (res.err)
+						this.error = res.error
+
+					this.showPreload = false
 				}
-				this.showPreload = true
-				Users.signUp(this.user)
-					.then(res => {
-						if (res.data.success)
-							this.success = res.data.success
-						if (res.data.err)
-							this.error = res.data.error
-
-						this.showPreload = false
-					})
-					.catch(err => {
-						console.log("err: "+err)
-						this.showPreload = false
-					})
 			}
+			catch(err) {
+				console.log("err: "+err)
+				this.showPreload = false
+			}
+			
 		},
-		checkVerify(){
-			var url = window.location.href
+		async checkVerify(){
+			try{
+				var url = window.location.href
 
-			var urlParam = new URL(url)
+				var urlParam = new URL(url)
 
-			if(urlParam.searchParams.has("token"))
-			{
-				var token = urlParam.searchParams.get("token");
-                Users.verify(token)
-					.then(res => {
-						if (res.data.success)
-							this.success = res.data.success
-						if (res.data.error)
-							this.error = res.data.error
-						
-					})
-					.catch(err => {
-							console.log("err: "+err)
-						}
-					)
+				if(urlParam.searchParams.has("token"))
+				{
+					var token = urlParam.searchParams.get("token");
+					const res = await userApi.verify(token)
+					if (res.success)
+						this.success = res.success
+					if (res.error)
+						this.error = res.error
+				}
+			}		
+			catch(err) {
+				console.log("err: "+err)
 			}
+				
 		},
 		
     },

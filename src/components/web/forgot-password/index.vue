@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import ForgotPW from '../../../service/ForgotPW'
+import ForgotPWApi from '../../../service/ForgotPW'
 export default {
 	data(){
 		return {
@@ -62,21 +62,17 @@ export default {
 		}
 	},
 	methods: {
-		forgotPW(){
-			this.showPreload = true
-			ForgotPW.handleRequestForgorPW(this.email)
-				.then(res=>{
-					if (res.data.success)
-						this.success = res.data.success
-					if (res.data.error)
-						this.error = res.data.error
-
-					this.showPreload = false
-				})
-				.catch(err => {
-					console.log("err: "+err)
-					this.showPreload = false
-				})
+		async forgotPW(){
+			try{
+				this.showPreload = true
+				const res = await ForgotPWApi.handleRequestForgorPW(this.email)
+				if(res.success) this.success = res.success
+				if(res.error) this.error = res.error
+				this.showPreload = false
+			}catch(err){
+				console.log("err: "+err)
+				this.showPreload = false
+			}
 		}
 	}
 }

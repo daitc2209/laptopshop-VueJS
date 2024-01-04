@@ -43,7 +43,7 @@
 
 <script>
 
-import Users from '../../../service/User';
+import userApi from '../../../service/User';
 export default {
 	data() {
         return {
@@ -65,33 +65,27 @@ export default {
 		click(){
 			this.$router.push("/auth/sign-up")
 		},
-		login(){
-			console.log("user: "+this.user)
-			Users.login(this.user)
-				.then((res) =>{
-					console.log(res)
-					console.log("res data accessToken: "+ res.data.data.accessToken)
-					console.log("role: "+ res.data.data.role)
-					if(res.data != null){
-						sessionStorage.setItem("login", true)
-						sessionStorage.setItem("jwtToken", res.data.data.accessToken)
-						sessionStorage.setItem("refreshToken", res.data.data.refreshToken)
-						sessionStorage.setItem("role", res.data.data.role)
-						sessionStorage.setItem("img", res.data.data.img);
-						sessionStorage.setItem("name", res.data.data.name)
-						if(res.data.data.role === "ROLE_USER")
-							window.location.href = "/home"
-						if(res.data.data.role === "ROLE_ADMIN")
-							window.location.href = "/admin/home"
-					}
-				})
-				.catch((err) => {
-					this.param.error = true
-					console.log("err: " + err)
-				})
+		async login(){
+			try{
+				const res = await userApi.login(this.user)
+				if(res != null){
+					sessionStorage.setItem("login", true)
+					sessionStorage.setItem("jwtToken", res.data.accessToken)
+					sessionStorage.setItem("refreshToken", res.data.refreshToken)
+					sessionStorage.setItem("role", res.data.role)
+					sessionStorage.setItem("img", res.data.img);
+					sessionStorage.setItem("name", res.data.name)
+					if(res.data.role === "ROLE_USER")
+						window.location.href = "/home"
+					if(res.data.role === "ROLE_ADMIN")
+						window.location.href = "/admin/home"
+				}
+			}catch(err) {
+				this.param.error = true
+				console.log("err: " + err)
+			}
 		},
 		loginGG(){
-
 			var url = window.location.href
 
 			var urlParam = new URL(url)
@@ -111,8 +105,6 @@ export default {
 				sessionStorage.setItem("img", img);
 				sessionStorage.setItem("name", fullname)
 				window.location.href = "/home"
-				// this.emitter.emit("login-success");
-				// this.$router.push("/home");
 			}
 		}
 	},

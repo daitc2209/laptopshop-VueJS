@@ -55,10 +55,10 @@
 
 											<div class="search__product-item-body">
 												<span class="search__product-item-price">
-												{{ product.price }}
+													{{ formatCurrency(product.price - product.price * product.discount / 100) }}
 												</span>
-												<span class="search__product-item-price-discount">
-												{{ product.discountPrice }}
+												<span class="search__product-item-price-discount" v-if="product.discount" style="font-weight:600; padding-left:4px">
+													{{ formatCurrency(product.price) }}
 												</span>
 											</div>
 										</div>
@@ -77,7 +77,8 @@
 </template>
 
 <script>
-import Search from '../../../service/Search'
+import searchApi from '../../../service/Search'
+import { formatCurrency } from "../../../assets/admin/js/format-admin";
 export default {
 	data() {
 		return {
@@ -87,26 +88,22 @@ export default {
 		};
 	},
 	methods:{
-		searchText1() {
+		formatCurrency,
+		async searchText1() {
 			if(this.searchText=="" || this.searchText==null)
 				this.hasResults = false
 			
-			Search.Search({
+			const res = await searchApi.Search({
 				params: {
 					term: this.searchText
 				}
 			})
-				.then(res => {
-					if(res != null)
-					{
-						this.searchResults = res.data.data.listSearch;
-						this.hasResults = true;
-					}
+			if(res != null)
+			{
+				this.searchResults = res.data.listSearch;
+				this.hasResults = true;
+			}
 
-				})
-				.catch(err => {
-					console.log("err search: "+err)
-				})
 		},
 	},
 	watch: {

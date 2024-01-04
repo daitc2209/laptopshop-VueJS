@@ -48,10 +48,11 @@
 					</div>
 				</div>
 				<div class="card-body">
-					<table class="table table-hover text-center">
+					<table class="table news-table table-hover text-center">
 						<thead>
 							<tr>
 								<th>No.</th>
+								<th>Ảnh</th>
 								<th>Tên bài viết</th>
 								<th>Mô tả ngắn</th>
 								<th>Thao tác</th>
@@ -61,9 +62,10 @@
 							<template v-if="news">
 									<tr v-for="(item,index) in news" v-bind:key="item.id">
 										<td class="td1" :text="index + ((currentPage - 1) * 3)">{{ index + 1 }}</td>
-										<td class="td2">{{ item.title }}</td>
-										<td class="td2">{{ item.shortDescription }}</td>
-										<td class="td3">
+										<td class="td2"><img :src="item.img" alt=""></td>
+										<td class="td3">{{ item.title }}</td>
+										<td class="td4">{{ item.shortDescription }}</td>
+										<td class="td5">
 											<a data-bs-toggle="modal" :data-bs-target="'#edit'+ item.id" @click="getEditNewsAdmin(item.id)" class="btn btn-sm btn-primary mb-2"><i class="fa-solid fa-pen-to-square"></i></a> 
 											<a data-bs-toggle="modal" :data-bs-target="'#delete'+ item.id" class="btn btn-sm btn-danger"><i class="fa-solid fa-trash"></i></a>
 										</td>
@@ -78,33 +80,33 @@
 														<div class="modal-body">
 															<div id="logins-part" class="content" role="tabpanel" aria-labelledby="logins-part-trigger">
 																<div class="form-group">
-																	<label for="">ID</label> 
+																	<label class="d-flex">ID</label> 
 																	<input type="text" id="idEdit" v-model="newDto.id" class="form-control" readonly="readonly" />
 																	<div class="text-danger"></div>
 																</div>
 																<div class="form-group">
-																	<label for="">Thể loại</label> 
+																	<label class="d-flex">Thể loại</label> 
 																	<select class="form-control form-select" required="required" v-model="newDto.categoryName" id="categoryEdit">
 																		<option v-for="item in category" v-bind:key="item.id"
 																			 :value="item.name" >{{ item.name }}</option>
 																	</select>
 																</div>
 																<div class="form-group">
-																	<label for="">Tiêu đề</label> 
+																	<label class="d-flex">Tiêu đề</label> 
 																	<input type="text" v-model="newDto.title" class="form-control" required="required" id="titleEdit"/>
 																	<div class="text-danger"></div>
 																</div>
 																<div class="form-group">
-																	<label for="">Hình đại diện</label> 
+																	<label class="d-flex">Hình đại diện</label> 
 																	<input type="text" v-model="newDto.img" class="form-control" required="required" id="thumbnailEdit"/>
 																	<div class="text-danger"></div>
 																</div>
 																<div class="form-group">
-																	<label for="">Mô tả ngắn</label> 
+																	<label class="d-flex">Mô tả ngắn</label> 
 																	<textarea class="form-control" v-model="newDto.shortDescription" required="required" id="shortDescriptionEdit"></textarea>
 																</div>
 																<div class="form-group">
-																	<label for="">Nội dung</label> 
+																	<label class="d-flex">Nội dung</label> 
 																	<textarea class="form-control" :id="`contentEdit`+item.id" v-model="newDto.content"></textarea>
 																</div>
 															</div>
@@ -154,28 +156,28 @@
 											<div class="modal-body">
 												<div id="logins-part" class="content" role="tabpanel" aria-labelledby="logins-part-trigger">
 													<div class="form-group">
-														<label style="display: flex;">Thể loại</label> 
+														<label class="d-flex">Thể loại</label> 
 														<select class="form-control form-select" required="required" v-model="newAdd.categoryName">
 															<option v-for="item in category" v-bind:key="item.id" :value="item.name" >{{ item.name }}</option>
 														</select>
 													</div>
-													<div >
-														<label>Tiêu đề</label> 
+													<div class="form-group">
+														<label class="d-flex">Tiêu đề</label> 
 														<input type="text" v-model="newAdd.title" class="form-control" required="required" />
 														<div class="text-danger"></div>
 													</div>
 													<div class="form-group">
-														<label for="">Hình đại diện</label> 
+														<label class="d-flex">Hình đại diện</label> 
 														<input type="text" v-model="newAdd.img" class="form-control" required="required" />
 														<div class="text-danger"></div>
 													</div>
 													<div class="form-group">
-														<label for="">Mô tả ngắn</label> 
+														<label class="d-flex">Mô tả ngắn</label> 
 														<textarea class="form-control" v-model="newAdd.shortDescription" required="required"></textarea>
 														<div class="text-danger"></div>
 													</div>
 													<div class="form-group">
-														<label for="">Nội dung</label> 
+														<label class="d-flex">Nội dung</label> 
 														<textarea class="form-control" id="contentAdd" v-model="newAdd.content"></textarea>
 													</div>
 												</div>
@@ -206,15 +208,15 @@
 </template>
 
 <script>
-import News from '../../../service/News';
-import { showSuccessToast, showErrorToast } from "../../../assets/web/js/main";
+import newsApi from '../../../service/News';
+import { showSuccessToast, showErrorToastMess } from "../../../assets/web/js/main";
 
 export default {
     data(){
         return {
 			paginationButtons:[],
             news: [],
-            newDto: [],
+            newDto: {},
             newAdd: {},
 			category:[],
 			currentPage:'',
@@ -223,85 +225,76 @@ export default {
         }
     },
     methods: {
-		getNewsAdmin(){
-			News.getNewsAdmin(this.currentPage,this.keyword)
-				.then(res => {
-					this.news = res.data.data.news.content
-					this.totalPage = res.data.data.totalPage
-					this.currentPage = res.data.data.currentPage
-					this.category = res.data.data.category
+		async getNewsAdmin(){
+			try{
+				const res = await newsApi.getNewsAdmin(this.currentPage,this.keyword)
+				if(res){
+					this.news = res.data.news.content
+					this.totalPage = res.data.totalPage
+					this.currentPage = res.data.currentPage
+					this.category = res.data.category
 					this.setupPagination(this.totalPage)
-				})
-				.catch(err => {console.log("err: "+err)})
+				}
+			}
+			catch(err){
+				console.log("err: "+err)
+				showErrorToastMess("Lấy danh sách bài viết thất bại")
+			}
 		},
-		getEditNewsAdmin(id){
-			// CKEDITOR.replace('contentEdit' + id)
-			News.getEditNewsAdmin(id)
-				.then(res => {
-					this.newDto = res.data.data.newsDto
-					CKEDITOR.replace('contentEdit' + id, {}, () => {
-						CKEDITOR.instances['contentEdit' + id].setData(res.data.data.newsDto.content);
-					});
-				})
-				.catch(err => {console.log("err: "+err)})
-				
+		async getEditNewsAdmin(id){
+			try{
+				const res = await newsApi.getEditNewsAdmin(id)
+				this.newDto = res.data.newsDto
+				CKEDITOR.replace('contentEdit' + id, {}, () => {
+					CKEDITOR.instances['contentEdit' + id].setData(res.data.newsDto.content);
+				});
+			}
+			catch(err){
+				console.log("err: "+err)
+			}
 		},
-		postEditNewsAdmin(id){
-			console.log("content: "+CKEDITOR.instances['contentEdit' + id].getData())
-			this.newDto.content = CKEDITOR.instances['contentEdit' + id].getData();
-			News.postEditNewsAdmin(this.newDto)
-				.then(() => {
-					let mess = 'Chỉnh sửa thành công'
-					this.showToastr(true,mess)
-					this.getNewsAdmin()
-					// document.getElementById("edit"+id).style.display='none';
-					bootstrap.Modal.getInstance(document.getElementById("edit"+id)).hide()
-				})
-				.catch(() => {
-					let mess = 'Có lỗi xảy ra'
-					this.showToastr(false,mess)
-				})
+		async postEditNewsAdmin(id){
+			try{
+				this.newDto.content = CKEDITOR.instances['contentEdit' + id].getData();
+				const res = await newsApi.postEditNewsAdmin(this.newDto)
+				if(res){
+					showSuccessToast("Chỉnh sửa bài viết thành công")
+					await this.getNewsAdmin()
+				}
+				bootstrap.Modal.getInstance(document.getElementById("edit"+id)).hide()
+			}catch(err){
+				console.log("err: "+err)
+				showErrorToastMess("Chỉnh sửa bài viết thất bại")
+			}
 		},
-		postAddNewsAdmin(){
-			this.newAdd.content = CKEDITOR.instances['contentAdd'].getData();
-			News.postAddNewsAdmin(this.newAdd)
-				.then(() => {
-					let mess = 'Thêm thành công'
-					this.showToastr(true,mess)
-					this.getNewsAdmin()
-					// document.getElementById("add").style.display='none';
-					// document.getElementsByClassName("modal-backdrop")[0].classList.remove("modal-backdrop", "show");
-					bootstrap.Modal.getInstance(document.getElementById("add")).hide()
-				})
-				.catch(() => {
-					let mess = 'Có lỗi xảy ra'
-					this.showToastr(false,mess)
-				})
+		async postAddNewsAdmin(){
+			try{
+				this.newAdd.content = CKEDITOR.instances['contentAdd'].getData();
+				const res = await newsApi.postAddNewsAdmin(this.newAdd)
+				if(res){
+					showSuccessToast("Thêm bài viết thành công")
+					this.newAdd={}
+					await this.getNewsAdmin()
+				}
+				bootstrap.Modal.getInstance(document.getElementById("add")).hide()
+			}catch(err){
+				console.log("err: "+err)
+				showErrorToastMess("Thêm bài viết thất bại")
+			}
 		},
-        clickDeleteNew(id){
-			News.deleteNewsAdmin(id)
-				.then(() => {
-					let mess = 'Xóa thành công'
-					this.showToastr(true,mess)
-					this.getNewsAdmin();
-					// document.getElementById("delete" + id).classList.remove("show");
-					// document.getElementsByClassName("modal-backdrop")[0].classList.remove("modal-backdrop", "show");
-					bootstrap.Modal.getInstance(document.getElementById("delete" + id)).hide()
-				})
-				.catch(() => {
-					let mess = 'Có lỗi xảy ra'
-					this.showToastr(false,mess)
-				})
+        async clickDeleteNew(id){
+			try{
+				bootstrap.Modal.getInstance(document.getElementById("delete" + id)).hide()
+				const res = await newsApi.deleteNewsAdmin(id)
+				if(res){
+					showSuccessToast("Xóa bài viết thành công")
+					await this.getNewsAdmin();
+				}
+			}catch(err){
+				console.log("err: "+err)
+				showErrorToastMess("Xóa bài viết thất bại")
+			}
 		},
-        
-        showToastr(condition,message) {
-            if(condition)
-				showSuccessToast(message)
-			
-			if(condition == false)
-				showErrorToast(message)
-			
-        },
         PaginationButton (page) {
 			return {
 				page,
@@ -322,29 +315,31 @@ export default {
 			}
 		},
 		async loadNews(page) {
-				News.getNewsAdmin(page)
-				.then(res => {
+			try{
+				const res = await newsApi.getNewsAdmin(page)
+				if(res){
 					this.news = res.data.data.news.content
 					this.totalPage = res.data.data.totalPage
 					this.currentPage = res.data.data.currentPage
-				})
-				.catch(err => {console.log("err: "+err)})
-			
+				}
+			}catch(err){
+				showErrorToastMess("Lấy danh sách bài viết thất bại")
+				console.log("err: "+err)
+			}
     	},
 
 		initializeEditor(){
 			CKEDITOR.replace( 'contentAdd');
 		},
 		
-		search(page,keyword){
+		async search(page,keyword){
 			console.log("keyword: "+keyword)
-			this.getNewsAdmin(page,keyword)
+			await this.getNewsAdmin(page,keyword)
 		}
 	},
     mounted() {
 		if(!sessionStorage.getItem("login") && sessionStorage.getItem("role")!="ROLE_ADMIN")
 		{
-			// window.location.href = "/auth/sign-in"
 			this.$router.push("/auth/sign-in")
 			sessionStorage.setItem("auth",true)
 		}
@@ -357,5 +352,8 @@ export default {
 </script>
 
 <style>
-
+.news-table img{
+	width: 50px;
+	height: 50px;
+}
 </style>

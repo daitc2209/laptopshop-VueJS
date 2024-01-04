@@ -6,12 +6,11 @@
 				<form class="order-form">
 					<div class="row">
 						<div class="col-12 pt-4">
+							<button id="btn-login" style="width: 300px;">
+								<router-link to="/home" class="text-center">Trở về trang chủ trang chủ</router-link>
+							</button>
 			                <h3 class="text-center">Đặt hàng thành công</h3>
 			            </div>
-					<button id="btn-login" style="width: 300px;">
-						<router-link to="/home" class="text-center">Trở về trang chủ trang chủ</router-link>
-					</button>
-				
 						<div class="col-lg-6">
 							<div class="information-detail py-4">
 								<div class="col-12 mb-2 border info-user p-3">
@@ -93,7 +92,7 @@
 </template>
 
 <script>
-import CheckOut from '../../../service/CheckOut'
+import checkOutApi from '../../../service/CheckOut'
 import { formatDate, formatCurrency } from "../../../assets/web/js/main";
 export default {
     data(){
@@ -116,9 +115,7 @@ export default {
     },
 	mounted(){
 		if (sessionStorage.getItem("login"))
-		{
 			this.getBill();
-		}
 		else
 		{
 			window.location.href = '/auth/sign-in'
@@ -129,25 +126,26 @@ export default {
         formatDate,
 		formatCurrency,
 
-		sendOrderConfirm(orderCode){
-			CheckOut.sendEmail(orderCode)
-				.then(() => console.log("success !!!"))
-				.catch(() => console.log("error !!!"))
+		async sendOrderConfirm(orderCode){
+			try{
+				await checkOutApi.sendEmail(orderCode)
+				console.log("success !!!")
+			}catch(err){console.log("error !!!")}
 		},
 
-		getBill(){
+		async getBill(){
 			if(sessionStorage.getItem("typePayment")=="COD")
 			{
 				this.check = true;
-				CheckOut.getBill(sessionStorage.getItem("orderId"))
-					.then((res)=>{
-						this.order = res.data.data.order
-						this.orderdetail = res.data.data.orderdetail
-						sessionStorage.removeItem("typePayment")
-						sessionStorage.removeItem("orderId")
-						this.sendOrderConfirm(this.order.codeOrder)
-					})
-					.catch((err)=>{console.log("err bill: "+err)})
+				try{
+					const res = await checkOutApi.getBill(sessionStorage.getItem("orderId"))
+					this.order = res.data.order
+					this.orderdetail = res.data.orderdetail
+					sessionStorage.removeItem("typePayment")
+					sessionStorage.removeItem("orderId")
+					await this.sendOrderConfirm(this.order.codeOrder)
+				}catch(err){console.log("err bill: "+err)}
+				
 			}
 			else{
 				var url = window.location.href
@@ -169,21 +167,16 @@ export default {
 				else{
 					this.check = false
 				}
-				CheckOut.getBillVNPAY(vnp_Amount,vnp_BankCode,vnp_CardType,
+				try{
+					const res = await checkOutApi.getBillVNPAY(vnp_Amount,vnp_BankCode,vnp_CardType,
 						vnp_OrderInfo,vnp_PayDate,vnp_ResponseCode,vnp_TxnRef)
-						.then((res)=>{
-							if(res.data.data.success)
-							{
-								this.order = res.data.data.order
-								this.orderdetail = res.data.data.orderdetail
-								this.sendOrderConfirm(vnp_TxnRef)
-							}
-							else{
-								console.log("giao dich that bai !!!")
-							}
-						})
-						.catch((err)=>{console.log("err bill VNPAY: "+err)})
-				
+					if(res.data.success)
+					{
+						this.order = res.data.order
+						this.orderdetail = res.data.orderdetail
+						this.sendOrderConfirm(vnp_TxnRef)
+					}
+				}catch(err){console.log("err bill VNPAY: "+err)}
 			}
 		}
     }

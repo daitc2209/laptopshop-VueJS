@@ -212,8 +212,8 @@
 <script>
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
-import User from '../../../service/User';
-import {showSuccessToast,showErrorToast, showErrorToastMess, formatDate, formatCurrency } from "../../../assets/web/js/main";
+import userApi from '../../../service/User';
+import {showSuccessToast, showErrorToastMess, formatDate, formatCurrency, getStateCheckoutDisplay, getStateOrderDisplay } from "../../../assets/web/js/main";
 import menuShared from "../profile/menu-shared.vue";
 export default {
 	components: {
@@ -233,105 +233,85 @@ export default {
   	methods: {
 		formatDate,
 		formatCurrency,
+		getStateCheckoutDisplay,
+		getStateOrderDisplay,
 
-		getStateCheckoutDisplay(stateCheckout) {
-			const stateMap = {
-				UNPAID: "Chưa thanh toán",
-				PAID: "Đã thanh toán"
-			};
-			return stateMap[stateCheckout] || "";
-		},
-		getStateOrderDisplay(stateOrder) {
-			const stateMap = {
-				PENDING: "Đang xử lý",
-				DELIVERING: "Đang giao hàng",
-				CONFIRMED: "Đã xác nhận",
-				RECEIVED: "Đã nhận",
-				CANCELLED: "Đã huỷ"
-			};
-			return stateMap[stateOrder] || "";
-		},
+		async getOrderByStatus(data){
+			try{
+				var buttons = document.getElementsByClassName('order-status__item');
+				for (var i = 0; i < buttons.length; i++) {
+					buttons[i].classList.remove('active');
+				} 
+				var selectedButton = document.getElementById('btn-' + data);
+					selectedButton.classList.add('active');
 
-		getOrderByStatus(data){
-			var buttons = document.getElementsByClassName('order-status__item');
-			for (var i = 0; i < buttons.length; i++) {
-				buttons[i].classList.remove('active');
-			} 
-			var selectedButton = document.getElementById('btn-' + data);
-				selectedButton.classList.add('active');
-
-			//Cập nhật lại trạng thái đơn hàng
-			this.status = data
-			
-			//Nếu không chọn ngày thì sẽ lọc bình thường
-			if(this.startDate !== null || this.endDate !== null){
-				this.search()
+				//Cập nhật lại trạng thái đơn hàng
+				this.status = data
+				
+				//Nếu không chọn ngày thì sẽ lọc bình thường
+				if(this.startDate !== null || this.endDate !== null)
+					this.search()
+				else{
+					const res = await userApi.getPurchaseHistory(data)
+					if(res.data.order != null)
+						this.order = res.data.order.reverse()
+					else
+						this.order = null
+				}
+			}catch(err){
+				console.log("loi purchase history !!!" + err)
 			}
-			else{
-				User.getPurchaseHistory(data)
-					.then((res)=>{
-						if(res.data.data.order != null)
-							this.order = res.data.data.order.reverse()
-						else
-							this.order = null
-					})
-					.catch((err)=>{console.log("loi purchase history !!!" + err)})
-			}
-			
 		},
-		search(){
-			let start = null
-			let end = null
-			if(this.startDate !== null || this.endDate !== null)
-			{
-				start = this.formatDate(this.startDate)
-				end = this.formatDate(this.endDate)
+		async search(){
+			try{
+				let start = null
+				let end = null
+				if(this.startDate !== null || this.endDate !== null)
+				{
+					start = this.formatDate(this.startDate)
+					end = this.formatDate(this.endDate)
+				}
+				let status = this.status
+				let data = {start,end,status}
+				if (start > end) {
+					showErrorToastMess('Ngày bắt đầu không được lớn hơn ngày kết thúc.')
+				} else {
+					const res = await userApi.findByRangeDay(data)
+					if(res.data.orderDay != null)
+						this.order = res.data.orderDay.reverse()
+					else
+						this.order = null
+				}
 			}
-			let status = this.status
-			let data = {start,end,status}
-			if (start > end) {
-				let error = 'Ngày bắt đầu không được lớn hơn ngày kết thúc.';
-				showErrorToastMess(error)
-			} else {
-				User.findByRangeDay(data)
-					.then(res=>{
-						if(res.data.data.orderDay != null)
-							this.order = res.data.data.orderDay.reverse()
-						else
-							this.order = null
-					})
-					.catch(err=>{
-						showErrorToastMess("loi r")
-						console.log("err: "+err)
-					})
+			catch(err){
+				showErrorToastMess("loi r")
+				console.log("err: "+err)
 			}
 		},
 
-		clickCancelOrder(id,status){
-			User.postPurchaseHistory(id,status)
-				.then((res)=>{
-					if(res.data){
-						let message = 'Hủy đơn hàng thành công'
-						this.order = res.data.data.order
-						this.getTotalOrderReceived()
-						showSuccessToast(message)
-						bootstrap.Modal.getInstance(document.getElementById("Modal"+id)).hide()
-					}else{
-						showErrorToast()
-					}
-				})
-				.catch((err)=>{console.log("loi purchase history !!!" + err)})
+		async clickCancelOrder(id,status){
+			try{
+				const res = await userApi.postPurchaseHistory(id,status)
+				if(res.data){
+					this.order = res.data.order
+					this.getTotalOrderReceived()
+					showSuccessToast('Hủy đơn hàng thành công')
+				}
+				bootstrap.Modal.getInstance(document.getElementById("Modal"+id)).hide()
+			}
+			catch(err){
+				showErrorToastMess('Xảy ra lỗi khi hủy đơn hàng. Vui lòng thử lại sau !')
+			}
 		},
 
-		getTotalOrderReceived(){
-			User.getTotalOrderReceived()
-				.then(res=>{
-					this.total_order = res.data.data.total_order
-					this.total_order_received = res.data.data.total_order_received
-				})
-				.catch(err=>{
-					console.log("loi lấy tổng đơn hàng đã nhận và tiền đã tiêu !!!" + err)
-				})
+		async getTotalOrderReceived(){
+			try{
+				const res = await userApi.getTotalOrderReceived()
+				this.total_order = res.data.total_order
+				this.total_order_received = res.data.total_order_received
+			}catch(err){
+					console.log("lỗi lấy tổng đơn hàng đã nhận và tiền đã tiêu !!!" + err)
+				}
 		},
 
 		init(){

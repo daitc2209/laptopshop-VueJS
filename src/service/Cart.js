@@ -1,25 +1,30 @@
 import axios from "axios"
 
-class Cart{
-    addToCart(cart){
-        return axios.post(`cart/add-to-cart?productId=`+cart.productId+`&num=`+cart.num);
-    }
+const cartApi = {
+    addToCart: async (cart)=>{
+        const res = await axios.post(`cart/add-to-cart?productId=`+cart.productId+`&num=`+cart.num);
+        return res.data
+    },
 
-    GetItemInCart(){
-        return axios.get(`cart`);
-    }
+    GetItemInCart: async ()=>{
+        const res = await axios.get(`cart`);
+        return res.data
+    },
 
-    editItemCart(id,num){
-        return axios.get(`cart/edit-cart/${id}/${num}`)
-    }
+    editItemCart: async (id,num)=>{
+        const res = await axios.get(`cart/edit-cart/${id}/${num}`)
+        return res.data
+    },
 
-    deleteItemCart(id){
-        return axios.get(`cart/delete-cart/${id}`)
-    }
+    deleteItemCart: async (id)=>{
+        const res = await axios.get(`cart/delete-cart/${id}`)
+        return res.data
+    },
 
-    clearCart(){
-        return axios.get(`cart/clear-cart`)
-    }
+    clearCart: async ()=>{
+        const res = await axios.get(`cart/clear-cart`)
+        return res.data
+    },
 }
 
-export default new Cart()
+export default cartApi

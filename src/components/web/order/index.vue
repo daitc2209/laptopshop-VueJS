@@ -94,7 +94,7 @@
 </template>
 
 <script>
-import Order from '../../../service/Order'
+import orderApi from '../../../service/Order'
 import { formatDate, formatCurrency } from "../../../assets/admin/js/format-admin";
 export default {
 	data(){
@@ -131,40 +131,29 @@ export default {
 				this.OrderRequest.bankCode = ""
 
 		},
-		getOrder(){
-			Order.getOrder()
-				.then((res)=>{
-					this.userLogin.email = res.data.data.email
-					this.userLogin.fullname = res.data.data.fullname
-					this.listCart = res.data.data.listCart
-					this.orderDate = res.data.data.orderDate
-					this.totalQuantity = res.data.data.totalQuantity
-					this.totalMoney = res.data.data.totalMoney
-					console.log("date: "+this.orderDate)
-
-				})
-				.catch((err)=>{
-					console.log("err order: "+err)
-				})
+		async getOrder(){
+			const res = await orderApi.getOrder()
+				this.userLogin.email = res.data.email
+				this.userLogin.fullname = res.data.fullname
+				this.listCart = res.data.listCart
+				this.orderDate = res.data.orderDate
+				this.totalQuantity = res.data.totalQuantity
+				this.totalMoney = res.data.totalMoney
 		},
-		Order(){
-			Order.postOrder(this.OrderRequest)
-				.then((res)=>{
-					console.log("gui order thanh cong: "+res)
-					console.log("data res: "+res.data)
-					
-						window.location.href = res.data.data.redirectUrl
+		async Order(){
+			const res = await orderApi.postOrder(this.OrderRequest)
+			console.log("gui order thanh cong: "+res)
+			console.log("data res: "+res.data)
+			
+			window.location.href = res.data.redirectUrl
 
-						if(res.data.data.typePayment == "COD")
-						{
-							sessionStorage.setItem("typePayment",res.data.data.typePayment);
-							sessionStorage.setItem("orderId",res.data.data.orderId);
-						}
-					console.log("TRANSFER !!!!")
-				})
-				.catch((err)=>{
-					console.log("err order: "+err)
-				})
+			if(res.data.typePayment == "COD")
+			{
+				sessionStorage.setItem("typePayment",res.data.typePayment);
+				sessionStorage.setItem("orderId",res.data.orderId);
+			}
+			console.log("TRANSFER !!!!")
+			
 		}
 	},
 	mounted(){

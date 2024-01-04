@@ -1,33 +1,41 @@
 import axios from "axios";
 
-class Order{
-    getOrder(){
-        return axios.get(`order`);
-    }
-    postOrder(data){
-        return axios.post(`order`,data);
-    }
-    getBill(id){
-        return axios.get(`checkout/getBill?id=`+id);
-    }
+const orderApi = {
+    getOrder: async ()=>{
+        const res = await axios.get(`order`);
+        return res.data
+    },
+    postOrder: async (data)=>{
+        const res = await axios.post(`order`,data);
+        return res.data
+    },
+    getBill: async (id)=>{
+        const res = await axios.get(`checkout/getBill?id=`+id);
+        return res.data;
+    },
 
     // Admin
-    getAllOrderByStatus(){
-        return axios.get(`admin/order/total-order-status`)
-    }
-    getListOrderByStatus(page,search_text,status){
-        return axios.get("admin/order", {params:{page:page, search_text:search_text, status:status}})
-    }
-    findByRangeDay(page,data){
-        return axios.post("admin/order/range-day?page="+page,data)
-    }
-    getOrderById(id){
-        return axios.get("admin/order/"+id)
-    }
-    verify(id,status){
-        return axios.post("admin/order/verify?id="+id+"&status="+status)
-    }
+    getAllOrderByStatus: async ()=>{
+        const res = await axios.get(`admin/order/total-order-status`)
+        return res.data
+    },
+    getListOrderByStatus: async (page,search_text,status)=>{
+        const res = await axios.get("admin/order", {params:{page:page, search_text:search_text, status:status}})
+        return res.data
+    },
+    findByRangeDay: async (page,data)=>{
+        const res = await axios.post("admin/order/range-day?page="+page,data)
+        return res.data
+    },
+    getOrderById: async (id)=>{
+        const res = await axios.get("admin/order/"+id)
+        return res.data
+    },
+    verify: async (id,status)=>{
+        const res = await axios.post("admin/order/verify?id="+id+"&status="+status)
+        return res.data;
+    },
 
 }
 
-export default new Order
+export default orderApi

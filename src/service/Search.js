@@ -1,8 +1,9 @@
 import axios from "axios";
 
-class Search {
-    Search(input){
-        return axios.get("search",input)
+const searchApi = {
+    Search: async (input)=>{
+        const res = await axios.get("search",input)
+        return res.data
     }
 }
-export default new Search()
+export default searchApi

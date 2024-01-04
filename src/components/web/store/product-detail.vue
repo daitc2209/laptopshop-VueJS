@@ -24,7 +24,7 @@
             <i class="fa fa-star checked"></i>
             <i class="fa fa-star checked"></i>
           </div>
-          <div v-for="item in product.description.split(',')" :key="item">
+          <div v-for="item in product.description.split(';')" :key="item">
             <p>{{ item }}</p>
           </div>
           <h5>
@@ -56,7 +56,7 @@
 </template>
 
 <script>
-import { decFunction, incFunction, showSuccessToast, showErrorToast, showWarnToast, formatCurrency } from "../../../assets/web/js/main";
+import { decFunction, incFunction, showSuccessToast, showErrorToastMess, showWarnToast, formatCurrency } from "../../../assets/web/js/main";
 import productApi from "../../../service/Product";
 import Cart from "../../../service/Cart";
 import Favour from "../../../service/favour";
@@ -95,8 +95,8 @@ export default {
       Cart.addToCart(this.cart).then(()=>{
         let message = 'Thêm vào giỏ hàng thành công'
         showSuccessToast(message)
-      }).catch((err) => { 
-        showErrorToast()
+      }).catch(() => { 
+        showErrorToastMess("Sản phẩm đang hết hàng bạn nhé !! Vui lòng chọn sản phẩm khác")
       })
     },
     async addToFavour(event,id){
@@ -115,8 +115,8 @@ export default {
             let message = 'Sản phẩm đã có trong yêu thích !!'
             showWarnToast(message)
           }
-        }).catch((err)=>{
-          showErrorToast()
+        }).catch(()=>{
+          showErrorToastMess("Sản phẩm đã có trong yêu thích !!")
         })
       }
       else{

@@ -1,113 +1,116 @@
 
 import axios from "axios"
 
-class Users{
+const userApi = {
 
-    signUp(data){
-        return axios.post('register',data) 
-    }
-    verify(data){
-        return axios.get('register/verify?token='+data) 
-    }
+    signUp: async (data)=>{
+        const res = await axios.post('register',data) 
+        return res.data
+    },
+    verify: async (data)=>{
+        const res = await axios.get('register/verify?token='+data) 
+        return res.data
+    },
 
-    login(data)
-    {
-        return axios.post('login',data) 
-    }
+    login: async(data)=>{
+        const res = await axios.post('login',data) 
+        return res.data
+    },
 
-    loginGG(){
-        return axios.post('loginCode',data1) 
-    }
+    loginGG: async ()=>{
+        const res = await axios.post('loginCode',data1) 
+        return res.data
+    },
 
-    logout(token){
-        return axios.get("logout?token="+token)
-    }
+    logout: async (token)=>{
+        const res = await axios.get("logout?token="+token)
+        return res.data
+    },
 
-    getInfo(accessToken){
-        return axios.post('getInfo',accessToken) 
-    }
+    getInfo: async (accessToken)=>{
+        const res = await axios.post('getInfo',accessToken) 
+        return res.data
+    },
 
-    getPurchaseHistory(status){
-        return axios.get('purchase-history?status='+status);
-    }
+    getPurchaseHistory: async (status)=>{
+        const res = await axios.get('purchase-history?status='+status);
+        return res.data
+    },
 
-    postPurchaseHistory(id,status){
-        return axios.post(`purchase-history/delete?id=`+id+`&status=`+status)
-    }
+    postPurchaseHistory: async (id,status)=>{
+        const res = await axios.post(`purchase-history/delete?id=`+id+`&status=`+status)
+        return res.data
+    },
 
-    findByRangeDay(data){
-        return axios.post(`purchase-history/range-day`,data)
-    }
+    findByRangeDay: async (data)=>{
+        const res = await axios.post(`purchase-history/range-day`,data)
+        return res.data
+    },
 
-    getTotalOrderReceived(){
-        return axios.get('purchase-history/totalOrder');
-    }
+    getTotalOrderReceived: async ()=>{
+        const res = await axios.get('purchase-history/totalOrder');
+        return res.data
+    },
 
-    postProfile(data){
-        return axios.post('user/profile', data)
-    }
+    postProfile: async (data)=>{
+        const res = await axios.post('user/profile', data)
+        return res.data
+    },
 
-    getProfile(){
-        return axios.get('user/profile')
-    }
+    getProfile: async ()=>{
+        const res = await axios.get('user/profile')
+        return res.data
+    },
 
-    postChangePW(oldPW, newPW){
-        return axios.post('user/profile/change-password?oldPW='+oldPW+'&newPW='+newPW)
-    }
+    postChangePW: async (oldPW, newPW)=>{
+        const res = await axios.post('user/profile/change-password?oldPW='+oldPW+'&newPW='+newPW)
+        return res.data
+    },
 
-    getListUserAdmin(page, fullname,sex,address,email,stateUser,authType){
-        return axios.get('admin/user',
+    // Admin
+    getListUserAdmin: async (page, fullname,sex,address,email,stateUser,authType)=>{
+        const res = await axios.get('admin/user',
             {params: {fullname:fullname,sex:sex,address:address,
                     email:email,stateUser:stateUser,authType:authType,page:page}}) 
-    }
+        return res.data
+    },
 
-    getListAdmin(page, fullname,sex,address,email,stateUser,authType){
-        return axios.get('admin/user/getAdmin',
+    getListAdmin: async (page, fullname,sex,address,email,stateUser,authType)=>{
+        const res = await axios.get('admin/user/getAdmin',
             {params: {fullname:fullname,sex:sex,address:address,
                     email:email,stateUser:stateUser,authType:authType,page:page}}) 
-    }
+        return res.data
+    },
 
-    addUser(data){
-        return axios.post("admin/user/add",data)
-    }
+    addUser: async (data)=>{
+        const res = await axios.post("admin/user/add",data)
+        return res.data
+    },
 
-    getEditUser(id){
-        return axios.get("admin/user/edit/"+id)
-    }
+    getEditUser: async (id)=>{
+        const res = await axios.get("admin/user/edit/"+id)
+        return res.data
+    },
 
-    postEditUser(data){
-        return axios.post("admin/user/edit",data)
-    }
+    postEditUser: async (data)=>{
+        const res = await axios.post("admin/user/edit",data)
+        return res.data
+    },
 
-    lockUser(id){
-        return axios.post("admin/user/lock?id="+id)
-    }
+    lockUser: async (id)=>{
+        const res = await axios.post("admin/user/lock?id="+id)
+        return res.data
+    },
 
-    unlockUser(id){
-        return axios.post("admin/user/unlock?id="+id)
-    }
+    unlockUser: async (id)=>{
+        const res = await axios.post("admin/user/unlock?id="+id)
+        return res.data
+    },
 
-    deleteUser(id){
-        return axios.post("admin/user/delete?id="+id)
-    }
+    deleteUser: async (id)=>{
+        const res = await axios.post("admin/user/delete?id="+id)
+        return res.data
+    },
 }
 
-// const Users = {
-//     signUp: async (data) => {
-//         const res = await axios.post('register',data)
-//         return res; 
-//     },
-
-//     verify: async (data) => {
-//         const res = await axios.get('register/verify?token='+data) 
-//         return res;
-//     },
-
-//     login: async (data) => {
-//         const res = await axios.post('login',data) 
-//         return res;
-//     }
-// }
-
-export default new Users();
-// export default Users;
+export default userApi;

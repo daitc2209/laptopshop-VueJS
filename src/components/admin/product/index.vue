@@ -309,7 +309,7 @@
 </template>
 
 <script>
-import { showSuccessToast, showErrorToast } from "../../../assets/web/js/main";
+import { showSuccessToast, showErrorToastMess } from "../../../assets/web/js/main";
 import { formatCurrency } from "../../../assets/admin/js/format-admin";
 import productApi from "../../../service/Product";
 import brandsApi from "../../../service/Brands";
@@ -332,7 +332,6 @@ export default {
     },
     methods: {
         formatCurrency,
-
 		async addProduct(productDtoAdd){
 			try{
 				this.showPreload = true
@@ -351,14 +350,12 @@ export default {
 				
 				const res = await productApi.addProduct(formData)
 				if(res.success){
-					let mess = "Thêm thành công"
-					this.showToastr(true,mess)
+					showSuccessToast("Thêm sản phẩm thành công !!")
 					this.productDtoAdd=[]
 					this.imgDto=''
 				}
 				if(res.error){
-					let mess='Có lỗi xảy ra'
-					this.showToastr(false,mess)
+					showErrorToastMess("Thêm sản phẩm thất bại !!")
 				}
 				this.showPreload = false
 				await this.getListProduct(this.currentPage, this.formSearchProduct)
@@ -368,14 +365,17 @@ export default {
 			catch(error){
 				this.showPreload = false
 				console.log("err: "+error)
+				showErrorToastMess("Có lỗi xảy ra !!")
 			};
 		},
 
 		async getEditProduct(id){
 			try{
 				const res = await productApi.getEditProduct(id)
-				this.productDto = res }
+				this.productDto = res 
+			}
 			catch(err){
+				showErrorToastMess("Lấy danh sách sản phẩm thất bại !!")
 				console.log("Err: "+err)
 			}
 		},
@@ -399,13 +399,11 @@ export default {
 				
 				const res = await productApi.postEditProduct(formData)
 				if(res.success){
-					let mess = "Sửa thành công"
-					this.showToastr(true,mess)
+					showSuccessToast("Chỉnh sửa sản phẩm thành công !!")
 					await this.getListProduct(this.currentPage, this.formSearchProduct)
 				}
 				if(res.error){
-					let mess='Có lỗi xảy ra'
-					this.showToastr(false,mess)
+					showErrorToastMess("Chỉnh sửa sản phẩm thất bại !!")
 				}
 				this.showPreload = false
 				bootstrap.Modal.getInstance(document.getElementById("edit"+productDto.id)).hide()
@@ -414,6 +412,7 @@ export default {
 			catch(error){
 				this.showPreload = false
 				console.log("err: "+error)
+				showErrorToastMess("Có lỗi xảy ra !!")
 			};
 		},
 
@@ -423,16 +422,15 @@ export default {
 				const res = await productApi.deleteProduct(id)
 				if(res.success){
 					await this.getListProduct(this.currentPage,this.formSearchProduct)
-					let mess='Xóa thành công'
-					this.showToastr(true,mess)
+					showSuccessToast("Xóa sản phẩm thành công !!")
 				}
 				if(res.error){
-					let mess='Có lỗi xảy ra'
-					this.showToastr(false,mess)
+					showErrorToastMess("Xóa sản phẩm thất bại !!")
 				}
 			}
 			catch(err){
 				console.log("err: "+err)
+				showErrorToastMess("Có lỗi xảy ra !!")
 			}
 		},
 		async getListProduct(currentPage, formSearchProduct){
@@ -445,32 +443,29 @@ export default {
 				this.setupPagination(this.totalPage)
 			}
 			catch(err){
-				console.log("Err: "+err)
+				console.log("Err: "+err); showErrorToastMess("Lấy danh sách sản phẩm thất bại !!")
 			}
 		},
 
-		search(currentPage,formSearchProduct){
-			this.getListProduct(currentPage, formSearchProduct)
+		async search(currentPage,formSearchProduct){
+			await this.getListProduct(currentPage, formSearchProduct)
 		},
 		async stateProduct(id,state){
 			try{
 				const res = await productApi.stateProduct(id,state)
 
 				if(state){
-					let mess='Đóng thành công'
-					this.showToastr(1,mess)
+					showSuccessToast("Ẩn sản phẩm thành công !!")
 				}
 				if(!state)
 				{
-					let mess='Mở thành công'
-					this.showToastr(1,mess)
+					showSuccessToast("Hiển thị sản phẩm thành công !!")
 				}
 				await this.getListProduct(this.currentPage, this.formSearchProduct)
 			}
 			catch(err){
 				console.error("Lỗi: ", err);
-				let errorMessage = 'Đã xảy ra lỗi khi thay đổi trạng thái sản phẩm. Vui lòng thử lại sau.';
-				this.showToastr(0, errorMessage);
+				showErrorToastMess("Đã xảy ra lỗi khi thay đổi trạng thái sản phẩm. Vui lòng thử lại sau.")
 			}
 		},
 
@@ -504,15 +499,6 @@ export default {
 				console.log(err)
 			}
 		},
-
-		showToastr(condition,message) {
-            if(condition)
-				showSuccessToast(message)
-			
-			if(condition == false)
-				showErrorToast(message)
-			
-        },
         PaginationButton (page) {
 			return {
 				page,
@@ -550,7 +536,6 @@ export default {
 	mounted(){
 		if(!sessionStorage.getItem("login") && sessionStorage.getItem("role")!="ROLE_ADMIN")
 		{
-			// window.location.href = "/auth/sign-in"
 			this.$router.push("/auth/sign-in")
 			sessionStorage.setItem("auth",true)
 		}

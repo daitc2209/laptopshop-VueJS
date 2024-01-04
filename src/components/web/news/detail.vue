@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import News from '../../../service/News';
+import newsApi from '../../../service/News';
 export default {
     data(){
         return {
@@ -28,20 +28,20 @@ export default {
         }
     },
     methods: {
-        getDetailNews(){
-            var url = new URL(window.location.href)
-            if(url.searchParams.has("id") && url.searchParams.has("page"))
-            {
-                News.getDetailNews(url.searchParams.get("id"), url.searchParams.get("page"))
-                    .then(res =>{
-                        this.newsItem = res.data.data.NewsItem
-                    })
-                    .catch(err =>{
-                        console.log("err: "+err)
-                    })
+        async getDetailNews(){
+            try{
+                var url = new URL(window.location.href)
+                if(url.searchParams.has("id") && url.searchParams.has("page"))
+                {
+                    const res = await newsApi.getDetailNews(url.searchParams.get("id"), url.searchParams.get("page"))
+                    if(res)
+                        this.newsItem = res.data.NewsItem
+                    else
+                        window.location.href='/news'
+                }
+            }catch(err){
+                console.log("err: "+err)
             }
-            else
-                window.location.href='/news'
         }
     },
     mounted(){

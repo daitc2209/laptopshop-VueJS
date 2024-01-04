@@ -1,37 +1,44 @@
 import axios from "axios";
 
-class News{
-    getNews(page){
+const newsApi = {
+    getNews: async (page)=>{
         if(page == "" || page == null)
             page = 1
-        return axios.get(`/news?page=`+page);
-    }
+        const res = await axios.get(`/news?page=`+page);
+        return res.data
+    },
 
-    getDetailNews(id,page){
+    getDetailNews: async (id,page) => {
         if(page == "" || page == null)
             page = 1
-        return axios.get(`/news/detail?id=${id}&page=`+page);
-    }
+        const res = await axios.get(`/news/detail?id=${id}&page=`+page);
+        return res.data;
+    },
 
-    getNewsAdmin(page,search){
-        return axios.get(`admin/news`,{params: {search:search , page:page}})
-    }
+    getNewsAdmin: async (page,search) => {
+        const res = await axios.get(`admin/news`,{params: {search:search , page:page}})
+        return res.data
+    },
 
-    getEditNewsAdmin(id){
-        return axios.get(`admin/news/edit/${id}`)
-    }
+    getEditNewsAdmin: async (id)=>{
+        const res = await axios.get(`admin/news/edit/${id}`)
+        return res.data
+    },
 
-    postEditNewsAdmin(data){
-        return axios.post(`admin/news/edit`,data)
-    }
+    postEditNewsAdmin: async (data) =>{
+        const res = await axios.post(`admin/news/edit`,data)
+        return res.data
+    },
 
-    postAddNewsAdmin(data){
-        return axios.post("admin/news/add",data)
-    }
+    postAddNewsAdmin: async (data)=>{
+        const res = await axios.post("admin/news/add",data)
+        return res.data
+    },
 
-    deleteNewsAdmin(id){
-        return axios.post("admin/news/delete?id="+id)
+    deleteNewsAdmin: async (id)=>{
+        const res = await axios.post("admin/news/delete?id="+id)
+        return res.data
     }
 }
 
-export default new News
+export default newsApi

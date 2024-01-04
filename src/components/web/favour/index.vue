@@ -37,7 +37,7 @@
                                                 <router-link :to="`/store/`+item.product.id"><h5 style="color: blue;">{{ item.product.name }}</h5></router-link>
                                             </td>
                                             <td class="cart-title first-row">
-                                                <h5>{{ item.product.description }}</h5>
+                                                <h5 class="item-description">{{ item.product.description }}</h5>
                                             </td>
                                             <td class="discount first-row">
                                                 <h5>{{ item.product.discount }}%</h5>
@@ -68,9 +68,9 @@
 </template>
   
 <script>
-import { showSuccessToast, showErrorToastMess } from "../../../assets/web/js/main";
-import Favour from "../../../service/favour";
-import Cart from "../../../service/Cart";
+import { showSuccessToast, showErrorToastMess, formatCurrency } from "../../../assets/web/js/main";
+import favourApi from "../../../service/favour";
+import cartApi from "../../../service/Cart";
 export default {
     data() {
         return {
@@ -85,36 +85,29 @@ export default {
         };
     },
     methods: {
-        addToCard(id) {
-            this.cart.productId=id
-            Cart.addToCart(this.cart).then(()=>{
-                let message = 'Đã thêm sản phẩm vào giỏ hàng !! '
-                showSuccessToast(message)
-            }).catch((err)=>{
+        async addToCard(id) {
+            try{
+                this.cart.productId=id
+                await cartApi.addToCart(this.cart)
+                showSuccessToast("Đã thêm sản phẩm vào giỏ hàng !!")
+            }catch(err){
                 showErrorToastMess("Sản phẩm đã hết hàng !!")
                 console.log("err o trang favour khi them gio hang: "+err)
-            })
+            }
         },
-        formatCurrency(value) {
-            const formatter = new Intl.NumberFormat("vi-VN", {
-                style: "currency",
-                currency: "VND",
-            });
-            return formatter.format(value);
+        formatCurrency,
+        async deleteItem(id) {
+            try{
+                await favourApi.deleteItemFavour(id)
+                showSuccessToast('Xóa thành công sản phẩm khỏi yêu thích !')
+                this.getItemInFavour()
+            }catch(err){console.log("xoa khong thanh cong")}
         },
-        deleteItem(id) {
-            Favour.deleteItemFavour(id)
-                .then(() => {
-                    let message = 'Xóa thành công sản phẩm khỏi yêu thích ! '
-                    showSuccessToast(message)
-                    this.getItemInFavour()
-                })
-                .catch(err => console.log("xoa khong thanh cong"))
-        },
-        getItemInFavour() {
-            Favour.GetItemInFavour().then((res) => {
-                this.listFavour = res.data.data.listFavour
-            }).catch((err) => { console.log("loi trang cart !!! err: " + err) })
+        async getItemInFavour() {
+            try{
+                const res = await favourApi.GetItemInFavour()
+                this.listFavour = res.data.listFavour
+            }catch(err){console.log("loi trang cart !!! err: " + err) }
         }
     },
     mounted() {

@@ -192,8 +192,8 @@
 </template>
 
 <script>
-import { showSuccessToast, showErrorToast } from "../../../assets/web/js/main";
-import User from '../../../service/User';
+import { showSuccessToast, showErrorToast,getGenderDisplay } from "../../../assets/web/js/main";
+import userApi from '../../../service/User';
 import menuShared from "./menu-shared.vue";
 export default {
 	components: {
@@ -228,60 +228,43 @@ export default {
 				this.imgDto = file
 			}
 		},
-		editProfile() {
-			this.showPreload = true
-			const formData = new FormData();
-			console.log("this.profile.img: ", this.profile.img);
-			if (this.imgDto !== null && this.imgDto !== "")
-				this.profile.img = this.imgDto
+		async editProfile() {
+			try{
+				this.showPreload = true
+				const formData = new FormData();
+				if (this.imgDto !== null && this.imgDto !== "")
+					this.profile.img = this.imgDto
 
-			formData.append('fileImage', this.profile.img);
-			formData.append('id', this.profile.id);
-			formData.append('fullname', this.profile.fullname);
-			formData.append('address', this.profile.address);
-			formData.append('sex', this.profile.sex);
-			formData.append('birthday', this.profile.birthday);
-			formData.append('email', this.profile.email);
-			formData.append('phone', this.profile.phone);
-			
-			User.postProfile(formData)
-			.then(() => {
+				formData.append('fileImage', this.profile.img);
+				formData.append('id', this.profile.id);
+				formData.append('fullname', this.profile.fullname);
+				formData.append('address', this.profile.address);
+				formData.append('sex', this.profile.sex);
+				formData.append('birthday', this.profile.birthday);
+				formData.append('email', this.profile.email);
+				formData.append('phone', this.profile.phone);
+				
+				await userApi.postProfile(formData)
 				this.getProfile()
-				// Xử lý phản hồi thành công
-				let message = "Sửa thông tin thành công"
-				showSuccessToast(message)
+				showSuccessToast("Sửa thông tin thành công")
 				this.showPreload = false
 				bootstrap.Modal.getInstance(document.getElementById("myModal")).hide()
-			})
-			.catch(error => {
-				// Xử lý lỗi
+			}catch(err){
 				this.showPreload = false
 				console.error("err: "+error);
-			});
-		},
-		getProfile(){
-			this.url = ''
-			User.getProfile()
-				.then(res => {
-					// Xử lý phản hồi thành công
-						this.profile = res.data.data.profile
-						sessionStorage.setItem("img",this.profile.img)
-					
-				})
-				.catch(error => {
-					// Xử lý lỗi
-					console.error("err: "+error);
-				});
-		},
-		getGenderDisplay(gender) {
-			if (gender === "MALE") {
-				return "Nam";
-			} else if (gender === "FEMALE") {
-				return "Nữ";
-			} else {
-				return ""; // Xử lý trường hợp giới tính không xác định
 			}
 		},
+		async getProfile(){
+			try{
+				this.url = ''
+				const res = await userApi.getProfile()
+				this.profile = res.data.profile
+				sessionStorage.setItem("img",this.profile.img)
+			}catch(error) {
+				console.error("err: "+error);
+			};
+		},
+		getGenderDisplay,
 		onDragover(e){
 			e.preventDefault();
 			this.isDragging = true;
@@ -305,43 +288,34 @@ export default {
 		clearPasswordMismatchError() {
 			this.error = '';
 		},
-		ChangePassword(){
-			if (this.newPw !== this.confirm_newPw) {
+		async ChangePassword(){
+			try{
+				if (this.newPw !== this.confirm_newPw) {
 					this.error = 'Mật khẩu mới không trùng nhau';
 					return; 
 				}
-			User.postChangePW(this.oldPw,this.newPw)
-				.then(res => {
-					// Xử lý phản hồi thành công
-					console.log("change pw success");
-					this.oldPw = ''
-					this.newPw = ''
-					this.confirm_newPw = ''
-					let message = "Đổi mật khẩu thành công"
-					showSuccessToast(message)
-					bootstrap.Modal.getInstance(document.getElementById("myModal1")).hide()
-				})
-				.catch(error => {
-					// Xử lý lỗi
-					showErrorToast()
-					console.error("err: "+error);
-				});
+				await userApi.postChangePW(this.oldPw,this.newPw)
+			
+				this.oldPw = ''
+				this.newPw = ''
+				this.confirm_newPw = ''
+				showSuccessToast('Đổi mật khẩu thành công')
+				bootstrap.Modal.getInstance(document.getElementById("myModal1")).hide()
+					
+			}catch(err){
+				showErrorToast()
+				console.error("err: "+error);
+			}
 		},
-		showSuccessToast(message){
-      		showSuccessToast(message)
-		},
-		showErrorToast(){
-			showErrorToast()
-		}
 	},
 	mounted(){
 		if(sessionStorage.getItem("login"))
 			this.getProfile()
 		else
-			{
-				window.location.href = "/auth/sign-in"
-				sessionStorage.setItem("err",true)
-			}
+		{
+			window.location.href = "/auth/sign-in"
+			sessionStorage.setItem("err",true)
+		}
 	}
 }
 </script>

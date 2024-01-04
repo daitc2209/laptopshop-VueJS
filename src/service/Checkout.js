@@ -1,23 +1,26 @@
 import axios from "axios";
 
-class CheckOut{
-    getBill(id){
-        return axios.get(`/checkout/getBill?id=`+id);
-    }
-    getBillVNPAY(vnp_Amount,vnp_BankCode,vnp_CardType,
-        vnp_OrderInfo,vnp_PayDate,vnp_ResponseCode,vnp_TxnRef){
-        return axios.get(`/checkout/vnpay/info?vnp_Amount=`+vnp_Amount
+const checkOutApi = {
+    getBill: async (id) =>{
+        const res = await axios.get(`/checkout/getBill?id=`+id);
+        return res.data
+    },
+    getBillVNPAY: async (vnp_Amount,vnp_BankCode,vnp_CardType,
+        vnp_OrderInfo,vnp_PayDate,vnp_ResponseCode,vnp_TxnRef)=>{
+        const res = await axios.get(`/checkout/vnpay/info?vnp_Amount=`+vnp_Amount
                 +`&vnp_BankCode=`+vnp_BankCode
                 +`&vnp_CardType=`+vnp_CardType
                 +`&vnp_OrderInfo=`+vnp_OrderInfo
                 +`&vnp_PayDate=`+vnp_PayDate
                 +`&vnp_ResponseCode=`+vnp_ResponseCode
                 +`&vnp_TxnRef=`+vnp_TxnRef);
-    }
+        return res.data
+    },
 
-    sendEmail(orderCode){
-        return axios.post("/checkout/orderConfirm?codeOrder="+orderCode)
+    sendEmail: async (orderCode)=>{
+        const res = await axios.post("/checkout/orderConfirm?codeOrder="+orderCode)
+        return res.data
     }
 }
 
-export default new CheckOut
+export default checkOutApi

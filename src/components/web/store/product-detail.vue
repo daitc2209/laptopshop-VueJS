@@ -19,7 +19,7 @@
           <h1>{{ product.name }}</h1>
           <div class="pd-rating mb-2">
             <i class="fa fa-star checked"></i>
-            <i class="fa fa-star checked"></i>
+            <i class="fa fa-star checked"></i> 
             <i class="fa fa-star checked"></i>
             <i class="fa fa-star checked"></i>
             <i class="fa fa-star checked"></i>
@@ -51,16 +51,24 @@
           </form>
         </div>
       </div>
+      <div>
+        <span class="same-product">SẢN PHẨM TƯƠNG TỰ</span>
+        <productSame :same="product.categoryName" v-if="isProductLoaded"/>
+      </div>
     </div>
   </section>
 </template>
 
 <script>
-import { decFunction, incFunction, showSuccessToast, showErrorToastMess, showWarnToast, formatCurrency } from "../../../assets/web/js/main";
+import { decFunction, incFunction, showSuccessToast, showErrorToastMess, showWarnToast, formatCurrency, owlCarousel } from "../../../assets/web/js/main";
 import productApi from "../../../service/Product";
 import Cart from "../../../service/Cart";
 import Favour from "../../../service/favour";
+import productSame from "./same-product.vue"
 export default {
+  components:{
+    productSame
+  },
   data() {
     return {
       product: {
@@ -71,17 +79,16 @@ export default {
         discount: 0,
         id: ''
       },
-      err: '',
-      success: '',
       cart: {
         productId: "",
         num:""
-      }
+      },
+      isProductLoaded: false 
     };
   },
   methods: {
     formatCurrency,
-
+    // owlCarousel,
     decFunction(num) {
       this.cart.num = decFunction(num);
     },
@@ -128,6 +135,8 @@ export default {
       try{
         const res = await productApi.getProductById(id)
         this.product = res.data
+        this.isProductLoaded = true; 
+        console.log("vao !!")
       }
       catch(err) {
         console.log("err: " + err)
@@ -140,10 +149,14 @@ export default {
   watch(){
     decFunction(num) 
     incFunction(num)
+    
   }
 };
 </script>
 
 <style>
-
+.same-product{
+  font-size: 24px;
+  font-weight: 700;
+}
 </style>

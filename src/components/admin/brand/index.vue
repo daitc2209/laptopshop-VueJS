@@ -179,7 +179,7 @@
 
 <script>
 import brandsApi from "../../../service/Brands";
-import { showSuccessToast, showErrorToast } from "../../../assets/web/js/main";
+import { showSuccessToast, showErrorToast, showErrorToastMess } from "../../../assets/web/js/main";
 export default {
     data(){
         return {
@@ -207,7 +207,6 @@ export default {
             }
         },
         async search(name){
-            console.log("name: "+name)
             await this.getListBrand(this.currentPage, name)
         },
         async addBrand(brandDtoAdd){
@@ -223,14 +222,11 @@ export default {
                         await this.getListBrand(this.currentPage,"")
 						this.brandDtoAdd = {}
 						this.imgDto=''
-                        let mess='Thêm thành công'
-				        this.showToastr(1,mess)
+						showSuccessToast("Thêm thành công")
                         bootstrap.Modal.getInstance(document.getElementById("add")).hide()
                     }
-                    if(res.err){
-                        let mess='Thêm thất bại'
-				        this.showToastr(0,mess)
-                    }
+                    if(res.err) showErrorToastMess('Thêm thất bại')
+                    
 					this.showPreload = false
             }
             catch(err){
@@ -258,14 +254,11 @@ export default {
                 const res = await brandsApi.postEditBrands(formData)
                     if(res.success){
                         await this.getListBrand(this.currentPage,"")
-                        let mess='Sửa thành công'
-				        this.showToastr(1,mess)
+				        showSuccessToast('Sửa thành công')
                         bootstrap.Modal.getInstance(document.getElementById("edit"+brandDto.id)).hide()
                     }
-                    if(res.err){
-                        let mess='Sửa thất bại'
-				        this.showToastr(0,mess)
-                    }
+                    if(res.err) showErrorToastMess("Sửa thất bại")
+                    
 					this.showPreload = false
             }
             catch(err){
@@ -279,16 +272,12 @@ export default {
                 const res = await brandsApi.deleteBrands(id)
                     if(res.success){
                         await this.getListBrand(this.currentPage,"")
-                        let mess='Xóa thành công'
-				        this.showToastr(1,mess)
+				        showSuccessToast('Xóa thành công')
                     }
-                    if(res.err){
-                        let mess='Xóa thất bại'
-				        this.showToastr(0,mess)
-                    }
+                    if(res.err) showErrorToastMess("Xóa thất bại")
             }
             catch(err){
-                this.showToastr(0,mess)
+                showErrorToast()
             }
         },
 		chooseFile(e,data){
@@ -301,14 +290,6 @@ export default {
 					this.brandDto.img = URL.createObjectURL(file)
 			}
 		},
-        showToastr(condition,message) {
-            if(condition)
-				showSuccessToast(message)
-			
-			if(condition == false)
-				showErrorToast(message)
-			
-        },
         PaginationButton (page) {
 			return {
 				page,

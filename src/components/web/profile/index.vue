@@ -64,7 +64,6 @@
 		        	<section class="container">
 					<div class="row">
 						<div class="col-md-4 col-12 p-0" id="side1" @dragover.prevent="onDragover" @dragleave.prevent="onDragleave" @drop.prevent="onDrop">
-							<!-- <img id="image" alt="" :src="'/images/user/' + profile.img" /> -->
 							<template v-if="!isDragging">
 								<span v-if="this.url==null || this.url == ''">
 									<img id="image" alt="" :src="this.profile.img" />
@@ -88,7 +87,7 @@
 									</div>
 									<div class="profile-form__feild">
 										<label class="profile-form__name" for="">Email</label>
-										<input class="profile-form__feild-item" title="Email" type="text" v-model="profile.email">
+										<input class="profile-form__feild-item" title="Email" type="text" v-model="profile.email" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$">
 									</div>
 									<div class="profile-form__feild">
 										<label class="profile-form__name" for="">Giới tính</label>
@@ -99,11 +98,11 @@
 									</div>
 									<div class="profile-form__feild">
 										<label class="profile-form__name" for="">Ngày sinh</label>
-										<input class="profile-form__feild-item" title="Email" type="text" v-model="profile.birthday">
+										<input class="profile-form__feild-item" title="Định dạng: yyyy-mm-dd" type="text" v-model="profile.birthday" placeholder="yyyy-mm-dd" pattern="^\d{4}-\d{2}-\d{2}$">
 									</div>
 									<div class="profile-form__feild">
 										<label class="profile-form__name" for="">SĐT</label>
-										<input class="profile-form__feild-item" title="Email" type="text" v-model="profile.phone">
+										<input class="profile-form__feild-item" title="VD: 0123456789" type="text" v-model="profile.phone" pattern="^\d+$">
 									</div>
 									<input hidden="" type="text" v-model="profile.img" > 
 									<div class="profile-form__feild">
@@ -166,11 +165,11 @@
 									</div>
 									<div class="profile-form__feild">
 										<label class="profile-form__name" for="">Mật khẩu mới<span style="color: red;">*</span></label>
-										<input @input="clearPasswordMismatchError()" class="profile-form__feild-item" title="New Password" required type="text" v-model="newPw">
+										<input @input="clearPasswordMismatchError()" class="profile-form__feild-item" required type="text" v-model="newPw" pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])([0-9a-zA-Z]{8,})$" title="Ít nhất 8 ký tự trở lên. Có ít nhất một chữ số. Có ít nhất một chữ cái viết thường. Có ít nhất một chữ cái viết hoa.">
 									</div>
 									<div class="profile-form__feild">
 										<label class="profile-form__name" for="">Nhập lại mật khẩu <span style="color: red;">*</span></label>
-										<input @input="clearPasswordMismatchError()" class="profile-form__feild-item" title="New Password" required type="text" v-model="confirm_newPw">
+										<input @input="clearPasswordMismatchError()" class="profile-form__feild-item" required type="text" v-model="confirm_newPw" pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])([0-9a-zA-Z]{8,})$" title="Ít nhất 8 ký tự trở lên. Có ít nhất một chữ số. Có ít nhất một chữ cái viết thường. Có ít nhất một chữ cái viết hoa.">
 									</div>
 								</div>
 								<div id="login">

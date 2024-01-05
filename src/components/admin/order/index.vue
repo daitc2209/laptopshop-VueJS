@@ -3,6 +3,14 @@
     <head>
         <title>Quản lý đơn hàng</title>
     </head>
+	<div v-if="showPreload" class="preload-screen">
+		<div class="preloader-wrapper d-flex">
+			<div class="spinner-border text-primary">
+				<span class="visually-hidden">Loading...</span>
+			</div>
+			<span style="margin-left: 20px; line-height: 30px;">Hệ thống đang xử lý</span>
+		</div>
+	</div>
     <section class="content-header">
 			<div class="container-fluid">
 				<div class="row mb-2">
@@ -18,7 +26,6 @@
 				</div>
 			</div>
 		</section>
-		
 		<section class="search">
 			<div id="toast">
     		</div>
@@ -313,7 +320,8 @@ export default {
 			totalPage:'',
 			paginationButtons:[],
 			orderDto:{},
-			orderStatus:{}
+			orderStatus:{},
+			showPreload: false
         }
     },
     methods: {
@@ -369,6 +377,7 @@ export default {
 		},
         async clickVerifyOrder(item){
 			try{
+				this.showPreload = true
 				const res = await orderApi.verify(item.id,item.stateOrder)
 				if(res.message)
 				{
@@ -377,8 +386,10 @@ export default {
 				}
 				if(res.error)
 					showErrorToastMess("Đổi trạng thái thất bại")
+				this.showPreload = false
 				bootstrap.Modal.getInstance(document.getElementById("vertify"+item.id)).hide()
 			}catch(err){
+				this.showPreload = false
 				console.log("err: "+err)
 			}
 		},

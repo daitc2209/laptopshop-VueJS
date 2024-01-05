@@ -63,15 +63,15 @@
                 <div class="row col-12">
                   <template v-if="listProduct.length > 0">
                     <div class="product-item col-lg-3 col-md-6 col-sm-6 col-12 " v-for="item in listProduct"  :key="item.id">
-                        <div class="product-item" >
+                        <router-link :to="`store/`+item.id" class="product-item" >
                             <div class="pi-pic " >
                               <img :src="item.img" alt="">
                               <ul>
                                 <li class="w-icon active">
-                                  <a @click="addToCart(item.id)"><i class="fa-solid fa-cart-shopping"></i></a>
+                                  <a @click="addToCart($e,item.id)"><i class="fa-solid fa-cart-shopping"></i></a>
                                 </li>
                                 <li class="w-icon active">
-                                  <a @click="addToFavour(item.id)"><i class="fa-solid fa-heart"></i></a>
+                                  <a @click="addToFavour($e,item.id)"><i class="fa-solid fa-heart"></i></a>
                                 </li>
                                 <li class="quick-view"><a :href="'/store/' + item.id">+ Quick View</a></li>
                               </ul>
@@ -80,13 +80,13 @@
                               <h5>{{ item.name }}</h5>
                               <div class="product-price">
                                 {{ formatCurrency(item.price - (item.price * item.discount / 100)) }}
-                                <del v-if="item.discount > 0">{{ formatCurrency(item.price) }}</del>
+                              <del v-if="item.discount > 0">{{ formatCurrency(item.price) }}</del>
                             </div>
                             </div>
                             <div class="home-product-item__favourite">
                                 <span>Giảm {{ item.discount }}%</span>
                             </div>
-                        </div>
+                        </router-link>
                     </div>
                   </template>
                   <div v-else>
@@ -163,8 +163,9 @@ export default {
         console.log("loi store Get: "+err)
       }
     },
-    async addToCart(id){
+    async addToCart(e,id){
       try{
+        e.preventDefault()
         this.cart.productId=id
         await cartApi.addToCart(this.cart)
         showSuccessToast('Thêm vào giỏ hàng thành công')
@@ -172,7 +173,8 @@ export default {
         showErrorToastMess('Thêm vào giỏ hàng thất bại')
       }
     },
-    async addToFavour(id){
+    async addToFavour(e,id){
+      e.preventDefault()
       if(sessionStorage.getItem("login"))
       {
         const res = await favourApi.addToFavour(id)

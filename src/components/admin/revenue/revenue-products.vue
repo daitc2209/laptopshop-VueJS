@@ -71,15 +71,15 @@
                             </template>
                         </tbody>
                     </table>
-                    <template v-if="revenue">
-                        <div class="pagination" id="pagination" v-if="paginationButtons.length >= 2">
-                            <button v-for="page in paginationButtons" :key="page" :class="{ active: currentPage === page }"
-                                @click="PaginationButton(page).handleClick()">
-                                {{ page }}
-                            </button>
-                        </div>
-                    </template>
                 </div>
+            <template v-if="revenue">
+                <div class="pagination" id="pagination" v-if="paginationButtons.length >= 2">
+                    <button v-for="page in paginationButtons" :key="page" :class="{ active: currentPage === page }"
+                        @click="PaginationButton(page).handleClick()">
+                        {{ page }}
+                    </button>
+                </div>
+            </template>
             </div>
             <div class="col-1"></div>
             <div class="col-4" style="width: 500px; height: 500px;">
@@ -96,9 +96,10 @@ import Chart from 'chart.js/auto'
 export default {
     data() {
         return {
+            itemsPerPage: 10,
             revenue: [],
-            currentPage: '',
-            totalPage: '',
+            currentPage: 1,
+            totalPage: 0,
             paginationButtons: [],
         }
     },
@@ -108,11 +109,22 @@ export default {
                 const res = await revenueApi.getRevenueProducts()
                 // this.revenue = res.data.revenueProduct
                 this.revenue =this.sortedProducts(res.data.revenueProduct)
+
+                this.totalPage = Math.ceil(this.revenue.length / this.itemsPerPage);
+                this.setupPagination(this.totalPage);
+                // Hiển thị chỉ một phần của dữ liệu theo trang hiện tại
+                this.revenue = this.displayedProducts();
+
                 this.updateChart(this.revenue, chart)
             }
             catch(err){
                 console.log("err: "+err)
             }
+        },
+        displayedProducts() {
+            const start = (this.currentPage - 1) * this.itemsPerPage;
+            const end = start + this.itemsPerPage;
+            return this.revenue.slice(start, end);
         },
         sortedProducts(data) {
             // Sắp xếp mảng sản phẩm theo số lượng giảm dần
@@ -124,15 +136,15 @@ export default {
                 isActive: this.currentPage === page,
                 handleClick: async () => {
                     console.log("page: " + page)
-                    await this.loadOrders(page);
+                    this.currentPage = page;
+                    await this.getRevenueProducts();
                 },
             };
         },
         setupPagination(totalPage) {
             this.paginationButtons = [];
 
-            let page_count = totalPage;
-            for (let i = 1; i < page_count + 1; i++) {
+            for (let i = Math.max(1, this.currentPage - 2); i <= Math.min(totalPage, this.currentPage + 2); i++) {
                 this.paginationButtons.push(i);
             }
         },

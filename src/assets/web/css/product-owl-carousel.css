@@ -73,7 +73,7 @@
     color: #333;
     font-weight: 400;
     line-height: 24px;
-
+	word-break: break-word;
     /* cắt giảm chữ, hiện dấu ... ở sản phẩm */
     /* height: 24px; điều chỉnh chiều cao dòng chữ chỉ còn 2 dòng */
     overflow: hidden; /*ẩn những dòng thừa hiện ra*/

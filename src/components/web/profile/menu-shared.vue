@@ -27,7 +27,7 @@
                         <li class="menu-item">
                             <a @click="logout()" class="menu-link" style="cursor: pointer;">
                                 <i class="nav-icon fa-solid fa-power-off"></i>
-                                <p>Logout</p>
+                                <p>Đăng xuất</p>
                             </a>
                         </li>
                     </ul>
@@ -38,8 +38,33 @@
 </template>
 
 <script>
+import userApi from '../../../service/User'
+import axios from 'axios';
 export default {
 
+    methods:{
+        async logout(){
+			try{
+				axios.defaults.headers.Authorization = `Bearer ${sessionStorage.getItem("jwtToken")}`;
+				const res = await userApi.logout(sessionStorage.getItem("jwtToken"))
+					
+				if(res.responseCode == "0")
+				{
+					window.location.href = "/auth/sign-in"
+					sessionStorage.removeItem("login"),
+					sessionStorage.removeItem("jwtToken"),
+					sessionStorage.removeItem("refreshToken"),
+					sessionStorage.removeItem("role"),
+					sessionStorage.removeItem("img"),
+					sessionStorage.removeItem("name"),
+					sessionStorage.setItem("logout",true)
+				}
+			}
+			catch(err){
+				console.log("err: "+err)
+			}
+		},
+    }
 }
 </script>
 

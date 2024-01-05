@@ -120,7 +120,7 @@
 					@click="PaginationButton(page).handleClick()">
 						{{ page }}
 					</button>
-				</div>
+				</div> 
 			</div>
 		</section>
 

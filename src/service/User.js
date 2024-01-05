@@ -38,7 +38,12 @@ const userApi = {
     },
 
     postPurchaseHistory: async (id,status)=>{
-        const res = await axios.post(`purchase-history/delete?id=`+id+`&status=`+status)
+        const res = await axios.post(`purchase-history/cancelled?id=`+id+`&status=`+status)
+        return res.data
+    },
+
+    postSendMailCancelled: async (codeOrder)=>{
+        const res = await axios.post(`purchase-history/send-mail-cancelled?codeOrder=${codeOrder}`)
         return res.data
     },
 

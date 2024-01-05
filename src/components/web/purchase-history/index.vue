@@ -174,7 +174,7 @@
 																	<li class="total-price">Phí vận chuyển <p>{{formatCurrency(40000)}}</p></li>
 																	<li class="total-price">Thành tiền <p>{{formatCurrency(item.total_money+40000)}}</p></li>
 																</ul>
-																<div :id="'cancelOrderBtn_'+ item.id" v-if="(item.stateOrder === 'PENDING')" class="order-btn"><a @click="clickCancelOrder(item.id,item.stateOrder)"><button type="button" class="site-btn place-btn">Hủy đơn hàng</button></a></div>
+																<div :id="'cancelOrderBtn_'+ item.id" v-if="(item.stateOrder === 'PENDING')" class="order-btn"><a @click="clickCancelOrder(item.id, this.status)"><button type="button" class="site-btn place-btn">Hủy đơn hàng</button></a></div>
 																											
 															</div>
 														</div>
@@ -186,7 +186,7 @@
 										</div>
 										<!-- Modal footer -->
 										<div class="modal-footer">
-											<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+											<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
 										</div>
 									</div>
 								</div>
@@ -291,9 +291,11 @@ export default {
 
 		async clickCancelOrder(id,status){
 			try{
+				this.startDate = null
+				this.endDate = null
 				const res = await userApi.postPurchaseHistory(id,status)
 				if(res.data){
-					this.order = res.data.order
+					this.order = res.data.order.reverse()
 					this.getTotalOrderReceived()
 					showSuccessToast('Hủy đơn hàng thành công')
 				}
@@ -302,6 +304,7 @@ export default {
 			catch(err){
 				showErrorToastMess('Xảy ra lỗi khi hủy đơn hàng. Vui lòng thử lại sau !')
 			}
+			// await userApi.postSendMailCancelled(codeOrder)
 		},
 
 		async getTotalOrderReceived(){

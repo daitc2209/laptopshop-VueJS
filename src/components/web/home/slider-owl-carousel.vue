@@ -2,25 +2,25 @@
   <div class="slider-owl-carousel owl-carousel">
 		<div class="slider-item">
 			<div class="content">
-				<h3>Biggest Clothe Sale <br> <span>Up To 50% Off</span></h3>
-				<p>Immerse yourself in seamless computing with Asus's range of sleek and powerful laptops, designed for the modern user.</p>
-				<a href="/store"><button id="shopnow">Shop Now</button></a>
+				<h3>Khuyến mãi lớn <br> <span>Lên tới 50%</span></h3>
+				<p>Đắm chìm trong khả năng điện toán liền mạch với nhiều loại máy tính xách tay mạnh mẽ và kiểu dáng đẹp của Asus, được thiết kế cho người dùng hiện đại.</p>
+				<a href="/store"><button id="shopnow">Mua ngay</button></a>
 			</div>
 			<div class="img"><img src="../../../images/slide/ASUS-1.png" alt=""></div>
 		</div>
 		<div class="slider-item">
 			<div class="content">
-				<h3>Biggest Clothe Sale <br> <span>Up To 75% Off</span></h3>
-				<p>Experience seamless productivity and exceptional craftsmanship with Dell's premium laptops, designed to empower your work.</p>
-				<a href="/store"><button id="shopnow">Shop Now</button></a>
+				<h3>Khuyến mãi lớn <br> <span>Lên tới 70%</span></h3>
+				<p>Trải nghiệm năng suất liền mạch và tay nghề xuất sắc với máy tính xách tay cao cấp của Dell, được thiết kế để hỗ trợ công việc của bạn.</p>
+				<a href="/store"><button id="shopnow">Mua ngay</button></a>
 			</div>
 			<div class="img"><img src="../../../images/slide/DELL-1.png" alt=""></div>
 		</div>
 		<div class="slider-item">
 			<div class="content">
-				<h3>Biggest Clothe Sale <br> <span>Up To 95% Off</span></h3>
-				<p>Experience the perfect blend of performance and elegance with HP laptops, designed to fuel your productivity.</p>
-				<a href="/store"><button id="shopnow">Shop Now</button></a>
+				<h3>Khuyến mãi lớn <br> <span>Lên tới 60%</span></h3>
+				<p>Trải nghiệm sự kết hợp hoàn hảo giữa hiệu suất và sự sang trọng với máy tính xách tay HP, được thiết kế để tăng năng suất của bạn.</p>
+				<a href="/store"><button id="shopnow">Mua ngay</button></a>
 			</div>
 			<div class="img"><img src="../../../images/slide/HP-1.png" alt=""></div>
 		</div>

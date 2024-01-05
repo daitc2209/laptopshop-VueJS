@@ -42,7 +42,7 @@
 							</div>
 							<div id="login">
 								<button type="button" @click="getProfile()" data-bs-toggle="modal" data-bs-target="#myModal">Cập nhật thông tin</button>
-								<button type="button" data-bs-toggle="modal" data-bs-target="#myModal1">Đổi mật khẩu</button>
+								<button v-if="auth" type="button" data-bs-toggle="modal" data-bs-target="#myModal1">Đổi mật khẩu</button>
 							</div>
 						</div>
 					</div>
@@ -84,8 +84,8 @@
 									<div class="profile-form__feild">
 										<label class="profile-form__name" for="">Họ và tên</label>
 										<input class="profile-form__feild-item" title="Họ và tên" type="text" v-model="profile.fullname"> 
-									</div>
-									<div class="profile-form__feild">
+									</div> 
+									<div class="profile-form__feild" v-if="auth">
 										<label class="profile-form__name" for="">Email</label>
 										<input class="profile-form__feild-item" title="Email" type="text" v-model="profile.email" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$">
 									</div>
@@ -191,7 +191,7 @@
 </template>
 
 <script>
-import { showSuccessToast, showErrorToast,getGenderDisplay } from "../../../assets/web/js/main";
+import { showSuccessToast, showErrorToast,getGenderDisplay, showErrorToastMess } from "../../../assets/web/js/main";
 import userApi from '../../../service/User';
 import menuShared from "./menu-shared.vue";
 export default {
@@ -216,7 +216,8 @@ export default {
 			url:'',
 			imgDto:'',
 			showPreload: false,
-			error:""
+			error:"",
+			auth: sessionStorage.getItem("auth")
         }
     },
 	methods:{
@@ -243,9 +244,15 @@ export default {
 				formData.append('email', this.profile.email);
 				formData.append('phone', this.profile.phone);
 				
-				await userApi.postProfile(formData)
+				const res = await userApi.postProfile(formData)
 				this.getProfile()
-				showSuccessToast("Sửa thông tin thành công")
+				if(res.success)
+				{
+					showSuccessToast("Sửa thông tin thành công")
+				}
+				if(res.error)
+					showErrorToastMess("Email đã được liên kết với tài khoản khác.")
+				
 				this.showPreload = false
 				bootstrap.Modal.getInstance(document.getElementById("myModal")).hide()
 			}catch(err){

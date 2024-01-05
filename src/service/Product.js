@@ -14,6 +14,11 @@ const productApi = {
         return res.data
     },
 
+    getSameProduct: async (name) =>{
+        const res = await axios.get("getSameProduct?name="+name)
+        return res.data
+    },
+
     getProductById: async (id) => {
         const res = await axios.get(`store/`+id);
         return res.data

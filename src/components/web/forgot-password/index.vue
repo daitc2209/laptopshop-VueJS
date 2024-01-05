@@ -37,7 +37,7 @@
 					<form v-else @submit.prevent="forgotPW()">
 						<p>Chúng tôi sẽ gửi link đổi mật khẩu cho bạn.</p>
 						<div class="inp">
-							<input v-model="email" type="email" placeholder="Enter your e-mail" name="email" required>
+							<input v-model="email" type="email" placeholder="Enter your e-mail" name="email" required pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$">
 						</div>
 						<div id="login">
 							<button type="submit">Gửi</button>

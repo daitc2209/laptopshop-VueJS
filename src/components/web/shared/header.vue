@@ -82,6 +82,7 @@ export default {
 					sessionStorage.removeItem("role"),
 					sessionStorage.removeItem("img"),
 					sessionStorage.removeItem("name"),
+					sessionStorage.removeItem("auth"),
 					sessionStorage.setItem("logout",true)
 				}
 			}

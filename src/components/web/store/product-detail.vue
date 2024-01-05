@@ -62,8 +62,8 @@
 <script>
 import { decFunction, incFunction, showSuccessToast, showErrorToastMess, showWarnToast, formatCurrency, owlCarousel } from "../../../assets/web/js/main";
 import productApi from "../../../service/Product";
-import Cart from "../../../service/Cart";
-import Favour from "../../../service/favour";
+import cartApi from "../../../service/Cart";
+import favourApi from "../../../service/favour";
 import productSame from "./same-product.vue"
 export default {
   components:{
@@ -88,7 +88,6 @@ export default {
   },
   methods: {
     formatCurrency,
-    // owlCarousel,
     decFunction(num) {
       this.cart.num = decFunction(num);
     },
@@ -96,35 +95,25 @@ export default {
       this.cart.num = incFunction(num)
     },
 
-    async addToCart() {
-      this.cart.productId=this.product.id
-
-      Cart.addToCart(this.cart).then(()=>{
-        let message = 'Thêm vào giỏ hàng thành công'
-        showSuccessToast(message)
-      }).catch(() => { 
-        showErrorToastMess("Sản phẩm đang hết hàng bạn nhé !! Vui lòng chọn sản phẩm khác")
-      })
+    async addToCart(){
+      try{
+        this.cart.productId=this.product.id
+        await cartApi.addToCart(this.cart)
+        showSuccessToast('Thêm vào giỏ hàng thành công')
+      }catch(err){
+        showErrorToastMess('Sản phẩm đang hết hàng bạn nhé !! Vui lòng chọn sản phẩm khác')
+      }
     },
-    async addToFavour(event,id){
-      event.preventDefault();
-      console.log("vao duoc favour id: "+id)
+    async addToFavour(e,id){
+      e.preventDefault();
       if(sessionStorage.getItem("login"))
       {
-        Favour.addToFavour(id).then((res)=>{
-          if(res.data.responseCode == 1)
-          {
-            let message = 'Đã thêm sản phẩm vào yêu thích !!'
-            showSuccessToast(message)
-          }
-          if(res.data.responseCode == 2)
-          {
-            let message = 'Sản phẩm đã có trong yêu thích !!'
-            showWarnToast(message)
-          }
-        }).catch(()=>{
-          showErrorToastMess("Sản phẩm đã có trong yêu thích !!")
-        })
+        const res = await favourApi.addToFavour(id)
+        if(res.responseCode == 1) 
+          showSuccessToast('Đã thêm sản phẩm vào yêu thích !!')
+        
+        if(res.responseCode == 2)
+          showWarnToast('Sản phẩm đã có trong yêu thích !!')
       }
       else{
         sessionStorage.setItem("err",true)

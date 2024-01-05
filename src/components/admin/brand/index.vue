@@ -251,6 +251,7 @@ export default {
 					brandDto.img = this.imgDto
 				formData.append('fileImage', brandDto.img);
 				formData.append('name', brandDto.name);
+				formData.append('id', brandDto.id);
                 const res = await brandsApi.postEditBrands(formData)
                     if(res.success){
                         await this.getListBrand(this.currentPage,"")

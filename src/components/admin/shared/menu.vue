@@ -85,32 +85,31 @@
 </template>
   
 <script>
-import Users from '../../../service/User'
+import userApi from '../../../service/User'
 import axios from 'axios';
 export default {
 	methods: {
-		logout() {
-			axios.defaults.headers.Authorization = `Bearer ${sessionStorage.getItem("jwtToken")}`;
-			Users.logout(sessionStorage.getItem("jwtToken"))
-				.then(res => {
-					console.log(res)
-					if (res.data.responseCode == "0") {
-						window.location.href = "/auth/sign-in"
-						// this.$router.push("/auth/sign-in")
-						// this.checklogin = false
-						sessionStorage.removeItem("login"),
-							sessionStorage.removeItem("jwtToken"),
-							sessionStorage.removeItem("refreshToken"),
-							sessionStorage.removeItem("role"),
-							sessionStorage.removeItem("img"),
-							sessionStorage.removeItem("name"),
-							sessionStorage.setItem("logout", true)
-					}
-
-				})
-				.catch(err => {
-					console.log("err: " + err)
-				})
+		async logout(){
+			try{
+				axios.defaults.headers.Authorization = `Bearer ${sessionStorage.getItem("jwtToken")}`;
+				const res = await userApi.logout(sessionStorage.getItem("jwtToken"))
+					
+				if(res.responseCode == "0")
+				{
+					window.location.href = "/auth/sign-in"
+					sessionStorage.removeItem("login"),
+					sessionStorage.removeItem("jwtToken"),
+					sessionStorage.removeItem("refreshToken"),
+					sessionStorage.removeItem("role"),
+					sessionStorage.removeItem("img"),
+					sessionStorage.removeItem("name"),
+					sessionStorage.removeItem("auth"),
+					sessionStorage.setItem("logout",true)
+				}
+			}
+			catch(err){
+				console.log("err: "+err)
+			}
 		},
 	}
 }

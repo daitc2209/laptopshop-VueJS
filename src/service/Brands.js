@@ -1,6 +1,13 @@
 import axios from "axios"
-
+ 
 const brandsApi = {
+    
+    // lấy thương hiệu để hiển thị ở trang chủ
+    getBrands: async () =>{
+        const res = await axios.get("findAllBrand")
+        return res.data
+    },
+
     getAllBrands: async () => {
         const res = await axios.get("admin/brand/findAll")
         return res.data

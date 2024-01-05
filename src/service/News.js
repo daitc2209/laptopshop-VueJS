@@ -4,14 +4,14 @@ const newsApi = {
     getNews: async (page)=>{
         if(page == "" || page == null)
             page = 1
-        const res = await axios.get(`/news?page=`+page);
+        const res = await axios.get(`news?page=`+page);
         return res.data
     },
 
     getDetailNews: async (id,page) => {
         if(page == "" || page == null)
             page = 1
-        const res = await axios.get(`/news/detail?id=${id}&page=`+page);
+        const res = await axios.get(`news/detail?id=${id}&page=`+page);
         return res.data;
     },
 

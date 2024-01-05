@@ -75,6 +75,7 @@ export default {
 					sessionStorage.setItem("role", res.data.role)
 					sessionStorage.setItem("img", res.data.img);
 					sessionStorage.setItem("name", res.data.name)
+					sessionStorage.setItem("auth", true)
 					if(res.data.role === "ROLE_USER")
 						window.location.href = "/home"
 					if(res.data.role === "ROLE_ADMIN")

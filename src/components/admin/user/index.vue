@@ -215,9 +215,9 @@
 									<label for="">Họ và tên</label> 
 									<input type="text" v-model="formAddUser.fullname" class="form-control" required="required" />
 								</div>
-								<div class="form-group">
+								<div class="form-group"> 
 									<label for="">Email</label> 
-									<input type="text" v-model="formAddUser.email" class="form-control" required="required" />
+									<input type="text" v-model="formAddUser.email" class="form-control" required="required" pattern="^\w+([\.-]?\w+)+@\w+([\.-]?\w+)*(\.\w{2,3})+$" title="admin@gmail.com" />
 								</div>
 								<div class="form-group">
 									<label for="">Tên đăng nhập</label> 
@@ -225,7 +225,7 @@
 								</div>
 								<div class="form-group">
 									<label for="">Mật khẩu</label> 
-									<input autocomplete="" type="password" v-model="formAddUser.password" class="form-control" required="required" />
+									<input autocomplete="" type="password" v-model="formAddUser.password" class="form-control" required="required" pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])([0-9a-zA-Z]{8,})$" title="Ít nhất 8 ký tự trở lên. Có ít nhất một chữ số. Có ít nhất một chữ cái viết thường. Có ít nhất một chữ cái viết hoa." />
 								</div>
 							</div>
 						</div>
@@ -265,7 +265,7 @@
 									</div>
 									<div class="form-group">
 										<label for="">Ngày sinh</label> 
-										<input type="text" class="form-control" id="birthdayEdit" v-model="formEditUser.dob" />
+										<input type="text" class="form-control" id="birthdayEdit" v-model="formEditUser.dob" placeholder="yyyy-mm-dd" pattern="^\d{4}-\d{2}-\d{2}$" title="Định dạng: yyyy-mm-dd" />
 									</div>
 									<div class="form-group">
 										<label for="">Địa chỉ</label> 
@@ -273,7 +273,7 @@
 									</div>
 									<div class="form-group">
 										<label for="">SĐT</label> 
-										<input type="text" class="form-control" id="phoneEdit" v-model="formEditUser.phone" />
+										<input type="text" class="form-control" id="phoneEdit" v-model="formEditUser.phone" pattern="^\d+$" title="Vui lòng chỉ nhập số" />
 									</div>
 									<div class="form-group">
 										<label for="">Trạng thái</label> 

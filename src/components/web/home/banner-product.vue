@@ -14,17 +14,8 @@
 		</div>
 		<h1 class="m-4 text-center" style="margin-top: 30px; color: #1c1c50; text-shadow: 1px 1px 1px black;">THƯƠNG HIỆU</h1>
 		<div class="row mb-4">
-			<div class="col-md-3 col-sm-3 col-3 py-3 py-md-0">
-				<div class="card brands"><img src="../../../images/banner/asus.png" alt=""></div>
-			</div>
-			<div class="col-md-3 col-sm-3 col-3 py-3 py-md-0">
-				<div class="card brands"><img src="../../../images/banner/dell.png" alt=""></div>
-			</div>
-			<div class="col-md-3 col-sm-3 col-3 py-3 py-md-0">
-				<div class="card brands"><img src="../../../images/banner/hp.png" alt=""></div>
-			</div>
-			<div class="col-md-3 col-sm-3 col-3 py-3 py-md-0">
-				<div class="card brands"><img src="../../../images/banner/logictech.png" alt=""></div>
+			<div class="col-md-3 col-sm-3 col-3 py-3 py-md-0 mt-2" v-for="item in brands" :key="item.id">
+				<div class="card brands"><img :src="item.img" alt=""></div>
 			</div>
 		</div>
 	</section>
@@ -32,8 +23,27 @@
 </template>
 
 <script>
+import brandsApi from "../../../service/Brands";
 export default {
-
+	data() {
+		return {
+            brands: []
+        }
+	},
+	methods:{
+		async getBrands(){
+            try{
+                const res = await brandsApi.getBrands()
+                this.brands = res.data.brands
+            }
+            catch(err){
+                console.log("err: "+err)
+            }
+        },
+	},
+	mounted(){
+		this.getBrands()
+	}
 }
 </script>
 

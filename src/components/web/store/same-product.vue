@@ -44,12 +44,9 @@ export default {
     },
     methods: {
         formatCurrency,
-        async getAllProduct() {
-            console.log("same: "+this.same) 
-            const res = await productApi.getAllProduct();
-            if(this.same === "laptop") this.same_product = res.data.laptop;
-            if(this.same === "keyboard") this.same_product = res.data.keyboard;
-            if(this.same === "mouse") this.same_product = res.data.mouse;
+        async getSameProduct() {
+            const res = await productApi.getSameProduct(this.same);
+            this.same_product = res.data.same_product;
         },
         async addToFavour(e, id) {
             e.preventDefault();
@@ -67,7 +64,7 @@ export default {
         },
     },
     mounted() {
-        this.getAllProduct();
+        this.getSameProduct();
     },
     updated() {
         owlCarousel(".product-owl-carousel")

@@ -1,27 +1,27 @@
 <template>
   <section class="banner-sale">
 		<div class="content">
-			<h1>Get Up To 50% Off</h1>
-			<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempora, animi?</p>
+			<h1>Giảm giá lên tới 50%</h1>
+			<p>Hãy nhanh tay lựa chọn những sản phẩm công nghệ mà mình thích.</p>
 			<ul class="timer">
 				<li class="d-inline-flex flex-column justify-content-center align-items-center p-4">
 					<div id="day" class="timer_num text-white">{{ days }}</div>
-					<div class="timer_unit text-white">Day</div>
+					<div class="timer_unit text-white">Ngày</div>
 				</li>
 				<li class="d-inline-flex flex-column justify-content-center align-items-center p-4">
 					<div id="hour" class="timer_num text-white">{{ hours }}</div>
-					<div class="timer_unit text-white">Hours</div>
+					<div class="timer_unit text-white">Giờ</div>
 				</li>
 				<li class="d-inline-flex flex-column justify-content-center align-items-center p-4">
 					<div id="minute" class="timer_num text-white">{{ minutes }}</div>
-					<div class="timer_unit text-white">Mins</div>
+					<div class="timer_unit text-white">Phút</div>
 				</li>
 				<li class="d-inline-flex flex-column justify-content-center align-items-center p-4">
 					<div id="second" class="timer_num text-white">{{ seconds }}</div>
-					<div class="timer_unit text-white">Sec</div>
+					<div class="timer_unit text-white">Giây</div>
 				</li>
 			</ul>
-			<div id="bannerbtn"><a href="/store"><button>SHOP NOW</button></a></div>
+			<div id="bannerbtn"><a href="/store"><button>Mua ngay</button></a></div>
 		</div>
 	</section>
 </template>

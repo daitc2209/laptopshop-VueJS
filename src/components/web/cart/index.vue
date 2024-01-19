@@ -87,7 +87,11 @@ export default {
     methods: {
 		click(e){
 			e.preventDefault()
-			if(this.listCart) this.$router.push("/order")
+			if(!sessionStorage.getItem("login")){
+				window.location.href = '/auth/sign-in'
+				sessionStorage.setItem("err", true)
+			}
+			if(this.listCart != "") this.$router.push("/order")
 			else{
 				this.$router.push("/store")
 				sessionStorage.setItem("cart-empty",1)
@@ -172,4 +176,5 @@ export default {
 .cart-title_name:hover{
 	text-decoration: underline;
 }
+
 </style>

@@ -37,7 +37,7 @@
                                                 <router-link :to="`/store/`+item.product.id"><h5 style="color: blue; word-break: break-word;">{{ item.product.name }}</h5></router-link>
                                             </td>
                                             <td class="cart-title first-row">
-                                                <h5 class="item-description">{{ item.product.description }}</h5>
+                                                <h4 class="item-description">{{ item.product.description }}</h4>
                                             </td>
                                             <td class="discount first-row">
                                                 <h5>{{ item.product.discount }}%</h5>

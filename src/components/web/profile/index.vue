@@ -102,7 +102,7 @@
 									</div>
 									<div class="profile-form__feild">
 										<label class="profile-form__name" for="">SĐT</label>
-										<input class="profile-form__feild-item" title="VD: 0123456789" type="text" v-model="profile.phone" pattern="^\d+$">
+										<input class="profile-form__feild-item" title="VD: 0123456789" type="text" v-model="profile.phone" >
 									</div>
 									<input hidden="" type="text" v-model="profile.img" > 
 									<div class="profile-form__feild">

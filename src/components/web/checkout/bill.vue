@@ -92,7 +92,7 @@
 </template>
 
 <script>
-import checkOutApi from '../../../service/CheckOut'
+import checkOutApi from '../../../service/Checkout'
 import { formatDate, formatCurrency } from "../../../assets/web/js/main";
 export default {
     data(){
